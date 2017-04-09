@@ -1,4 +1,8 @@
+import sbt.Keys._
+import sbt.Level
+
 name := "ChessEngineModuler"
+logLevel := Level.Warn
 
 version := "1.0"
 
