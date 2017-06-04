@@ -8,9 +8,9 @@ import java.util.List;
  * Created by aleksanderr on 18/03/17.
  */
 public interface EngineRunner {
-    public List<String> getEngineNames();
-    public String RunEngineWithCommand(String engineName, CommandEnum command, String... attributes);
-    public String RunEngineWithGoTimeoutCommand(String engineName, String fenPosition, int timeout);
-    public String RunEngineWithGoDepthCommand(String engineName, String fenPosition, int depth);
+    List<String> getEngineNames();
+    String RunEngineWithCommand(String engineName, CommandEnum command, String... attributes);
+    String RunEngineWithGoTimeoutCommand(String engineName, String fenPosition, int timeout);
+    String RunEngineWithGoDepthCommand(String engineName, String fenPosition, int depth);
 
 }

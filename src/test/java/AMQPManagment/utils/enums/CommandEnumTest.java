@@ -1,4 +1,4 @@
-package utils.enums;
+package AMQPManagment.utils.enums;
 
 import engineprocessor.core.utils.enums.CommandEnum;
 import org.junit.Assert;

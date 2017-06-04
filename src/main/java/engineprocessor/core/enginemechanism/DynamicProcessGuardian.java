@@ -6,9 +6,10 @@ package engineprocessor.core.enginemechanism;
  */
 public class DynamicProcessGuardian {
 
+    Thread countingThread;
     private int counterValue = 0;
     private int counter=0;
-    private boolean processIsReady = false;
+    private boolean processIsReadyToTakeAnotherCommand = false;
 
 
     public DynamicProcessGuardian(int milisec){
@@ -17,7 +18,7 @@ public class DynamicProcessGuardian {
     }
 
     public boolean isProcessReady(){
-        return processIsReady;
+        return processIsReadyToTakeAnotherCommand;
     }
 
     public void resetGuardState(){
@@ -26,23 +27,27 @@ public class DynamicProcessGuardian {
 
     public void startDetector(){
         resetGuardState();
-        processIsReady=false;
+        processIsReadyToTakeAnotherCommand = false;
+    }
+
+    public void killCounter(){
+        countingThread.interrupt();
     }
 
     private void createDetector(){
-        Thread countingThread = new Thread() {
+        countingThread = new Thread() {
             public void run() {
                 while (isAlive()) {
-                    while (!processIsReady) {
+                    while (!processIsReadyToTakeAnotherCommand) {
                         while (counter < counterValue) {
                             try {
-                                sleep(1);
+                                Thread.sleep(10);
                                 counter++;
                             } catch (InterruptedException e) {
                                 e.printStackTrace();
                             }
                         }
-                        processIsReady = true;
+                        processIsReadyToTakeAnotherCommand = true;
                     }
                 }
             }

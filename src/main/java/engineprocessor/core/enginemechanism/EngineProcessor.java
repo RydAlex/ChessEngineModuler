@@ -3,6 +3,7 @@ package engineprocessor.core.enginemechanism;
 import java.io.IOException;
 import java.io.PrintWriter;
 import java.util.Scanner;
+import java.util.concurrent.*;
 
 /**
  * Class which allow communicate in and out with engine
@@ -11,6 +12,7 @@ import java.util.Scanner;
 
 public class EngineProcessor {
 
+    ExecutorService ex;
     private PrintWriter output;
     private Process engineProcess;
     private CommandQuery commandQuery;
@@ -19,6 +21,12 @@ public class EngineProcessor {
 
     private boolean isEngineProcessorWorkFully(){
         return readingFromEngine && sendingToEngine;
+    }
+
+    public void brutallyKillEngine(){
+        engineProcess.destroy();
+//        ex.shutdown();
+        commandQuery.killGuard();
     }
 
     public boolean isEngineStillWork(){
@@ -31,8 +39,12 @@ public class EngineProcessor {
         final Scanner input = new Scanner(engineProcess.getInputStream());
         output = new PrintWriter(engineProcess.getOutputStream());
 
-        commandQuery = new CommandQuery();
         DynamicProcessGuardian guard = new DynamicProcessGuardian(dynamicGuardTimeout);
+
+        commandQuery = new CommandQuery(guard, this);
+
+        //ExecutorService ex = Executors.newFixedThreadPool(2);
+        //ex.submit(() -> {
 
         // Receive message
         new Thread() {
@@ -42,7 +54,7 @@ public class EngineProcessor {
                     readingFromEngine = true;
                     while (input.hasNextLine()) {
                         String resultLine = input.nextLine();
-                        //System.out.println(commandQuery.processedCommand + " " + resultLine);
+                        System.out.println(commandQuery.processedCommand + " " + resultLine);
                         commandQuery.setResultOfCommand(resultLine);
                         try {
                             sleep(1);
@@ -81,8 +93,11 @@ public class EngineProcessor {
             }
         }.start();
 
-        while (!(isEngineProcessorWorkFully() && commandQuery.isMsgWasSendToEngine("Initialize"))){
+
+        int i=0;
+        while (i<=3 && !(isEngineProcessorWorkFully() && commandQuery.isMsgWasSendToEngine("Initialize"))){
             Thread.sleep(1000);
+            i++;
         }
         return commandQuery;
 

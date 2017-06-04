@@ -69,7 +69,7 @@ public class FenGenerator {
         }
     }
 
-    public FenGenerator insertMove(String move){
+    public boolean insertMove(String move){
         try {
             String from = move.substring(0, 2);
             String to = move.substring(2, 4);
@@ -78,23 +78,31 @@ public class FenGenerator {
                 promotion = move.substring(4, 5);
             }
             String figure = chessBoard.get(from);
+            String figureTo = chessBoard.get(to);
             isMoveExistForActivePlayer(figure);
-            if (from.equals(to)) {
-                throw new RuntimeException("I DO NOT HAD TIME TO MADE DECISION");
-            }
-            isEnPessant(figure, to);
+            isEnPessant(figure,from, to);
             chessBoard.put(to, figure);
             chessBoard.put(from, null);
             if (!promotion.trim().equals("")) {
                 doPromotion(to, ChessEnum.fromString(promotion));
             }
             changeSideWhichHaveMove();
-            return this;
-        } catch (RuntimeException re){
-            throw re;
+            return isHalfMoveBroken(figure, figureTo);
         } catch (Exception ex){
             throw new RuntimeException("Error while parsing move from engine --> " + move);
         }
+    }
+
+    private boolean isHalfMoveBroken(String figure, String figureTo) {
+        // If Pone was moved than HalfMove should reset
+        if(figure.equals("p") || figure.equals("P")){
+            return true;
+        }
+        // if opponent figure was beaten also HalfMove should reset
+        else if(figureTo != null) {
+            return true;
+        }
+        return false;
     }
 
     private boolean isMoveExistForActivePlayer(String figure) {
@@ -108,12 +116,19 @@ public class FenGenerator {
     }
 
     public boolean isMoveACheckmate(String move){
-        if(move.equals("(none)") || move.equals("")){
+        if((move == null) ||
+            move.equals("null") ||
+            move.equals("NULL") ||
+            move.equals("(none)") ||
+            move.equals("")){
             return true;
         }
         String from = move.substring(0,2);
         String to = move.substring(2,4);
         if(from.equals(to)){
+            if(chessBoard.get(from) == null){
+                return true;
+            }
             if(!from.equals("00") &&
                     (chessBoard.get(from).equals(ChessEnum.King.getBlackFigure()) ||
                     chessBoard.get(from).equals(ChessEnum.King.getWhiteFigure()))) {
@@ -126,19 +141,22 @@ public class FenGenerator {
 
     }
 
-    private void isEnPessant(String figure, String onWhichField) {
-        String[] exactPosition = onWhichField.split("");
-        if(figure.equals("p")){
-            if(exactPosition[1].equals("5")){
-                enPessant = exactPosition[0] + "6";
-                return;
+    private void isEnPessant(String figure,String from, String to) {
+        String[] exactPositionFrom = from.split("");
+        String[] exactPosition = to.split("");
+        if(exactPositionFrom[1].equals("2") || exactPositionFrom[1].equals("7")) {
+            if (figure.equals("p")) {
+                if (exactPosition[1].equals("5")) {
+                    enPessant = exactPosition[0] + "6";
+                    return;
+                }
             }
-        }
 
-        if(figure.equals("P")){
-            if(exactPosition[1].equals("4")){
-                enPessant = exactPosition[0] + "3";
-                return;
+            if (figure.equals("P")) {
+                if (exactPosition[1].equals("4")) {
+                    enPessant = exactPosition[0] + "3";
+                    return;
+                }
             }
         }
         enPessant = "-";

@@ -15,7 +15,7 @@ import static java.lang.Thread.sleep;
  * Created by aleksanderr on 19/03/17.
  */
 public class EngineRunnerImpl implements EngineRunner {
-    public static final int DYNAMIC_GUARD_TIMEOUT = 100;
+    public static final int DYNAMIC_GUARD_TIMEOUT = 300;
 
     @Override
     public List<String> getEngineNames() {
@@ -77,11 +77,12 @@ public class EngineRunnerImpl implements EngineRunner {
                     .startNewGame()
                     .setPosition(fenPosition)
                     .go(GoEnum.searchInTime, timeout);
-            while (commandQuery.isListOfCommandEmpty()) {
-                sleep(10);
+            while (commandQuery.isListOfCommandHaveElements()) {
+                sleep(100);
             }
-            String msgFound = commandQuery.returnMoveWhichEngineFound();
+            String msgFound = commandQuery.returnMoveWhichEngineFound(timeout);
             commandQuery.exitTheGame();
+            er = null;
             return msgFound;
         } catch (IOException | InterruptedException e) {
             e.printStackTrace();
@@ -99,11 +100,12 @@ public class EngineRunnerImpl implements EngineRunner {
                 .startNewGame()
                 .setPosition(fenPosition)
                 .go(GoEnum.searchDepth, depth);
-        while (commandQuery.isListOfCommandEmpty()) {
-            sleep(10);
+        while (commandQuery.isListOfCommandHaveElements()) {
+            sleep(100);
         }
         String msgFound = commandQuery.returnMoveWhichEngineFound();
         commandQuery.exitTheGame();
+        er = null;
         return msgFound;
     } catch (IOException | InterruptedException e) {
         e.printStackTrace();

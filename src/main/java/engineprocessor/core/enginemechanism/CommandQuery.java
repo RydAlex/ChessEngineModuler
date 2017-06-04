@@ -2,6 +2,7 @@ package engineprocessor.core.enginemechanism;
 
 import engineprocessor.core.utils.EngineResponse;
 import engineprocessor.core.utils.enums.GoEnum;
+import org.scalatest.Engine;
 
 import java.util.*;
 
@@ -13,14 +14,28 @@ import static java.lang.Thread.sleep;
  */
 public class CommandQuery {
 
+
+    CommandQuery(DynamicProcessGuardian guardian, EngineProcessor engineHandler){
+        this.guardian = guardian;
+        this.engineHandler = engineHandler;
+    }
+
+    private EngineProcessor engineHandler;
+    private DynamicProcessGuardian guardian;
     String processedCommand = "Initialize";
     private LinkedList<String> commandList = new LinkedList<>();
     private ArrayList<EngineResponse> resultsOfCommand = new ArrayList<>();
 
+    public boolean isEngineFinishReturningMessages(){
+        return guardian.isProcessReady();
+    }
 
-
-    public boolean isListOfCommandEmpty(){
+    public boolean isListOfCommandHaveElements(){
         return commandList.size() != 0;
+    }
+
+    public void killGuard(){
+        guardian.killCounter();
     }
 
     String getCommand() {
@@ -38,6 +53,7 @@ public class CommandQuery {
 
     public void clearMessagesInLogs() {
         resultsOfCommand.clear();
+        commandList.clear();
     }
 
     private ArrayList<String> returnCommandsProcessedByEngine(){
@@ -54,15 +70,20 @@ public class CommandQuery {
         resultsOfCommand.add(er);
     }
 
-
     public String returnMoveWhichEngineFound(){
+        return returnMoveWhichEngineFound(15000);
+    }
+
+
+    public String returnMoveWhichEngineFound(int timeout){
         String moveFound = "";
         ArrayList<String> answerList;
         try {
-            retryWaitOnAnswer();
+            retryWaitOnAnswer(timeout);
         } catch (InterruptedException e) {
             e.printStackTrace();
         }
+
         answerList = returnMessagesFromEngineResponse();
         if(answerList != null){
             for(String answer : answerList){
@@ -103,6 +124,15 @@ public class CommandQuery {
 
     public CommandQuery exitTheGame() {
         commandList.addFirst("quit");
+       // engineHandler.brutallyKillEngine();
+        try {
+            Thread.sleep(300);
+        } catch (InterruptedException e) {
+            e.printStackTrace();
+        }
+        if(engineHandler.isEngineStillWork()){
+            destroyEngineInside();
+        }
         return this;
     }
 
@@ -165,14 +195,21 @@ public class CommandQuery {
     }
 
 
-    private void retryWaitOnAnswer() throws InterruptedException {
+    private void retryWaitOnAnswer(int timeout) throws InterruptedException {
         int retryWait=0;
         while(!isMsgCanBeFoundInLogs("bestmove")) {
             sleep(1000);
-            if(retryWait>=15){
-                break;
+            if(retryWait >= timeout){
+                commandList.addFirst("quit");
             }
-            retryWait++;
+            retryWait += 1000;
         }
     }
+
+
+    private void destroyEngineInside(){
+        engineHandler.brutallyKillEngine();
+        System.out.println("I slaughter this engine -.-' ");
+    }
+
 }

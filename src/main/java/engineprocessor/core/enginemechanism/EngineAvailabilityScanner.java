@@ -24,12 +24,16 @@ public class EngineAvailabilityScanner {
 
     private EngineAvailabilityScanner() {
         try {
-            String path = EngineAvailabilityScanner.class.getProtectionDomain().getCodeSource().getLocation().getFile()+ "/engineprocessor/core/engines";
+            String path = EngineAvailabilityScanner.class.getProtectionDomain().getCodeSource().getLocation().getFile()+ "/engineprocessor/core/engines/";
             try (Stream<Path> paths = Files.walk(Paths.get(path))) {
-                paths.filter(filePath -> Files.isRegularFile(filePath) && Files.isExecutable(filePath))
+                paths.filter(filePath -> Files.isDirectory(filePath))
                         .forEach(filePath -> { enginePathsMap.put(filePath.getFileName().toString(), filePath.toString()); });
             }
-
+            enginePathsMap.remove("engines");
+            for (Map.Entry<String, String> link: enginePathsMap.entrySet()){
+                String[] linkElements = link.getValue().split("/");
+                link.setValue(link.getValue()+"/"+linkElements[linkElements.length-1]);
+            }
         } catch (IOException e) {
             e.printStackTrace();
         }

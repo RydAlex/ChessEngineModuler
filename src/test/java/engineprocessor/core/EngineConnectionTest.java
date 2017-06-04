@@ -3,6 +3,7 @@ package engineprocessor.core;
 import engineprocessor.core.enginemechanism.CommandQuery;
 import engineprocessor.core.enginemechanism.EngineAvailabilityScanner;
 import engineprocessor.core.enginemechanism.EngineProcessor;
+import engineprocessor.core.enginemechanism.FenGenerator;
 import engineprocessor.core.utils.enums.GoEnum;
 import org.junit.BeforeClass;
 import org.junit.Test;
@@ -19,9 +20,9 @@ import static java.lang.Thread.sleep;
 
 public class EngineConnectionTest {
 
-    static int unitTestTimeout = 5000;
+    private static int unitTestTimeout = 5000;
 
-    static ArrayList<String> enginesPath = new ArrayList<>();
+    private static ArrayList<String> enginesPath = new ArrayList<>();
 
     @BeforeClass
     public static void classSetUp(){
@@ -40,11 +41,10 @@ public class EngineConnectionTest {
             boolean msgFound;
             commandMenu.getChessEngineInformation();
             sleep(unitTestTimeout);
-            msgFound = commandMenu.isMsgWasSendToEngine("Initialize");
-            assert msgFound;
             msgFound = commandMenu.isMsgCanBeFoundInLogs("id name");
             assert msgFound;
             commandMenu.clearMessagesInLogs();
+            commandMenu.exitTheGame();
         }
     }
 
@@ -59,14 +59,17 @@ public class EngineConnectionTest {
 //
 
     @Test
-    public void canExit() throws Exception {
-
+    public void canExitAfterThreeSecond() throws Exception {
         for(String enginePath : enginesPath) {
             EngineProcessor er = new EngineProcessor();
-            CommandQuery commandMenu = er.setEngineConnection(enginePath,300);
+            CommandQuery commandMenu = er.setEngineConnection(enginePath,500);
             commandMenu.exitTheGame();
-            sleep(unitTestTimeout);
+            while (commandMenu.isEngineFinishReturningMessages()){
+                Thread.sleep(10);
+            };
+            Thread.sleep(3000);
             assert !er.isEngineStillWork();
+            commandMenu.clearMessagesInLogs();
         }
     }
 
@@ -83,6 +86,7 @@ public class EngineConnectionTest {
             if(msgFound) {
                 counter++;
             }
+            commandMenu.exitTheGame();
         }
         System.out.println(" \n\n System which support debug: " + counter + "/" + enginesPath.size());
     }
@@ -90,17 +94,21 @@ public class EngineConnectionTest {
     @Test
     public void playFastTimeGame() throws Exception {
         final int fastTimeSearch = 500;
-
         for(String enginePath : enginesPath) {
+            System.out.println(enginePath);
             EngineProcessor er = new EngineProcessor();
-            CommandQuery commandMenu = er.setEngineConnection(enginePath,500);
-            commandMenu.startNewGame().go(GoEnum.searchInTime, 500);
-            while (commandMenu.isListOfCommandEmpty()) {
+            CommandQuery commandMenu = er.setEngineConnection(enginePath, fastTimeSearch);
+            commandMenu.getChessEngineInformation()
+                    .go(GoEnum.searchInTime, fastTimeSearch);
+            while (commandMenu.isListOfCommandHaveElements()) {
                 sleep(10);
             }
-            String msgFound = commandMenu.returnMoveWhichEngineFound();
+            String msgFound = commandMenu.returnMoveWhichEngineFound(fastTimeSearch);
+            System.out.println(msgFound);
+            commandMenu.exitTheGame();
             assert msgFound.length() == 4;
             commandMenu.clearMessagesInLogs();
+
         }
     }
 
@@ -114,15 +122,35 @@ public class EngineConnectionTest {
 
     @Test
     public void playProperTypeOfGame() throws Exception {
+        int timeout = 5000;
         for(String enginePath : enginesPath) {
             EngineProcessor er = new EngineProcessor();
             CommandQuery commandMenu = er.setEngineConnection(enginePath,500);
             commandMenu
                     .getChessEngineInformation()                // uci
-                    .startNewGame()                             // uciNewGame
                     .setPosition("r1k4r/p2nb1p1/2b4p/1p1n1p2/2PP4/3Q1NB1/1P3PPP/R5K1 b - c3 0 19") //position Fen ....
-                    .go(GoEnum.searchInTime, 5000);             // go movetime 5000
-            while (commandMenu.isListOfCommandEmpty()) {
+                    .go(GoEnum.searchInTime, timeout);             // go movetime 5000
+            while (commandMenu.isListOfCommandHaveElements()) {
+                sleep(10);
+            }
+            String msgFound = commandMenu.returnMoveWhichEngineFound(timeout);
+            commandMenu.exitTheGame();
+            System.out.println(msgFound);
+            assert msgFound.length() == 4 || msgFound.length() == 5;
+            commandMenu.clearMessagesInLogs();
+        }
+    }
+
+    @Test
+    public void playDepthTypeOfGame3() throws Exception {
+        for(String enginePath : enginesPath) {
+            EngineProcessor er = new EngineProcessor();
+            CommandQuery commandMenu = er.setEngineConnection(enginePath,500);
+            commandMenu
+                    .getChessEngineInformation()                // uci
+                    .setPosition("8/8/8/8/K7/8/6p1/7k b - -") //position Fen ....
+                    .go(GoEnum.searchDepth, 3);             // go depth 8
+            while (commandMenu.isListOfCommandHaveElements()) {
                 sleep(10);
             }
             String msgFound = commandMenu.returnMoveWhichEngineFound();
@@ -133,16 +161,34 @@ public class EngineConnectionTest {
     }
 
     @Test
-    public void playDepthTypeOfGame() throws Exception {
+    public void playDepthTypeOfGame5() throws Exception {
         for(String enginePath : enginesPath) {
             EngineProcessor er = new EngineProcessor();
             CommandQuery commandMenu = er.setEngineConnection(enginePath,500);
             commandMenu
                     .getChessEngineInformation()                // uci
-                    .startNewGame()                             // uciNewGame
                     .setPosition("8/8/8/8/K7/8/6p1/7k b - -") //position Fen ....
-                    .go(GoEnum.searchDepth, 8);             // go depth 8
-            while (commandMenu.isListOfCommandEmpty()) {
+                    .go(GoEnum.searchDepth, 5);             // go depth 8
+            while (commandMenu.isListOfCommandHaveElements()) {
+                sleep(10);
+            }
+            String msgFound = commandMenu.returnMoveWhichEngineFound();
+            commandMenu.exitTheGame();
+            assert msgFound.length() == 4 || msgFound.length() == 5;
+            commandMenu.clearMessagesInLogs();
+        }
+    }
+
+    @Test
+    public void playDepthTypeOfGame7() throws Exception {
+        for(String enginePath : enginesPath) {
+            EngineProcessor er = new EngineProcessor();
+            CommandQuery commandMenu = er.setEngineConnection(enginePath,500);
+            commandMenu
+                    .getChessEngineInformation()                // uci
+                    .setPosition("8/8/8/8/K7/8/6p1/7k b - -") //position Fen ....
+                    .go(GoEnum.searchDepth, 7);             // go depth 8
+            while (commandMenu.isListOfCommandHaveElements()) {
                 sleep(10);
             }
             String msgFound = commandMenu.returnMoveWhichEngineFound();

@@ -10,7 +10,7 @@ import org.junit.Test;
  */
 public class EngineAvaliabilityScannerTest {
 
-    EngineAvailabilityScanner engineAvailability;
+    private EngineAvailabilityScanner engineAvailability;
 
     @Before
     public void setUp(){
@@ -19,12 +19,12 @@ public class EngineAvaliabilityScannerTest {
 
     @Test
     public void isTestReturnProperMapOfEngineWithTheirPath(){
-        Assert.assertEquals(6, engineAvailability.returnMapOfEnginePaths().size());
+        Assert.assertEquals(17, engineAvailability.returnMapOfEnginePaths().size());
     }
 
     @Test
     public void isTestReturnProperListOfEngine(){
-        Assert.assertEquals(6, engineAvailability.returnListOfNames().size());
+        Assert.assertEquals(17, engineAvailability.returnListOfNames().size());
     }
 
 }
