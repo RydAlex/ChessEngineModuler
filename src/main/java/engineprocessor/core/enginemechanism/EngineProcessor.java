@@ -12,7 +12,6 @@ import java.util.concurrent.*;
 
 public class EngineProcessor {
 
-    ExecutorService ex;
     private PrintWriter output;
     private Process engineProcess;
     private CommandQuery commandQuery;
@@ -25,8 +24,6 @@ public class EngineProcessor {
 
     public void brutallyKillEngine(){
         engineProcess.destroy();
-//        ex.shutdown();
-        commandQuery.killGuard();
     }
 
     public boolean isEngineStillWork(){
@@ -43,9 +40,6 @@ public class EngineProcessor {
 
         commandQuery = new CommandQuery(guard, this);
 
-        //ExecutorService ex = Executors.newFixedThreadPool(2);
-        //ex.submit(() -> {
-
         // Receive message
         new Thread() {
             public void run() {
@@ -54,14 +48,8 @@ public class EngineProcessor {
                     readingFromEngine = true;
                     while (input.hasNextLine()) {
                         String resultLine = input.nextLine();
-                        System.out.println(commandQuery.processedCommand + " " + resultLine);
+                        //System.out.println(commandQuery.processedCommand + " " + resultLine);
                         commandQuery.setResultOfCommand(resultLine);
-                        try {
-                            sleep(1);
-                            guard.resetGuardState();
-                        } catch (InterruptedException e) {
-                            e.printStackTrace();
-                        }
                     }
                 }
                 input.close();
@@ -74,25 +62,16 @@ public class EngineProcessor {
                 while(engineProcess.isAlive())
                 {
                     sendingToEngine = true;
-                    while(guard.isProcessReady()){
-                        String command = null;
-                        while(command == null){
-                            command = commandQuery.getCommand();
-                            try {
-                                Thread.sleep(10);
-                            } catch (InterruptedException e) {
-                                e.printStackTrace();
-                            }
-                        }
-                        output.println(command);
-                        output.flush();
-                        guard.startDetector();
-                    };
+                    String command = null;
+                    while(command == null){
+                        command = commandQuery.getCommand();
+                    }
+                    output.println(command);
+                    output.flush();
                 }
                 output.close();
             }
         }.start();
-
 
         int i=0;
         while (i<=3 && !(isEngineProcessorWorkFully() && commandQuery.isMsgWasSendToEngine("Initialize"))){

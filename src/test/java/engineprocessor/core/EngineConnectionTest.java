@@ -193,6 +193,7 @@ public class EngineConnectionTest {
             }
             String msgFound = commandMenu.returnMoveWhichEngineFound();
             commandMenu.exitTheGame();
+            System.out.println(msgFound);
             assert msgFound.length() == 4 || msgFound.length() == 5;
             commandMenu.clearMessagesInLogs();
         }

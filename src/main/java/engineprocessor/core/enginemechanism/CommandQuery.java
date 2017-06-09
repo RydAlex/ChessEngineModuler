@@ -5,6 +5,9 @@ import engineprocessor.core.utils.enums.GoEnum;
 import org.scalatest.Engine;
 
 import java.util.*;
+import java.util.concurrent.ArrayBlockingQueue;
+import java.util.concurrent.BlockingQueue;
+import java.util.concurrent.LinkedBlockingQueue;
 
 import static java.lang.Thread.sleep;
 
@@ -23,8 +26,8 @@ public class CommandQuery {
     private EngineProcessor engineHandler;
     private DynamicProcessGuardian guardian;
     String processedCommand = "Initialize";
-    private LinkedList<String> commandList = new LinkedList<>();
-    private ArrayList<EngineResponse> resultsOfCommand = new ArrayList<>();
+    private BlockingQueue<String> commandList = new LinkedBlockingQueue<>();
+    private BlockingQueue<EngineResponse> resultsOfCommand = new LinkedBlockingQueue<>();
 
     public boolean isEngineFinishReturningMessages(){
         return guardian.isProcessReady();
@@ -40,15 +43,11 @@ public class CommandQuery {
 
     String getCommand() {
         try {
-            if (!commandList.isEmpty()) {
-                processedCommand = commandList.getLast();
-                commandList.removeLast();
-                return processedCommand;
-            }
-        } catch (Exception e) {
-            // something weird happened....
+            processedCommand = commandList.take();
+        } catch (InterruptedException e) {
+            e.printStackTrace();
         }
-        return null;
+        return processedCommand;
     }
 
     public void clearMessagesInLogs() {
@@ -98,33 +97,32 @@ public class CommandQuery {
     }
 
     public CommandQuery getChessEngineInformation() {
-        commandList.addFirst("uci");
+        commandList.add("uci");
         return this;
     }
 
     public CommandQuery showActualLookOfGame() {
-        commandList.addFirst("d");
+        commandList.add("d");
         return this;
     }
 
     public CommandQuery isEngineReady() {
-        commandList.addFirst("isready");
+        commandList.add("isready");
         return this;
     }
 
     public CommandQuery setPosition(String fenString) {
-        commandList.addFirst("position fen " + fenString);
+        commandList.add("position fen " + fenString);
         return this;
     }
 
     public CommandQuery startNewGame() {
-        commandList.addFirst("ucinewgame");
+        commandList.add("ucinewgame");
         return this;
     }
 
     public CommandQuery exitTheGame() {
-        commandList.addFirst("quit");
-       // engineHandler.brutallyKillEngine();
+        commandList.add("quit");
         try {
             Thread.sleep(300);
         } catch (InterruptedException e) {
@@ -137,12 +135,12 @@ public class CommandQuery {
     }
 
     public CommandQuery go(GoEnum goOption) {
-        commandList.addFirst("go " + goOption.getText());
+        commandList.add("go " + goOption.getText());
         return this;
     }
 
     public CommandQuery go(GoEnum goOption, Integer value) {
-        commandList.addFirst("go " + goOption.getText() + " " + value);
+        commandList.add("go " + goOption.getText() + " " + value);
         return this;
     }
 
@@ -179,10 +177,9 @@ public class CommandQuery {
 
 
     public ArrayList<String> returnDataFromEngineResponse(boolean responseOrCommand){
-        ArrayList<EngineResponse> resultList = (ArrayList<EngineResponse>) resultsOfCommand.clone();
-        if(resultList.size() != 0){
+        if(resultsOfCommand.size() != 0){
             ArrayList<String> responses = new ArrayList<>();
-            for(EngineResponse response : resultList){
+            for(EngineResponse response : resultsOfCommand){
                 if(responseOrCommand)
                     responses.add(response.getResponseFromEngine());
                 else
@@ -200,7 +197,7 @@ public class CommandQuery {
         while(!isMsgCanBeFoundInLogs("bestmove")) {
             sleep(1000);
             if(retryWait >= timeout){
-                commandList.addFirst("quit");
+                commandList.add("quit");
             }
             retryWait += 1000;
         }

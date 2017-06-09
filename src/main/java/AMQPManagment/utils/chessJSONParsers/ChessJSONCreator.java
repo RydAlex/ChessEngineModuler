@@ -10,7 +10,7 @@ import java.util.List;
  */
 public class ChessJSONCreator {
 
-    static List<String> createChessJsonWithTimeoutRule(String fenString, Integer timeout, List<String> chessGameNames) {
+    public static List<String> createChessJsonWithTimeoutRule(String fenString, Integer timeout, List<String> chessGameNames) {
         List<ChessJSONObject> createdObj = createChessJsonObjects(fenString, null, timeout, chessGameNames);
         LinkedList<String> returnList = new LinkedList<>();
         for(ChessJSONObject obj : createdObj){

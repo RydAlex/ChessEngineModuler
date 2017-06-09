@@ -19,12 +19,12 @@ public class EngineAvaliabilityScannerTest {
 
     @Test
     public void isTestReturnProperMapOfEngineWithTheirPath(){
-        Assert.assertEquals(17, engineAvailability.returnMapOfEnginePaths().size());
+        Assert.assertEquals(16, engineAvailability.returnMapOfEnginePaths().size());
     }
 
     @Test
     public void isTestReturnProperListOfEngine(){
-        Assert.assertEquals(17, engineAvailability.returnListOfNames().size());
+        Assert.assertEquals(16, engineAvailability.returnListOfNames().size());
     }
 
 }

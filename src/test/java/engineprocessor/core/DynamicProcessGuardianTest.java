@@ -47,26 +47,14 @@ public class DynamicProcessGuardianTest {
         assert !guard.isProcessReady();
         Thread.sleep(100);
         assert !guard.isProcessReady();
-//        Thread.sleep(200);
-//        assert guard.isProcessReady();
-        int z=0;
-        while(!guard.isProcessReady()){
-            Thread.sleep(1);
-            z++;
-        }
-        System.out.println(z);
+        Thread.sleep(200);
+        assert guard.isProcessReady();
         for(int i = 0 ; i<50 ; i++){
             guard.startDetector();
             Thread.sleep(50);
             assert !guard.isProcessReady();
-            int h=0;
-            while(!guard.isProcessReady()){
-                Thread.sleep(1);
-                h++;
-            }
-            System.out.println(h);
-//            Thread.sleep(400);
-//            assert guard.isProcessReady();
+            Thread.sleep(400);
+            assert guard.isProcessReady();
         }
     }
 
