@@ -30,7 +30,7 @@ class ActorGame(system: ActorSystem, name: Seq[String]) extends Actor {
 
   def receive = {
     case message: MessageBack =>
-      log.info(name + "Msg from engine received from " + message.engineName +  " no :" + message.id)
+      log.info(name + "msg from engine received from " + message.engineName +  " no :" + message.id + " with answer: " + message.message)
       answers += message
       if(answers.length == listLength/2) {
         self ! AssumingMessage()
@@ -40,19 +40,22 @@ class ActorGame(system: ActorSystem, name: Seq[String]) extends Actor {
       logMessageOnEnterance(assumingMsg)
       val answer :MessageBack = ExtractMoveWhichShouldBeTakenInThisGame()
       val isCheckmate = new FenGenerator(chessboard).isMoveACheckmate(answer.message)
+      log.info(answer.message + " is checkmate: " + isCheckmate)
       if(isCheckmate) {
         log.info(name + " - " + answer.engineName + " LOST!")
         self ! EndGame()
         log.info("Heyo i am here...")
       }
       else {
-        UpdateChessboardOrTellIsItDraw(answer)
+        if(UpdateChessboardOrTellIsItDraw(answer)){
+          self ! EndGame()
+        }
         tellForOtherHalfOfEnginesToStartCounting()
       }
 
 
     case depthMessage: DepthMessage =>
-      log.info(name + " Depth msg received and will be send to engines:" + depthMessage.id)
+      //log.info(name + " Depth msg received and will be send to engines:" + depthMessage.id)
       if(activeListOne){
         for (engine <- enginesOne){
           engine ! depthMessage
@@ -64,7 +67,7 @@ class ActorGame(system: ActorSystem, name: Seq[String]) extends Actor {
       }
 
     case timeOutMessage: TimeOutMessage =>
-      log.info(name + " Timeout msg received :" + timeOutMessage.id)
+      //log.info(name + " Timeout msg received :" + timeOutMessage.id)
       if(activeListOne){
         for (engine <- enginesOne){
           engine ! TimeOutMessage(timeOutMessage.chessboardFen, timeOutMessage.duration)
@@ -76,7 +79,7 @@ class ActorGame(system: ActorSystem, name: Seq[String]) extends Actor {
       }
 
     case endGame: EndGame =>
-      log.info(name + " Lets kill everything... no:")
+      //log.info(name + " Lets kill everything... no:")
       for (engine <- enginesOne){
         engine ! PoisonPill
       }
@@ -86,7 +89,7 @@ class ActorGame(system: ActorSystem, name: Seq[String]) extends Actor {
       senderRef ! EndGame
 
      case initGame: InitGame =>
-       log.info(name + " InitGame Command received :")
+       //log.info(name + " InitGame Command received :")
        this.typeOfGame = initGame.typeOfGame
        this.senderRef = sender
        listLength = name.length
@@ -105,7 +108,7 @@ class ActorGame(system: ActorSystem, name: Seq[String]) extends Actor {
       chessboard = new FenGenerator(timeoutRule.chessboardFen).returnFenStringPositions()
       timeOutGameOrAnother = true
       valOfGameRule = timeoutRule.timeout
-      log.info(name + " game with timeout rule should be started shortly :" + timeoutRule.id)
+      //log.info(name + " game with timeout rule should be started shortly :" + timeoutRule.id)
       while(enginesOne.length + enginesTwo.length != listLength){}
       self ! new TimeOutMessage(chessboard,timeoutRule.timeout)
 
@@ -113,21 +116,21 @@ class ActorGame(system: ActorSystem, name: Seq[String]) extends Actor {
       chessboard = new FenGenerator(depthRule.chessboardFen).returnFenStringPositions()
       timeOutGameOrAnother = false
       valOfGameRule = depthRule.depth
-      log.info(name + " game with depth rule should be started shortly :" + depthRule.id)
+      //log.info(name + " game with depth rule should be started shortly :" + depthRule.id)
       while(enginesOne.length + enginesTwo.length != listLength){}
       self ! new TimeOutMessage(chessboard,depthRule.depth)
 
     case newActor: CreateNewActorInFirstGroup =>
-      log.info(name + " - " + newActor.engineName + " actor is created in first group - msg no :" + newActor.id)
+      //log.info(name + " - " + newActor.engineName + " actor is created in first group - msg no :" + newActor.id)
       enginesOne = system.actorOf(Props(new EngineActor(newActor.engineName))) :: enginesOne
 
     case newActor: CreateNewActorInSecondGroup =>
-      log.info(name + " - " + newActor.engineName + " actor is created in second group - msg no :" + newActor.id)
+      //log.info(name + " - " + newActor.engineName + " actor is created in second group - msg no :" + newActor.id)
       enginesTwo = system.actorOf(Props(new EngineActor(newActor.engineName))) :: enginesTwo
   }
 
 
-  def UpdateChessboardOrTellIsItDraw(answer: MessageBack): Unit = {
+  def UpdateChessboardOrTellIsItDraw(answer: MessageBack): Boolean = {
     val fen: FenGenerator = new FenGenerator(chessboard)
     val halfMoveShouldBroke = fen.insertMove(answer.message)
     if(halfMoveShouldBroke){
@@ -135,16 +138,17 @@ class ActorGame(system: ActorSystem, name: Seq[String]) extends Actor {
     } else {
       halfMoveCounter += 1
     }
-    log.info(name + " Half Move Counter is now at : " + halfMoveCounter)
-    if(halfMoveCounter == 50){
-      log.info(name + " THERE WAS A DRAW!!!!!!")
+    if(halfMoveCounter >= 50){
+      log.info(name + " THERE WAS A DRAW!!!!!!") // Example: "7K/7P/5q2/8/4k3/8/8/8 w - -"
+      true
     }
     chessboard = fen.returnFenStringPositions()
-    log.info(s"$name - move: ${answer.message} ,chessboard: $chessboard")
+    log.info(s"$name - move: ${answer.message} ,chessboard: $chessboard, halfmove: $halfMoveCounter")
+    false
   }
 
   def logMessageOnEnterance(assumingMsg: AssumingMessage) = {
-    log.info(name + " Enough message receive - lets assume :" + assumingMsg.id)
+    //log.info(name + " Enough message receive - lets assume :" + assumingMsg.id)
     log.info(s" All answers $answers")
   }
 

@@ -18,27 +18,17 @@ import static java.lang.Thread.sleep;
 public class CommandQuery {
 
 
-    CommandQuery(DynamicProcessGuardian guardian, EngineProcessor engineHandler){
-        this.guardian = guardian;
+    CommandQuery(EngineProcessor engineHandler){
         this.engineHandler = engineHandler;
     }
 
     private EngineProcessor engineHandler;
-    private DynamicProcessGuardian guardian;
     String processedCommand = "Initialize";
     private BlockingQueue<String> commandList = new LinkedBlockingQueue<>();
     private BlockingQueue<EngineResponse> resultsOfCommand = new LinkedBlockingQueue<>();
 
-    public boolean isEngineFinishReturningMessages(){
-        return guardian.isProcessReady();
-    }
-
     public boolean isListOfCommandHaveElements(){
         return commandList.size() != 0;
-    }
-
-    public void killGuard(){
-        guardian.killCounter();
     }
 
     String getCommand() {
@@ -88,6 +78,10 @@ public class CommandQuery {
             for(String answer : answerList){
                 if(answer.contains("bestmove")){
                     String[] answerParts = answer.split(" ");
+                    if(answerParts.length<2){
+                        System.out.println(answer);
+                        break;
+                    }
                     moveFound = answerParts[1];
                     break;
                 }
@@ -123,14 +117,7 @@ public class CommandQuery {
 
     public CommandQuery exitTheGame() {
         commandList.add("quit");
-        try {
-            Thread.sleep(300);
-        } catch (InterruptedException e) {
-            e.printStackTrace();
-        }
-        if(engineHandler.isEngineStillWork()){
-            destroyEngineInside();
-        }
+        destroyEngineInside();
         return this;
     }
 
@@ -159,7 +146,7 @@ public class CommandQuery {
         return msgFound;
     }
 
-    public boolean isMsgWasSendToEngine(String answerExample) {
+    boolean isMsgWasSendToEngine(String answerExample) {
         boolean msgFound = false;
         ArrayList<String> answerList;
         answerList = returnCommandsProcessedByEngine();
@@ -196,7 +183,7 @@ public class CommandQuery {
         int retryWait=0;
         while(!isMsgCanBeFoundInLogs("bestmove")) {
             sleep(1000);
-            if(retryWait >= timeout){
+            if(retryWait >= 20000){
                 commandList.add("quit");
             }
             retryWait += 1000;
@@ -206,7 +193,6 @@ public class CommandQuery {
 
     private void destroyEngineInside(){
         engineHandler.brutallyKillEngine();
-        System.out.println("I slaughter this engine -.-' ");
     }
 
 }

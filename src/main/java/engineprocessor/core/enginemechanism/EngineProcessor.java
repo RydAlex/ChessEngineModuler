@@ -1,5 +1,7 @@
 package engineprocessor.core.enginemechanism;
 
+import lombok.extern.slf4j.Slf4j;
+
 import java.io.IOException;
 import java.io.PrintWriter;
 import java.util.Scanner;
@@ -9,7 +11,7 @@ import java.util.concurrent.*;
  * Class which allow communicate in and out with engine
  * Created by aleksanderr on 26/04/16.
  */
-
+@Slf4j
 public class EngineProcessor {
 
     private PrintWriter output;
@@ -30,15 +32,13 @@ public class EngineProcessor {
         return engineProcess.isAlive();
     }
 
-    public CommandQuery setEngineConnection(String pathToEngine, int dynamicGuardTimeout) throws IOException, InterruptedException {
+    public CommandQuery setEngineConnection(String pathToEngine) throws IOException, InterruptedException {
         ProcessBuilder pb = new ProcessBuilder(pathToEngine);
         engineProcess = pb.start();
         final Scanner input = new Scanner(engineProcess.getInputStream());
         output = new PrintWriter(engineProcess.getOutputStream());
 
-        DynamicProcessGuardian guard = new DynamicProcessGuardian(dynamicGuardTimeout);
-
-        commandQuery = new CommandQuery(guard, this);
+        commandQuery = new CommandQuery(this);
 
         // Receive message
         new Thread() {
@@ -48,11 +48,11 @@ public class EngineProcessor {
                     readingFromEngine = true;
                     while (input.hasNextLine()) {
                         String resultLine = input.nextLine();
-                        //System.out.println(commandQuery.processedCommand + " " + resultLine);
                         commandQuery.setResultOfCommand(resultLine);
                     }
                 }
                 input.close();
+                //log.info("Slave just finish connection with Engine");
             }
         }.start();
 
@@ -70,6 +70,7 @@ public class EngineProcessor {
                     output.flush();
                 }
                 output.close();
+                //log.info("Slave just finish connection with Engine");
             }
         }.start();
 

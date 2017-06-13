@@ -24,6 +24,7 @@ class EngineActor(engineName: String, val engineRunner: EngineRunner = new Engin
       log.info(engineName + " receive depthClass request :" + depthClass.id )
       val engineNames = engineRunner.getEngineNames
       if(engineNames.contains(engineName)){
+        log.info(engineName + " was send with params : chessboard " + depthClass.chessboardFen +  " depth: " + depthClass.depth)
         sender ! MessageBack(engineName, engineRunner.RunEngineWithGoDepthCommand(engineName, depthClass.chessboardFen, depthClass.depth))
       }
   }

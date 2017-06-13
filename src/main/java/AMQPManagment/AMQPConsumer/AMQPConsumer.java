@@ -8,6 +8,9 @@ import engineprocessor.core.enginemechanism.EngineProcessor;
 import engineprocessor.interfaces.EngineRunner;
 import engineprocessor.interfaces.EngineRunnerImpl;
 import lombok.extern.slf4j.Slf4j;
+import scala.collection.JavaConverters;
+import scala.collection.Seq$;
+import simpleChessManagmentActor.ChessScheduler;
 
 import java.io.IOException;
 import java.net.URISyntaxException;
@@ -29,6 +32,7 @@ public class AMQPConsumer {
     public static void main(String[] argv) throws NoSuchAlgorithmException, KeyManagementException, URISyntaxException {
         ConnectionFactory factory = new ConnectionFactory();
         factory.setUri("amqp://hfmmtwsb:nAuNrdEXLlQ4Y1EllD10yngQf56f5cyM@zebra.rmq.cloudamqp.com/hfmmtwsb");
+        final boolean[] gameIsOn = {false};
 
         Connection connection = null;
         try {
@@ -36,7 +40,6 @@ public class AMQPConsumer {
             Channel channel = connection.createChannel();
 
             channel.queueDeclare(RPC_QUEUE_NAME, false, false, false, null);
-
             channel.basicQos(1);
 
             System.out.println(" [x] Awaiting RPC requests");
@@ -55,19 +58,20 @@ public class AMQPConsumer {
                     try {
                         String message = new String(body,"UTF-8");
                         ChessJSONObject chessObject = ChessJSONReader.readDataFromJson(message);
-                        log.info("I process " + chessObject.getChessGameName() + " with fen" + chessObject.getFen());
-                        EngineRunner engine = new EngineRunnerImpl();
+                        log.info("I process " + chessObject.getChessGameName() + " with fen " + chessObject.getFen());
                         if(chessObject.getDepth() != null) {
-                            response = engine.RunEngineWithGoDepthCommand(
-                                    chessObject.getChessGameName(),
+                            ChessScheduler.startGameWithDepthRule(
                                     chessObject.getFen(),
-                                    chessObject.getDepth());
+                                    chessObject.getDepth(),
+                                    JavaConverters.asScalaBuffer(chessObject.getChessGameName()).toSeq()
+                            );
                         }
                         else if(chessObject.getTimeout() != null) {
-                            response = engine.RunEngineWithGoTimeoutCommand(
-                                    chessObject.getChessGameName(),
+                            ChessScheduler.startGameWithTimeoutRule(
                                     chessObject.getFen(),
-                                    chessObject.getTimeout());
+                                    chessObject.getTimeout(),
+                                    JavaConverters.asScalaBuffer(chessObject.getChessGameName()).toSeq()
+                            );
                         } else {
                             response = null;
                         }
@@ -79,9 +83,12 @@ public class AMQPConsumer {
                         System.out.println(" [.] " + e.toString());
                     }
                     finally {
-                        channel.basicPublish("", properties.getReplyTo(), replyProps, answer.getBytes("UTF-8"));
-
-                        channel.basicAck(envelope.getDeliveryTag(), false);
+                        try{
+                            channel.basicPublish("", properties.getReplyTo(), replyProps, answer.getBytes("UTF-8"));
+                            channel.basicAck(envelope.getDeliveryTag(), false);
+                        } catch (Exception e){
+                            System.out.println("I had problem with messeging back the answer");
+                        }
                     }
                 }
             };
@@ -91,8 +98,10 @@ public class AMQPConsumer {
             //loop to prevent reaching finally block
             while(true) {
                 try {
-                    Thread.sleep(100);
-                } catch (InterruptedException _ignore) {}
+                    Thread.sleep(10000);
+                } catch (InterruptedException _ignore) {
+                    System.out.println("nooope");
+                }
             }
         } catch (IOException | TimeoutException e) {
             e.printStackTrace();

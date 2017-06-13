@@ -1,0 +1,9 @@
+1. Napisac Testy
+2. Refactor codu do czytelniejszej postaci - uporzadkowanie klas i metod
+3. Napisac zwracanie kto wygral w rozgrywce
+4. Napisac schedulera
+5. Poprawic logi
+6. Dorzucenie ELO:
+    - Zmiana Elo po zakonczonej grze
+    - Wykorzystywanie Elo podczas rozgrywki - voting na podstawie wagi silnika
+    -

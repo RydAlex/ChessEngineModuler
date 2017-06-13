@@ -1,5 +1,6 @@
 package AMQPManagment.utils.chessJSONParsers;
 
+import AMQPManagment.utils.TypeOfMessageExtraction;
 import AMQPManagment.utils.data.ChessJSONObject;
 import org.junit.Assert;
 import org.junit.Test;
@@ -18,11 +19,10 @@ public class ChessJSONTest {
         LinkedList<String> engineList = new LinkedList<>();
         engineList.add("stockfish");
         engineList.add("fruit");
-        List<String> listofDepthJson = ChessJSONCreator.createChessJsonWithTimeoutRule("adhd",5000,engineList);
+        String listofDepthJson = ChessJSONCreator.createChessJsonWithTimeoutRule("adhd",5000, TypeOfMessageExtraction.ELO, false ,engineList);
 
 
-        Assert.assertEquals("{\n  \"chessGameName\" : \"stockfish\",\n  \"timeout\" : 5000,\n  \"fen\" : \"adhd\"\n}",listofDepthJson.get(0));
-        Assert.assertEquals("{\n  \"chessGameName\" : \"fruit\",\n  \"timeout\" : 5000,\n  \"fen\" : \"adhd\"\n}",listofDepthJson.get(1));
+        Assert.assertEquals("{\n  \"chessGameName\" : \"stockfish\",\n  \"timeout\" : 5000,\n  \"fen\" : \"adhd\"\n}",listofDepthJson);
     }
 
     @Test
@@ -30,10 +30,10 @@ public class ChessJSONTest {
         LinkedList<String> engineList = new LinkedList<>();
         engineList.add("stockfish");
         engineList.add("fruit");
-        List<String> listofDepthJson = ChessJSONCreator.createChessJsonWithDepthRule("adhd",5,engineList);
+        String listofDepthJson = ChessJSONCreator.createChessJsonWithDepthRule("adhd",5, TypeOfMessageExtraction.ELO, false ,engineList);
 
-        Assert.assertEquals("{\n  \"chessGameName\" : \"stockfish\",\n  \"depth\" : 5,\n  \"fen\" : \"adhd\"\n}",listofDepthJson.get(0));
-        Assert.assertEquals("{\n  \"chessGameName\" : \"fruit\",\n  \"depth\" : 5,\n  \"fen\" : \"adhd\"\n}",listofDepthJson.get(1));
+        Assert.assertEquals("{\n  \"chessGameName\" : \"stockfish\",\n  \"depth\" : 5,\n  \"fen\" : \"adhd\"\n}",listofDepthJson);
+        Assert.assertEquals("{\n  \"chessGameName\" : \"fruit\",\n  \"depth\" : 5,\n  \"fen\" : \"adhd\"\n}",listofDepthJson);
     }
 
     @Test

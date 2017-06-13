@@ -9,11 +9,9 @@ import scala.util.Random
 /**
   * Created by aleksanderr on 15/04/17.
   */
-object ChessScheduler extends App {
-
-  var listOfGameToPlay = new GameMultipleEngineSetCreator().getMultipleEnginesForGame(2)
-  startGameWithDepthRule(3, listOfGameToPlay)
-
+object ChessScheduler {
+  //var listOfGameToPlay = new GameMultipleEngineSetCreator().getMultipleEnginesForGame(8)
+  //startGameWithDepthRule(3, listOfGameToPlay)
 
   // DEPTH GAME
   def startGameWithDepthRule(depth: Int ,chessEngineList: Seq[String]): Unit ={
@@ -24,6 +22,7 @@ object ChessScheduler extends App {
   def startGameWithDepthRule(chessboard: String, depth: Int, chessEngineList: Seq[String]): Unit ={
     val actor: ActorRef = GameShaper.defineNewGameWithThoseEngine(TypeOfGame.RANDOM,chessEngineList)
     GameShaper.startGameWithDepthRule(actor, depth, chessboard)
+    
   }
 
   //TIMEOUT GAME

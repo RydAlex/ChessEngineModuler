@@ -5,6 +5,7 @@ import engineprocessor.core.enginemechanism.EngineAvailabilityScanner;
 import engineprocessor.core.enginemechanism.EngineProcessor;
 import engineprocessor.core.utils.enums.CommandEnum;
 import engineprocessor.core.utils.enums.GoEnum;
+import lombok.extern.slf4j.Slf4j;
 
 import java.io.IOException;
 import java.util.List;
@@ -14,8 +15,8 @@ import static java.lang.Thread.sleep;
 /**
  * Created by aleksanderr on 19/03/17.
  */
+@Slf4j
 public class EngineRunnerImpl implements EngineRunner {
-    public static final int DYNAMIC_GUARD_TIMEOUT = 300;
 
     @Override
     public List<String> getEngineNames() {
@@ -27,7 +28,7 @@ public class EngineRunnerImpl implements EngineRunner {
         try{
             String enginePath = EngineAvailabilityScanner.getInstance().returnMapOfEnginePaths().get(engineName);
             EngineProcessor er = new EngineProcessor();
-            CommandQuery commandQuery = er.setEngineConnection(enginePath, DYNAMIC_GUARD_TIMEOUT);
+            CommandQuery commandQuery = er.setEngineConnection(enginePath);
             switch(command) {
                 case QUIT:
                     commandQuery.exitTheGame();
@@ -71,7 +72,7 @@ public class EngineRunnerImpl implements EngineRunner {
         try {
             String enginePath = EngineAvailabilityScanner.getInstance().returnMapOfEnginePaths().get(engineName);
             EngineProcessor er = new EngineProcessor();
-            CommandQuery commandQuery = er.setEngineConnection(enginePath, DYNAMIC_GUARD_TIMEOUT);
+            CommandQuery commandQuery = er.setEngineConnection(enginePath);
             commandQuery
                     .getChessEngineInformation()
                     .startNewGame()
@@ -83,6 +84,9 @@ public class EngineRunnerImpl implements EngineRunner {
             String msgFound = commandQuery.returnMoveWhichEngineFound(timeout);
             commandQuery.exitTheGame();
             er = null;
+            commandQuery = null;
+            System.gc();
+            //log.info("Garbage collector broke connection with engines");
             return msgFound;
         } catch (IOException | InterruptedException e) {
             e.printStackTrace();
@@ -94,7 +98,7 @@ public class EngineRunnerImpl implements EngineRunner {
     public String RunEngineWithGoDepthCommand(String engineName, String fenPosition, int depth) {try {
         String enginePath = EngineAvailabilityScanner.getInstance().returnMapOfEnginePaths().get(engineName);
         EngineProcessor er = new EngineProcessor();
-        CommandQuery commandQuery = er.setEngineConnection(enginePath, DYNAMIC_GUARD_TIMEOUT);
+        CommandQuery commandQuery = er.setEngineConnection(enginePath);
         commandQuery
                 .getChessEngineInformation()
                 .startNewGame()
@@ -106,6 +110,9 @@ public class EngineRunnerImpl implements EngineRunner {
         String msgFound = commandQuery.returnMoveWhichEngineFound();
         commandQuery.exitTheGame();
         er = null;
+        commandQuery = null;
+        System.gc();
+        //log.info("Garbage collector broke connection with engines");
         return msgFound;
     } catch (IOException | InterruptedException e) {
         e.printStackTrace();
