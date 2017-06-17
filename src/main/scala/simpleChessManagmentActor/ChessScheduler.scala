@@ -14,25 +14,28 @@ object ChessScheduler {
   //startGameWithDepthRule(3, listOfGameToPlay)
 
   // DEPTH GAME
-  def startGameWithDepthRule(depth: Int ,chessEngineList: Seq[String]): Unit ={
+  def startGameWithDepthRule(depth: Int ,chessEngineList: Seq[String]): Integer ={
     val actor: ActorRef = GameShaper.defineNewGameWithThoseEngine(TypeOfGame.RANDOM,chessEngineList)
     GameShaper.startGameWithDepthRule(actor, depth)
+    new Integer(1)
   }
 
-  def startGameWithDepthRule(chessboard: String, depth: Int, chessEngineList: Seq[String]): Unit ={
+  def startGameWithDepthRule(chessboard: String, depth: Int, chessEngineList: Seq[String]): Integer ={
     val actor: ActorRef = GameShaper.defineNewGameWithThoseEngine(TypeOfGame.RANDOM,chessEngineList)
     GameShaper.startGameWithDepthRule(actor, depth, chessboard)
-    
+    new Integer(1)
   }
 
   //TIMEOUT GAME
-  def startGameWithTimeoutRule(timeout: Int ,chessEngineList: Seq[String]): Unit ={
+  def startGameWithTimeoutRule(timeout: Int ,chessEngineList: Seq[String]): Integer ={
     val actor: ActorRef = GameShaper.defineNewGameWithThoseEngine(TypeOfGame.RANDOM,chessEngineList)
     GameShaper.startGameWithTimeOutRule(actor, timeout)
+    new Integer(1)
   }
 
-  def startGameWithTimeoutRule(chessboard: String, timeout: Int, chessEngineList: Seq[String]): Unit ={
+  def startGameWithTimeoutRule(chessboard: String, timeout: Int, chessEngineList: Seq[String]): Integer ={
     val actor: ActorRef = GameShaper.defineNewGameWithThoseEngine(TypeOfGame.RANDOM,chessEngineList)
     GameShaper.startGameWithTimeOutRule(actor, timeout, chessboard)
+    new Integer(1)
   }
 }

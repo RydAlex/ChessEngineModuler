@@ -10,7 +10,7 @@ import scala.Enumeration
 
 case class MessageBack(engineName: String, message :String, override val id: String = MessagesDictionary.uuid()) extends IdMessage
 case class AssumingMessage(override val id: String = MessagesDictionary.uuid()) extends IdMessage
-case class EndGame(override val id: String = MessagesDictionary.uuid()) extends IdMessage
+case class EndGame(whoWin: Integer, override val id: String = MessagesDictionary.uuid()) extends IdMessage
 case class InitGame(typeOfGame: TypeOfGame.gameMetodology, override val id: String = MessagesDictionary.uuid()) extends IdMessage
 case class StartNewGameWithTimeoutRule(timeout: Int, chessboardFen: String = new FenGenerator().returnFenStringPositions(), override val id: String = MessagesDictionary.uuid()) extends IdMessage
 case class StartNewGameWithDepthRule(depth: Int, chessboardFen: String = new FenGenerator().returnFenStringPositions(), override val id: String = MessagesDictionary.uuid()) extends IdMessage

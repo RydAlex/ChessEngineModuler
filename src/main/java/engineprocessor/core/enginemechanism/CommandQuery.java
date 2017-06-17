@@ -2,6 +2,7 @@ package engineprocessor.core.enginemechanism;
 
 import engineprocessor.core.utils.EngineResponse;
 import engineprocessor.core.utils.enums.GoEnum;
+import lombok.extern.slf4j.Slf4j;
 import org.scalatest.Engine;
 
 import java.util.*;
@@ -15,6 +16,7 @@ import static java.lang.Thread.sleep;
  * A list of command which can be send
  * Created by aleksanderr on 27/04/16.
  */
+@Slf4j
 public class CommandQuery {
 
 
@@ -34,6 +36,11 @@ public class CommandQuery {
     String getCommand() {
         try {
             processedCommand = commandList.take();
+            if(processedCommand.contains("depth")){
+                log.info("Depth command was send - " + processedCommand);
+            } else if(processedCommand.contains("timeout")){
+                log.info("Timout command was send");
+            }
         } catch (InterruptedException e) {
             e.printStackTrace();
         }
@@ -183,8 +190,9 @@ public class CommandQuery {
         int retryWait=0;
         while(!isMsgCanBeFoundInLogs("bestmove")) {
             sleep(1000);
-            if(retryWait >= 20000){
+            if(retryWait >= 30000){
                 commandList.add("quit");
+                break;
             }
             retryWait += 1000;
         }

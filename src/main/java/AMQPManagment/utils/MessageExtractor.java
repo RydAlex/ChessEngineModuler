@@ -25,7 +25,7 @@ public class MessageExtractor {
             answer = extractMessageInRandomWay(chessObjects);
         } else if(type.equals(TypeOfMessageExtraction.ELO)) {
             answer = extractMessageinEloWay(chessObjects);
-        } else if(type.equals(TypeOfMessageExtraction.POSITION)) {
+        } else if(type.equals(TypeOfMessageExtraction.POSITION_WEIGHT)) {
             answer = extractMessageInPositionWay(chessObjects);
         }
         return answer;

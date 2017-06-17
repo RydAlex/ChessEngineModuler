@@ -22,6 +22,7 @@ class ActorGame(system: ActorSystem, name: Seq[String]) extends Actor {
   var chessboard: String = ""
   var senderRef: ActorRef = null
   var listLength: Int = 0
+  var whoWin : Int = 0
   var answers :ListBuffer[MessageBack] = ListBuffer()
   var activeListOne = true
   var enginesOne :List[ActorRef] = List[ActorRef]()
@@ -43,12 +44,16 @@ class ActorGame(system: ActorSystem, name: Seq[String]) extends Actor {
       log.info(answer.message + " is checkmate: " + isCheckmate)
       if(isCheckmate) {
         log.info(name + " - " + answer.engineName + " LOST!")
-        self ! EndGame()
+        if(activeListOne){
+          self ! EndGame(1)
+        } else {
+          self ! EndGame(-1)
+        }
         log.info("Heyo i am here...")
       }
       else {
         if(UpdateChessboardOrTellIsItDraw(answer)){
-          self ! EndGame()
+          self ! EndGame(0)
         }
         tellForOtherHalfOfEnginesToStartCounting()
       }
@@ -86,7 +91,7 @@ class ActorGame(system: ActorSystem, name: Seq[String]) extends Actor {
       for (engine <- enginesTwo){
         engine ! PoisonPill
       }
-      senderRef ! EndGame
+      senderRef ! endGame
 
      case initGame: InitGame =>
        //log.info(name + " InitGame Command received :")
@@ -118,7 +123,7 @@ class ActorGame(system: ActorSystem, name: Seq[String]) extends Actor {
       valOfGameRule = depthRule.depth
       //log.info(name + " game with depth rule should be started shortly :" + depthRule.id)
       while(enginesOne.length + enginesTwo.length != listLength){}
-      self ! new TimeOutMessage(chessboard,depthRule.depth)
+      self ! new DepthMessage(chessboard,depthRule.depth)
 
     case newActor: CreateNewActorInFirstGroup =>
       //log.info(name + " - " + newActor.engineName + " actor is created in first group - msg no :" + newActor.id)
@@ -140,7 +145,7 @@ class ActorGame(system: ActorSystem, name: Seq[String]) extends Actor {
     }
     if(halfMoveCounter >= 50){
       log.info(name + " THERE WAS A DRAW!!!!!!") // Example: "7K/7P/5q2/8/4k3/8/8/8 w - -"
-      true
+      return true
     }
     chessboard = fen.returnFenStringPositions()
     log.info(s"$name - move: ${answer.message} ,chessboard: $chessboard, halfmove: $halfMoveCounter")

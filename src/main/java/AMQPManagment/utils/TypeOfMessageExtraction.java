@@ -10,9 +10,10 @@ import lombok.Getter;
 @Getter
 public enum TypeOfMessageExtraction {
 
-    RANDOM       ("RANDOM"),
-    ELO          ("ELO"),
-    POSITION     ("POSITION");
+    RANDOM              ("RANDOM"),
+    ELO                 ("ELO"),
+    POSITION_WEIGHT     ("POSITION_WEIGHT"),
+    DEPTH_2             ("DEPTH_WITH_2_MORE");
 
     private String typeOfGame;
 }

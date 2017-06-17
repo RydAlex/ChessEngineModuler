@@ -1,4 +1,4 @@
-package AMQPManagment.AMQPSender;
+package AMQPManagment.AMQPSender.SendImpl;
 
 import AMQPManagment.utils.chessJSONParsers.ChessJSONReader;
 import AMQPManagment.utils.data.ChessJSONObject;
@@ -13,7 +13,6 @@ import java.util.List;
 import java.util.UUID;
 import java.util.concurrent.ArrayBlockingQueue;
 import java.util.concurrent.BlockingQueue;
-import java.util.stream.Collectors;
 
 /**
  * Created by aleksanderr on 11/06/17.
@@ -54,7 +53,7 @@ class AMQPSenderConnImpl {
                     @Override
                     public void handleDelivery(String consumerTag, Envelope envelope, AMQP.BasicProperties properties, byte[] body) throws IOException {
                         String g = new String(body, "UTF-8");
-                        System.out.println("i have answer from Engine");
+                        System.out.println("i have answer from Engine " + g);
                         responses.add(g);
                     }
                 });
@@ -67,6 +66,7 @@ class AMQPSenderConnImpl {
         {
             Thread.sleep(100);
         }
+        returnData.add(ChessJSONReader.readDataFromJson(responses.take()));
         return returnData; // pobranie elementu z czekaniem az jakis sie pojawi.
     }
 
@@ -79,11 +79,11 @@ class AMQPSenderConnImpl {
         List<ChessJSONObject> response = null;
         try {
             sender = new AMQPSenderConnImpl();
-            System.out.println("Sending chess JSONs");
+            System.out.println("Sending chess JSONs" );
 
             response = sender.sendRequestToEngine(jsons);
-            //System.out.println(" [.] Got '" + response + "'");
-
+            System.out.println(" [.] Got '" + response + "'");
+            return response;
         }
         catch  (Exception e) {
             e.printStackTrace();

@@ -60,18 +60,18 @@ public class AMQPConsumer {
                         ChessJSONObject chessObject = ChessJSONReader.readDataFromJson(message);
                         log.info("I process " + chessObject.getChessGameName() + " with fen " + chessObject.getFen());
                         if(chessObject.getDepth() != null) {
-                            ChessScheduler.startGameWithDepthRule(
+                            response = ChessScheduler.startGameWithDepthRule(
                                     chessObject.getFen(),
                                     chessObject.getDepth(),
                                     JavaConverters.asScalaBuffer(chessObject.getChessGameName()).toSeq()
-                            );
+                            ).toString();
                         }
                         else if(chessObject.getTimeout() != null) {
-                            ChessScheduler.startGameWithTimeoutRule(
+                            response = ChessScheduler.startGameWithTimeoutRule(
                                     chessObject.getFen(),
                                     chessObject.getTimeout(),
                                     JavaConverters.asScalaBuffer(chessObject.getChessGameName()).toSeq()
-                            );
+                            ).toString();
                         } else {
                             response = null;
                         }

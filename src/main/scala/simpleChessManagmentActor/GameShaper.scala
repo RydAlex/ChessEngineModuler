@@ -34,21 +34,22 @@ object GameShaper{
   def startGameWithDepthRule(actor: ActorRef, depth: Int , fenChessboard: String = new FenGenerator().returnFenStringPositions()): Unit ={
     Thread.sleep(3000)
     actor ! StartNewGameWithDepthRule(depth, fenChessboard)
-    f onComplete {
-      case Success(value) => println("success")
-      case Failure(ex) => println("fail")
+    val k = Await.ready(f, Duration.Inf) onComplete  {
+      case Success(succ) => succ
+      case Failure(fail) => fail
     }
-    Await.ready(f, Duration.Inf)
+    k
   }
 
   def startGameWithTimeOutRule(actor: ActorRef, timeout: Int , fenChessboard: String = new FenGenerator().returnFenStringPositions()): Unit ={
     Thread.sleep(3000)
     actor ! StartNewGameWithTimeoutRule(timeout, fenChessboard)
     f onComplete {
-      case Success(value) => println("success")
+      case Success(value) => value
       case Failure(ex) => println("fail")
     }
-    Await.ready(f, Duration.Inf)
+    val k = Await.ready(f, Duration.Inf)
+    k
   }
 
 }
