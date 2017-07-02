@@ -1,11 +1,13 @@
 package simpleChessManagmentActor.actorimplementation
 
+import AMQPManagment.utils.TypeOfMessageExtraction
+import AMQPManagment.utils.data.SingleMoveResult
 import akka.actor._
 import akka.event.Logging
 import engineprocessor.core.enginemechanism.FenGenerator
 
 import scala.collection.mutable.ListBuffer
-import scala.util.{Failure, Random}
+import scala.util.Random
 
 
 /**
@@ -15,19 +17,21 @@ class ActorGame(system: ActorSystem, name: Seq[String]) extends Actor {
 
 
   val log = Logging(context.system, this)
+
   var timeOutGameOrAnother: Boolean = true
-  var typeOfGame: TypeOfGame.gameMetodology = TypeOfGame.RANDOM
+  var isSingleMove: Boolean = false
   var valOfGameRule: Int = 0
   var halfMoveCounter = 0
   var chessboard: String = ""
   var senderRef: ActorRef = null
   var listLength: Int = 0
   var whoWin : Int = 0
-  var answers :ListBuffer[MessageBack] = ListBuffer()
   var activeListOne = true
+  var answers :ListBuffer[MessageBack] = ListBuffer()
   var enginesOne :List[ActorRef] = List[ActorRef]()
   var enginesTwo :List[ActorRef] = List[ActorRef]()
-
+  var typeOfGame: TypeOfMessageExtraction = TypeOfMessageExtraction.RANDOM
+  val oneMoveMessagesParser = new OneMoveMessagesParser();
 
   def receive = {
     case message: MessageBack =>
@@ -39,23 +43,29 @@ class ActorGame(system: ActorSystem, name: Seq[String]) extends Actor {
 
     case assumingMsg: AssumingMessage =>
       logMessageOnEnterance(assumingMsg)
-      val answer :MessageBack = ExtractMoveWhichShouldBeTakenInThisGame()
+      val answer :MessageBack = extractMoveWhichShouldBeTakenInThisGame()
+      val singleMoveResults : List[SingleMoveResult] = oneMoveMessagesParser.parseResultsToMoveResults(answers)
       val isCheckmate = new FenGenerator(chessboard).isMoveACheckmate(answer.message)
       log.info(answer.message + " is checkmate: " + isCheckmate)
       if(isCheckmate) {
         log.info(name + " - " + answer.engineName + " LOST!")
         if(activeListOne){
-          self ! EndGame(1)
+          self ! EndGame(1) // First Players Win Game
         } else {
-          self ! EndGame(-1)
+          self ! EndGame(-1) // Second Player Win Game
         }
         log.info("Heyo i am here...")
       }
       else {
         if(UpdateChessboardOrTellIsItDraw(answer)){
-          self ! EndGame(0)
+          self ! EndGame(0) // Draw was detected
         }
-        tellForOtherHalfOfEnginesToStartCounting()
+        else if(isSingleMove){
+          self ! SingleMoves(singleMoveResults) // If single move than just return those moves
+        }
+        else {
+          tellForOtherHalfOfEnginesToStartCounting() // if no condition was detected just start counting at second side
+        }
       }
 
 
@@ -83,6 +93,16 @@ class ActorGame(system: ActorSystem, name: Seq[String]) extends Actor {
         }
       }
 
+    case singleMoves: SingleMoves =>
+      for (engine <- enginesOne){
+        engine ! PoisonPill
+      }
+      for (engine <- enginesTwo){
+        engine ! PoisonPill
+      }
+      senderRef ! singleMoves
+
+
     case endGame: EndGame =>
       //log.info(name + " Lets kill everything... no:")
       for (engine <- enginesOne){
@@ -96,6 +116,7 @@ class ActorGame(system: ActorSystem, name: Seq[String]) extends Actor {
      case initGame: InitGame =>
        //log.info(name + " InitGame Command received :")
        this.typeOfGame = initGame.typeOfGame
+       this.isSingleMove = initGame.isSingleMove
        this.senderRef = sender
        listLength = name.length
         if(name.length % 2 != 0 ){
@@ -157,15 +178,15 @@ class ActorGame(system: ActorSystem, name: Seq[String]) extends Actor {
     log.info(s" All answers $answers")
   }
 
-  def ExtractMoveWhichShouldBeTakenInThisGame(): MessageBack = {
+  def extractMoveWhichShouldBeTakenInThisGame(): MessageBack = {
     var answer :MessageBack = null
-    if (typeOfGame.equals(TypeOfGame.RANDOM)) {
+    if (typeOfGame.equals(TypeOfMessageExtraction.RANDOM)) {
       answer = extractMessageInARandomApproach()
-    } else if (typeOfGame.equals(TypeOfGame.ELO)) {
+    } else if (typeOfGame.equals(TypeOfMessageExtraction.ELO)) {
       answer = extractMessageInAEloApproach()
-    } else if (typeOfGame.equals(TypeOfGame.CLUSTER_ELO)) {
-      answer = extractMessageInAClusterEloApproach()
-    } else if (typeOfGame.equals(TypeOfGame.WEIGHT)) {
+    } else if (typeOfGame.equals(TypeOfMessageExtraction.DEPTH_2)) {
+      answer = extractMessageInADepthTwoApproach()
+    } else if (typeOfGame.equals(TypeOfMessageExtraction.POSITION_WEIGHT)) {
       answer = extractMessageInAWeightApproach()
     }
     answer
@@ -175,7 +196,7 @@ class ActorGame(system: ActorSystem, name: Seq[String]) extends Actor {
     null
   }
 
-  def extractMessageInAClusterEloApproach(): MessageBack = {
+  def extractMessageInADepthTwoApproach(): MessageBack = {
     null
   }
 

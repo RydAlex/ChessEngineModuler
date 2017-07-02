@@ -1,6 +1,6 @@
 package AMQPManagment.AMQPSender;
 
-import AMQPManagment.AMQPSender.SendImpl.*;
+import AMQPManagment.AMQPSender.SendImpl.AMQPSender;
 import AMQPManagment.utils.EngineSearcher;
 import AMQPManagment.utils.TypeOfMessageExtraction;
 import AMQPManagment.utils.data.ChessJSONObject;
@@ -9,10 +9,10 @@ import engineprocessor.core.enginemechanism.FenGenerator;
 import java.util.List;
 
 /**
- * Created by aleksanderr on 17/06/17.
+ * Created by aleksanderr on 25/06/17.
  */
-class FullInsideGameDefiner {
-    void createFullActorDepthGame(int numberOfEngine, int depth, TypeOfMessageExtraction type){
+class SingleMoveGameDefiner {
+    void createDistributedDepthMoveRequest(int numberOfEngine, int depth, int distributedCalculation, TypeOfMessageExtraction type){
         FenGenerator fenGenerator = new FenGenerator(); //mate board -> "3Q4/8/4kQ2/6K1/8/6P1/8/8 b - -"
         String fenStringPositions = fenGenerator.returnFenStringPositions();
 
@@ -21,8 +21,8 @@ class FullInsideGameDefiner {
                 fenStringPositions,
                 depth,
                 type ,
-                false ,
-                1,
+                true ,
+                distributedCalculation,
                 EngineSearcher.searchFewRandomEngineNames(numberOfEngine)
         );
         if(!answer.isEmpty()){
@@ -33,8 +33,12 @@ class FullInsideGameDefiner {
         }
     }
 
-    void createFullActorTimeoutGame(int numberOfEngine, int timeout, TypeOfMessageExtraction type) {
-        FenGenerator fenGenerator = new FenGenerator("3Q4/8/4kQ2/6K1/8/6P1/8/8 b - -");
+    void createSimpleDepthMoveRequest(int numberOfEngine, int depth, TypeOfMessageExtraction type) {
+        createDistributedDepthMoveRequest(numberOfEngine, depth, 1, type);
+    }
+
+    void createDistributedTimeoutMoveRequest(int numberOfEngine, int timeout, int distributedCalculation, TypeOfMessageExtraction type) {
+        FenGenerator fenGenerator = new FenGenerator();
         String fenStringPositions = fenGenerator.returnFenStringPositions();
 
         AMQPSender sender = new AMQPSender();
@@ -42,8 +46,8 @@ class FullInsideGameDefiner {
                 fenStringPositions,
                 timeout,
                 type,
-                false,
-                1,
+                true,
+                distributedCalculation,
                 EngineSearcher.searchFewRandomEngineNames(numberOfEngine)
         );
         if (!answer.isEmpty()) {
@@ -51,5 +55,9 @@ class FullInsideGameDefiner {
 
             }
         }
+    }
+
+    void createSimpleTimeoutMoveRequest(int numberOfEngine, int timeout, TypeOfMessageExtraction type){
+        createDistributedTimeoutMoveRequest(numberOfEngine, timeout, 1, type);
     }
 }

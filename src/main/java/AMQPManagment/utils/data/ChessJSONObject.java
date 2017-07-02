@@ -21,12 +21,76 @@ import java.util.List;
         "typeOfGame",
         "answer"
 })
-@Getter
-@Setter
 public class ChessJSONObject {
+
+    public List<String> getChessGameName() {
+        return chessGameName;
+    }
+
+    public void setChessGameName(List<String> chessGameName) {
+        this.chessGameName = chessGameName;
+    }
+
+    public List<SingleMoveResult> getSingleMoveResults() {
+        return singleMoveResults;
+    }
+
+    public void setSingleMoveResults(List<SingleMoveResult> singleMoveResults) {
+        this.singleMoveResults = singleMoveResults;
+    }
+
+    public Integer getDepth() {
+        return depth;
+    }
+
+    public void setDepth(Integer depth) {
+        this.depth = depth;
+    }
+
+    public Boolean getIsSingleMove() {
+        return isSingleMove;
+    }
+
+    public void setIsSingleMove(Boolean singleMove) {
+        isSingleMove = singleMove;
+    }
+
+    public Integer getTimeout() {
+        return timeout;
+    }
+
+    public void setTimeout(Integer timeout) {
+        this.timeout = timeout;
+    }
+
+    public String getFen() {
+        return fen;
+    }
+
+    public void setFen(String fen) {
+        this.fen = fen;
+    }
+
+    public TypeOfMessageExtraction getTypeOfGame() {
+        return typeOfGame;
+    }
+
+    public void setTypeOfGame(TypeOfMessageExtraction typeOfGame) {
+        this.typeOfGame = typeOfGame;
+    }
+
+    public String getAnswer() {
+        return answer;
+    }
+
+    public void setAnswer(String answer) {
+        this.answer = answer;
+    }
 
     @JsonProperty("chessGameName")
     private List<String> chessGameName;
+    @JsonProperty("singleMoveResults")
+    private List<SingleMoveResult> singleMoveResults = null;
     @JsonProperty("depth")
     private Integer depth;
     @JsonProperty("isSingleMove")

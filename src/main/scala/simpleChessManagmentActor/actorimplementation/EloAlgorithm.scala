@@ -1,5 +1,6 @@
 package simpleChessManagmentActor.actorimplementation
 
+import AMQPManagment.DatabaseConnections.DAO.CurrentEloDAO
 import simpleChessManagmentActor.actorimplementation.GameResult.result
 
 /**

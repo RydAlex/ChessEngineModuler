@@ -4,12 +4,7 @@ import AMQPManagment.utils.chessJSONParsers.ChessJSONCreator;
 import AMQPManagment.utils.chessJSONParsers.ChessJSONReader;
 import AMQPManagment.utils.data.ChessJSONObject;
 import com.rabbitmq.client.*;
-import engineprocessor.core.enginemechanism.EngineProcessor;
-import engineprocessor.interfaces.EngineRunner;
-import engineprocessor.interfaces.EngineRunnerImpl;
 import lombok.extern.slf4j.Slf4j;
-import scala.collection.JavaConverters;
-import scala.collection.Seq$;
 import simpleChessManagmentActor.ChessScheduler;
 
 import java.io.IOException;
@@ -22,6 +17,7 @@ import java.util.concurrent.TimeoutException;
 public class AMQPConsumer {
 
     private static final String RPC_QUEUE_NAME = "ChessRPC";
+    public static final String CLOUDAMQP_SYSTEM_URL = "CLOUDAMQP_URL";
 
     private static int fib(int n) {
         if (n ==0) return 0;
@@ -31,8 +27,7 @@ public class AMQPConsumer {
 
     public static void main(String[] argv) throws NoSuchAlgorithmException, KeyManagementException, URISyntaxException {
         ConnectionFactory factory = new ConnectionFactory();
-        factory.setUri("amqp://hfmmtwsb:nAuNrdEXLlQ4Y1EllD10yngQf56f5cyM@zebra.rmq.cloudamqp.com/hfmmtwsb");
-        final boolean[] gameIsOn = {false};
+        factory.setUri(System.getenv(CLOUDAMQP_SYSTEM_URL));
 
         Connection connection = null;
         try {
@@ -52,7 +47,7 @@ public class AMQPConsumer {
                             .correlationId(properties.getCorrelationId())
                             .build();
 
-                    String response = "";
+                    ChessJSONObject response;
                     String answer = "";
 
                     try {
@@ -60,24 +55,15 @@ public class AMQPConsumer {
                         ChessJSONObject chessObject = ChessJSONReader.readDataFromJson(message);
                         log.info("I process " + chessObject.getChessGameName() + " with fen " + chessObject.getFen());
                         if(chessObject.getDepth() != null) {
-                            response = ChessScheduler.startGameWithDepthRule(
-                                    chessObject.getFen(),
-                                    chessObject.getDepth(),
-                                    JavaConverters.asScalaBuffer(chessObject.getChessGameName()).toSeq()
-                            ).toString();
+                            response = ChessScheduler.startGameWithDepthRule(chessObject);
                         }
                         else if(chessObject.getTimeout() != null) {
-                            response = ChessScheduler.startGameWithTimeoutRule(
-                                    chessObject.getFen(),
-                                    chessObject.getTimeout(),
-                                    JavaConverters.asScalaBuffer(chessObject.getChessGameName()).toSeq()
-                            ).toString();
+                            response = ChessScheduler.startGameWithTimeoutRule(chessObject);
                         } else {
                             response = null;
                         }
-                        log.info("Answer from this message is " + response);
-                        chessObject.setAnswer(response);
-                        answer = ChessJSONCreator.createChessJsonFromObject(chessObject);
+                        log.info("I have message ready To Parse And Send");
+                        answer = ChessJSONCreator.createChessJsonFromObject(response);
                     }
                     catch (RuntimeException e){
                         System.out.println(" [.] " + e.toString());

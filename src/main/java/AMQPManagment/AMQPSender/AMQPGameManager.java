@@ -15,28 +15,30 @@ public class AMQPGameManager {
 
     public static void main(String[] argv){
         //Learning manager
-        FullInsideGameDefiner amqp = new FullInsideGameDefiner();
-        doLearningCallWithVotingMethod(amqp, TypeOfMessageExtraction.RANDOM);
-        doLearningCallWithVotingMethod(amqp, TypeOfMessageExtraction.ELO);
-        doLearningCallWithVotingMethod(amqp, TypeOfMessageExtraction.POSITION_WEIGHT);
-        doLearningCallWithVotingMethod(amqp, TypeOfMessageExtraction.DEPTH_2);
+        FullInsideGameDefiner gameDefiner = new FullInsideGameDefiner();
+        doLearningCallWithVotingMethod(gameDefiner, TypeOfMessageExtraction.RANDOM);
+//        doLearningCallWithVotingMethod(gameDefiner, TypeOfMessageExtraction.ELO);
+//        doLearningCallWithVotingMethod(gameDefiner, TypeOfMessageExtraction.POSITION_WEIGHT);
+//        doLearningCallWithVotingMethod(gameDefiner, TypeOfMessageExtraction.DEPTH_2);
 
+//        SingleMoveGameDefiner singleMoveGameDefiner = new SingleMoveGameDefiner();
+//        singleMoveGameDefiner.createSimpleDepthMoveRequest(8,7,TypeOfMessageExtraction.RANDOM);
     }
 
-    private static void doLearningCallWithVotingMethod(FullInsideGameDefiner amqp, TypeOfMessageExtraction type) {
+    private static void doLearningCallWithVotingMethod(FullInsideGameDefiner gameDefiner, TypeOfMessageExtraction type) {
         //type choise - DEPTH
         IntStream.of(2,4,6,8).parallel().forEach(number_of_engine -> {
-            amqp.createSimpleDepthGame(number_of_engine,3, type);
-            amqp.createSimpleDepthGame(number_of_engine,5, type);
-            amqp.createSimpleDepthGame(number_of_engine,7, type);
-            amqp.createSimpleDepthGame(number_of_engine,9, type);
+            gameDefiner.createFullActorDepthGame(number_of_engine,3, type);
+            gameDefiner.createFullActorDepthGame(number_of_engine,5, type);
+            gameDefiner.createFullActorDepthGame(number_of_engine,7, type);
+            gameDefiner.createFullActorDepthGame(number_of_engine,9, type);
         });
         //type choise - Timeout
         if(!type.equals(TypeOfMessageExtraction.DEPTH_2)){
             IntStream.of(3000, 5000, 8000).parallel().forEach(timeout -> {
-                amqp.createSimpleTimeoutGame(4,timeout, type);
-                amqp.createSimpleTimeoutGame(4,timeout, type);
-                amqp.createSimpleTimeoutGame(4,timeout, type);
+                gameDefiner.createFullActorTimeoutGame(4,timeout, type);
+                gameDefiner.createFullActorTimeoutGame(4,timeout, type);
+                gameDefiner.createFullActorTimeoutGame(4,timeout, type);
             });
         }
     }

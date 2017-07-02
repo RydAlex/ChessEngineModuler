@@ -20,6 +20,7 @@ import java.util.concurrent.BlockingQueue;
 
 class AMQPSenderConnImpl {
 
+    public static final String CLOUDAMQP_SYSTEM_URL = "CLOUDAMQP_URL";
     private Connection connection;
     private Channel channel;
     private String chess_rpc_queue = "ChessRPC";
@@ -27,7 +28,7 @@ class AMQPSenderConnImpl {
 
     private AMQPSenderConnImpl() throws Exception {
         ConnectionFactory factory = new ConnectionFactory();
-        factory.setUri("amqp://hfmmtwsb:nAuNrdEXLlQ4Y1EllD10yngQf56f5cyM@zebra.rmq.cloudamqp.com/hfmmtwsb");
+        factory.setUri(System.getenv(CLOUDAMQP_SYSTEM_URL));
 
         connection = factory.newConnection();
         channel = connection.createChannel();

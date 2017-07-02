@@ -1,14 +1,16 @@
 package simpleChessManagmentActor
 
-import akka.actor.{ActorRef, ActorSystem, Inbox, Props}
-import simpleChessManagmentActor.actorimplementation._
+import AMQPManagment.utils.TypeOfMessageExtraction
+import akka.actor.{ActorRef, ActorSystem, Props}
 import akka.pattern.ask
 import akka.util.Timeout
+import com.typesafe.scalalogging.Logger
 import engineprocessor.core.enginemechanism.FenGenerator
+import simpleChessManagmentActor.actorimplementation._
 
-import scala.concurrent.duration._
 import scala.concurrent.ExecutionContext.Implicits.global
-import scala.concurrent.{Await, Future, Promise}
+import scala.concurrent.duration._
+import scala.concurrent.{Await, Future}
 import scala.language.postfixOps
 import scala.util.{Failure, Success}
 /**
@@ -18,38 +20,38 @@ import scala.util.{Failure, Success}
 object GameShaper{
 
   implicit var timeout: Timeout = Timeout(30 minutes)
-
+  val logger = Logger("GameShaper")
   val system = ActorSystem("System")
-
   var f : Future[Any]= Future(0)
-  //checkmate game -  "3k1Q2/8/3K4/8/8/8/8/8 b - -"
-  //TODO: handle failure
 
-  def defineNewGameWithThoseEngine(typeOfGame: TypeOfGame.gameMetodology, chessEngineListForGame: Seq[String]): ActorRef = {
+  def defineNewGameWithThoseEngine(typeOfGame: TypeOfMessageExtraction, isSingleMove: Boolean, chessEngineListForGame: Seq[String]): ActorRef = {
     val actorGame = system.actorOf(Props(new ActorGame(system, chessEngineListForGame)))
-    f = actorGame ? InitGame(typeOfGame)
+    f = actorGame ? InitGame(typeOfGame, isSingleMove)
     actorGame
   }
 
-  def startGameWithDepthRule(actor: ActorRef, depth: Int , fenChessboard: String = new FenGenerator().returnFenStringPositions()): Unit ={
+  def startGameWithDepthRule(actor: ActorRef, depth: Int , fenChessboard: String = new FenGenerator().returnFenStringPositions()): Any ={
     Thread.sleep(3000)
     actor ! StartNewGameWithDepthRule(depth, fenChessboard)
-    val k = Await.ready(f, Duration.Inf) onComplete  {
-      case Success(succ) => succ
-      case Failure(fail) => fail
+
+    val enginesAnswer = Await.result(f, Duration.Inf) match {
+      case endGame: EndGame => endGame.whoWin.toString
+      case singleMove: SingleMoves => singleMove.singleMoveResult
+      case Failure(fail) => logger.info("Failure in Await.result at GameShaper")
     }
-    k
+    enginesAnswer
   }
 
-  def startGameWithTimeOutRule(actor: ActorRef, timeout: Int , fenChessboard: String = new FenGenerator().returnFenStringPositions()): Unit ={
+  def startGameWithTimeOutRule(actor: ActorRef, timeout: Int , fenChessboard: String = new FenGenerator().returnFenStringPositions()): Any ={
     Thread.sleep(3000)
     actor ! StartNewGameWithTimeoutRule(timeout, fenChessboard)
-    f onComplete {
-      case Success(value) => value
-      case Failure(ex) => println("fail")
+
+    val enginesAnswer = Await.result(f, Duration.Inf) match {
+      case endGame: EndGame => endGame.whoWin.toString
+      case singleMove: SingleMoves => singleMove.singleMoveResult
+      case Failure(fail) => logger.info("Failure in Await.result at GameShaper")
     }
-    val k = Await.ready(f, Duration.Inf)
-    k
+    enginesAnswer
   }
 
 }
