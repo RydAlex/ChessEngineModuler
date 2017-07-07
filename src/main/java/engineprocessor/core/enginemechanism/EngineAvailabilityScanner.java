@@ -28,9 +28,15 @@ public class EngineAvailabilityScanner {
             String path = EngineAvailabilityScanner.class.getProtectionDomain().getCodeSource().getLocation().getFile()+ "/engineprocessor/core/engines/";
             try (Stream<Path> paths = Files.walk(Paths.get(path))) {
                 paths.filter(filePath -> Files.isDirectory(filePath))
-                        .forEach(filePath -> { enginePathsMap.put(filePath.getFileName().toString(), filePath.toString()); });
+                    .filter(filePath -> filePath.toString().contains(systemSufix))
+                    .forEach(filePath ->
+                            enginePathsMap.put(
+                                filePath.getFileName().toString(),
+                                filePath.toString()));
             }
             enginePathsMap.remove("engines");
+            enginePathsMap.remove("mac");
+            enginePathsMap.remove("linux");
             for (Map.Entry<String, String> link: enginePathsMap.entrySet()){
                 String[] linkElements = link.getValue().split("/");
                 link.setValue(link.getValue()+"/"+linkElements[linkElements.length-1]);
