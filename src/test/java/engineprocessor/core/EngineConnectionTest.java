@@ -8,8 +8,12 @@ import engineprocessor.core.utils.enums.GoEnum;
 import org.junit.BeforeClass;
 import org.junit.Test;
 
+import java.nio.file.Files;
+import java.nio.file.attribute.PosixFilePermission;
 import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.Map;
+import java.util.Set;
 
 import static java.lang.Thread.sleep;
 
@@ -37,6 +41,8 @@ public class EngineConnectionTest {
         for(String enginePath : enginesPath){
 
             EngineProcessor er = new EngineProcessor();
+
+
             CommandQuery commandMenu = er.setEngineConnection(enginePath);
             boolean msgFound;
             commandMenu.getChessEngineInformation();
@@ -61,12 +67,12 @@ public class EngineConnectionTest {
     @Test
     public void canExitAfterThreeSecond() throws Exception {
         for(String enginePath : enginesPath) {
-            EngineProcessor er = new EngineProcessor();
-            CommandQuery commandMenu = er.setEngineConnection(enginePath);
-            commandMenu.exitTheGame();
-            Thread.sleep(1000);
-            assert !er.isEngineStillWork();
-            commandMenu.clearMessagesInLogs();
+                EngineProcessor er = new EngineProcessor();
+                CommandQuery commandMenu = er.setEngineConnection(enginePath);
+                commandMenu.exitTheGame();
+                Thread.sleep(1000);
+                assert !er.isEngineStillWork();
+                commandMenu.clearMessagesInLogs();
         }
     }
 

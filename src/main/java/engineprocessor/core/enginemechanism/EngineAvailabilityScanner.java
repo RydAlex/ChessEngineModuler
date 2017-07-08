@@ -1,13 +1,12 @@
 package engineprocessor.core.enginemechanism;
 
+import java.io.File;
 import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.nio.file.attribute.PosixFilePermission;
+import java.util.*;
 import java.util.stream.Stream;
 
 /**
@@ -40,6 +39,9 @@ public class EngineAvailabilityScanner {
             for (Map.Entry<String, String> link: enginePathsMap.entrySet()){
                 String[] linkElements = link.getValue().split("/");
                 link.setValue(link.getValue()+"/"+linkElements[linkElements.length-1]);
+                if(systemSufix.equals("linux")){
+                    setRightPermision(link.getValue());
+                }
             }
         } catch (IOException e) {
             e.printStackTrace();
@@ -58,5 +60,23 @@ public class EngineAvailabilityScanner {
         }
 
         return list;
+    }
+
+    private void setRightPermision(String name){
+        File file = new File(name);
+
+        Set<PosixFilePermission> perms = new HashSet<>();
+        perms.add(PosixFilePermission.OWNER_READ);
+        perms.add(PosixFilePermission.OWNER_WRITE);
+        perms.add(PosixFilePermission.OWNER_EXECUTE);
+        perms.add(PosixFilePermission.GROUP_EXECUTE);
+        perms.add(PosixFilePermission.GROUP_READ);
+        perms.add(PosixFilePermission.GROUP_WRITE);
+
+        try {
+            Files.setPosixFilePermissions(file.toPath(), perms);
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
     }
 }

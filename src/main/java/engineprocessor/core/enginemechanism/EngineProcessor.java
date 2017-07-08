@@ -48,6 +48,7 @@ public class EngineProcessor {
                     readingFromEngine = true;
                     while (input.hasNextLine()) {
                         String resultLine = input.nextLine();
+                        log.info(resultLine);
                         commandQuery.setResultOfCommand(resultLine);
                     }
                 }
