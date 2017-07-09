@@ -19,10 +19,9 @@ public class AMQPGameManager {
     public static void main(String[] argv){
         //Learning manager
         FullInsideGameDefiner gameDefiner = new FullInsideGameDefiner();
-        doLearningCallWithEloTypeAndFightOneVsOne(gameDefiner);
-
-//      SingleMoveGameDefiner singleMoveGameDefiner = new SingleMoveGameDefiner();
-//      SingleMoveGameDefiner.createSimpleDepthMoveRequest(8,7,TypeOfMessageExtraction.RANDOM);
+        while(true){
+            doLearningCallWithEloTypeAndFightOneVsOne(gameDefiner);
+        }
     }
 
     private static void doLearningCallWithEloTypeAndFightOneVsOne(FullInsideGameDefiner gameDefiner) {
@@ -32,12 +31,19 @@ public class AMQPGameManager {
                 .parallel()
                 .map(EngineEloPairParser::findElosForEngineNamesAndCreateEngineEloPair)
                 .forEach(engineEloPair -> {
-                    gameDefiner.playFullActorDepthGameWithDefinedEnginesNames(engineEloPair,3, TypeOfMessageExtraction.ELO_SIMPLE);
-                    gameDefiner.playFullActorDepthGameWithDefinedEnginesNames(engineEloPair,5, TypeOfMessageExtraction.ELO_SIMPLE);
-                    gameDefiner.playFullActorDepthGameWithDefinedEnginesNames(engineEloPair,7, TypeOfMessageExtraction.ELO_SIMPLE);
-                    gameDefiner.playFullActorDepthGameWithDefinedEnginesNames(engineEloPair,9, TypeOfMessageExtraction.ELO_SIMPLE);
-                    gameDefiner.playFullActorDepthGameWithDefinedEnginesNames(engineEloPair,15, TypeOfMessageExtraction.ELO_SIMPLE);
-        });
+                    //DEPTH ELO
+                    gameDefiner.playFullActorDepthGameWithDefinedEnginesNames(engineEloPair, 3, TypeOfMessageExtraction.ELO_SIMPLE);
+                    gameDefiner.playFullActorDepthGameWithDefinedEnginesNames(engineEloPair, 5, TypeOfMessageExtraction.ELO_SIMPLE);
+                    gameDefiner.playFullActorDepthGameWithDefinedEnginesNames(engineEloPair, 7, TypeOfMessageExtraction.ELO_SIMPLE);
+                    gameDefiner.playFullActorDepthGameWithDefinedEnginesNames(engineEloPair, 9, TypeOfMessageExtraction.ELO_SIMPLE);
+
+                    // TIMEOUTS ELO
+                    gameDefiner.playFullActorTimeoutGameWithDefindedEnginesNames(engineEloPair, 3000, TypeOfMessageExtraction.ELO_SIMPLE);
+                    gameDefiner.playFullActorTimeoutGameWithDefindedEnginesNames(engineEloPair, 6000, TypeOfMessageExtraction.ELO_SIMPLE);
+                    gameDefiner.playFullActorTimeoutGameWithDefindedEnginesNames(engineEloPair, 9000, TypeOfMessageExtraction.ELO_SIMPLE);
+                    gameDefiner.playFullActorTimeoutGameWithDefindedEnginesNames(engineEloPair, 20000, TypeOfMessageExtraction.ELO_SIMPLE);
+
+                });
     }
 
 

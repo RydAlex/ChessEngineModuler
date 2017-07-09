@@ -31,7 +31,7 @@ public class EngineNameDAO extends CoreDAO<EngineName> {
 
     public List<EngineName> findByNameAndType(String name, String typeOfGame) {
         List<EngineName> engineNames = em.createQuery(
-                "FROM EngineName engine WHERE engine.engineName LIKE :name AND engine.type_of_game_used_by_that_engine LIKE :gameType")
+                "FROM EngineName engine WHERE engine.engineName LIKE :name AND engine.typeOfGameUsedByThatEngine LIKE :gameType")
                 .setParameter("name", name)
                 .setParameter("gameType", typeOfGame)
                 .getResultList();

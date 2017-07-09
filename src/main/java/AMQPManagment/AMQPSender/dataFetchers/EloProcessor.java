@@ -14,6 +14,9 @@ public class EloProcessor {
         EngineEloPair firstGroupEngineElo = answer.getChessGamesEloValue().get(0);
         EngineEloPair secondGroupEngineElo = answer.getChessGamesEloValue().get(1);
 
+        getCurrentEloValueForEngineAndSetProperNameOfEngine(firstGroupEngineElo, answer);
+        getCurrentEloValueForEngineAndSetProperNameOfEngine(secondGroupEngineElo, answer);
+
         Integer newRatingOfFirstGroup = EloAlgorithm.calculateRating(
                 firstGroupEngineElo.getEloValue(),
                 secondGroupEngineElo.getEloValue(),
@@ -28,6 +31,7 @@ public class EloProcessor {
 
         EloService.updateEloValueForEntity(
                 firstGroupEngineElo.getEngineName(),
+                answer.getTypeOfGame(),
                 firstGroupEngineElo.getEloValue(),
                 newRatingOfFirstGroup,
                 extractGameResult(answer.getAnswer(), 1).isWin()
@@ -35,9 +39,27 @@ public class EloProcessor {
 
         EloService.updateEloValueForEntity(
                 secondGroupEngineElo.getEngineName(),
+                answer.getTypeOfGame(),
                 secondGroupEngineElo.getEloValue(),
                 newRatingOfSecondGroup,
                 extractGameResult(answer.getAnswer(), 2).isWin()
+        );
+    }
+
+    private void getCurrentEloValueForEngineAndSetProperNameOfEngine(EngineEloPair groupEngineElo, ChessJSONObject answer) {
+        String nameSufix;
+        if(answer.getDepth() != null){
+            nameSufix = "_depth_"+answer.getDepth();
+        } else{
+            nameSufix = "_timeout_"+answer.getTimeout();
+        }
+        groupEngineElo.setEngineName(groupEngineElo.getEngineName()+nameSufix);
+
+        groupEngineElo.setEloValue(
+            EloService.getEloValuesForEngineWithType(
+                groupEngineElo.getEngineName(),
+                answer.getTypeOfGame()
+            )
         );
     }
 

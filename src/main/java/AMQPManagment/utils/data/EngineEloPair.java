@@ -7,7 +7,6 @@ package AMQPManagment.utils.data;
 public class EngineEloPair {
     String engineName;
     Integer eloValue;
-    String typeOfGame;
 
 
     public String getEngineName() {

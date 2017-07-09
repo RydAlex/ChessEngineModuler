@@ -17,14 +17,14 @@ import java.util.stream.Collectors;
  * Created by aleksanderr on 02/07/17.
  */
 public class EloService {
-    public static List<Integer> getEloValuesForEngines(List<String> engineNames){
-        return engineNames.stream()
-                .map(EloService::getEloValuesForEngine)
-                .collect(Collectors.toCollection(LinkedList::new));
-    }
+//    public static List<Integer> getEloValuesForEngines(List<String> engineNames){
+//        return engineNames.stream()
+//                .map(EloService::getEloValuesForEngineWithType)
+//                .collect(Collectors.toCollection(LinkedList::new));
+//    }
 
     @Transactional
-    public static Integer getEloValuesForEngine(String engineName) {
+    public static Integer getEloValuesForEngineWithType(String engineName, TypeOfMessageExtraction type) {
         CurrentEloDAO currElo = new CurrentEloDAO();
         List<CurrentElo> currentEloList = currElo.findByEngineName(engineName);
         CurrentElo currentElo = null;
@@ -36,7 +36,7 @@ public class EloService {
             if(engineNameEntitiesList.isEmpty()) {
                 engineNameEntity = new EngineName();
                 engineNameEntity.setEngineName(engineName);
-                engineNameEntity.setTypeOfGameUsedByThatEngine(TypeOfMessageExtraction.ELO_SIMPLE.getTypeOfGame());
+                engineNameEntity.setTypeOfGameUsedByThatEngine(type.getTypeOfGame());
                 engineNameDAO.save(engineNameEntity);
             } else {
                 engineNameEntity = engineNameEntitiesList.get(0);
@@ -53,10 +53,10 @@ public class EloService {
         return currentElo.getEloValue();
     }
 
-    public static void updateEloValueForEntity(String engineName, Integer oldElo, Integer newElo, Boolean isWin) {
+    public static void updateEloValueForEntity(String engineName, TypeOfMessageExtraction type, Integer oldElo, Integer newElo, Boolean isWin) {
         //Znajdz silnik
         EngineNameDAO engineNameDAO = new EngineNameDAO();
-        EngineName engineNameEntity = engineNameDAO.findByName(engineName).get(0);
+        EngineName engineNameEntity = engineNameDAO.findByNameAndType(engineName, type.getTypeOfGame()).get(0);
 
         //Wpisz stare Elo do EloGamesHistory
         EloGamesHistoryDAO eloGamesHistoryDAO = new EloGamesHistoryDAO();

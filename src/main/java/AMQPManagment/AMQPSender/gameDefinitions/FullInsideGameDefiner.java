@@ -28,14 +28,8 @@ public class FullInsideGameDefiner extends GameDefiner {
                 getEngineNamesFromEngineEloPair(engineEloPairs),
                 engineEloPairs
         ).get(0);
-        if(answer != null && !answer.getAnswer().equals("-1")){
-            if(answer.getTypeOfGame().equals(TypeOfMessageExtraction.ELO_SIMPLE)) {
-                EloProcessor eloProcessor = new EloProcessor();
-                eloProcessor.fetchDataAndUpdateElo(answer);
-            }
-        }
+        extractAndSaveGameResult(answer);
     }
-
 
     public void playFullActorTimeoutGameWithDefindedEnginesNames(List<EngineEloPair> engineEloPairs, int timeout, TypeOfMessageExtraction type) {
         FenGenerator fenGenerator = new FenGenerator();
@@ -51,15 +45,20 @@ public class FullInsideGameDefiner extends GameDefiner {
                 getEngineNamesFromEngineEloPair(engineEloPairs),
                 engineEloPairs
         ).get(0);
-        if(answer != null){
-            if(answer.getTypeOfGame().equals(TypeOfMessageExtraction.ELO_SIMPLE)){
-                //Pobierz pierwsza grupe
-                //Ustaw czy przegrał czy wygrał
-                //Wylicz Elo
-                //Pobierz pierwsza grupe
-                //Ustaw czy przegrał czy wygrał
-                //Wylicz Elo
+        extractAndSaveGameResult(answer);
+    }
+
+
+    private void extractAndSaveGameResult(ChessJSONObject answer) {
+        if(answer != null && !answer.getAnswer().equals("-1")){
+            if(answer.getTypeOfGame().equals(TypeOfMessageExtraction.ELO_SIMPLE)) {
+                EloProcessor eloProcessor = new EloProcessor();
+                eloProcessor.fetchDataAndUpdateElo(answer);
+            } else if(answer.getTypeOfGame().equals(TypeOfMessageExtraction.RANDOM)) {
+                EloProcessor eloProcessor = new EloProcessor();
+                eloProcessor.fetchDataAndUpdateElo(answer);
             }
         }
     }
+
 }

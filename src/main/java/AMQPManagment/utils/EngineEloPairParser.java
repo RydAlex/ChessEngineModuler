@@ -1,6 +1,5 @@
 package AMQPManagment.utils;
 
-import AMQPManagment.DatabaseConnections.Service.EloService;
 import AMQPManagment.utils.data.EngineEloPair;
 
 import java.util.LinkedList;
@@ -15,7 +14,7 @@ public class EngineEloPairParser {
         for(String engineName : listOfEngines){
             EngineEloPair engineEloPair = new EngineEloPair();
             engineEloPair.setEngineName(engineName);
-            engineEloPair.setEloValue(EloService.getEloValuesForEngine(engineName));
+            engineEloPair.setEloValue(1000);//TODO: GET PROPER VALUES
             eloEngine.add(engineEloPair);
         }
         return eloEngine;

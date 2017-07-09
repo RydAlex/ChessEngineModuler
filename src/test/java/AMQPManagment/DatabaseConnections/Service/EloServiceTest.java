@@ -1,5 +1,6 @@
 package AMQPManagment.DatabaseConnections.Service;
 
+import AMQPManagment.utils.TypeOfMessageExtraction;
 import org.junit.Assert;
 import org.junit.Test;
 
@@ -13,15 +14,11 @@ public class EloServiceTest {
 
     @Test
     public void CheckIfEloCanBeFetchedFromDatabase(){
-        List<String> enginesList = new LinkedList<>();
-        enginesList.add("daydreamer");
-        enginesList.add("gull");
-        List<Integer> integerVal = EloService.getEloValuesForEngines(enginesList);
-        Assert.assertEquals(integerVal.size(),2);
+        Integer integerVal = EloService.getEloValuesForEngineWithType("daydreamer", TypeOfMessageExtraction.ELO_SIMPLE);
     }
 
     @Test
     public void CheckIfEloCanBeUpdatedInDatabase(){
-        EloService.updateEloValueForEntity("gull",1000,1030,true);
+        EloService.updateEloValueForEntity("gull",TypeOfMessageExtraction.ELO_SIMPLE,1000,1030,true);
     }
 }
