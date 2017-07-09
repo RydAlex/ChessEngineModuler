@@ -5,17 +5,18 @@ import AMQPManagment.DatabaseConnections.Entities.CurrentElo;
 import lombok.NoArgsConstructor;
 import org.springframework.stereotype.Repository;
 
+import javax.persistence.LockModeType;
 import javax.persistence.TypedQuery;
 import javax.persistence.criteria.CriteriaBuilder;
 import javax.persistence.criteria.CriteriaQuery;
 import javax.persistence.criteria.Root;
+import javax.transaction.Transactional;
 import java.util.List;
 
 /**
  * Created by aleksanderr on 21/06/17.
  */
 @NoArgsConstructor
-@Repository
 public class CurrentEloDAO extends CoreDAO<CurrentElo>{
 
 
@@ -24,15 +25,15 @@ public class CurrentEloDAO extends CoreDAO<CurrentElo>{
     }
 
     public List<CurrentElo> findByEngineName(String engineName) {
-
         CriteriaBuilder criteriaBuilder = em.getCriteriaBuilder();
 
         CriteriaQuery<CurrentElo> criteria= criteriaBuilder.createQuery(CurrentElo.class);
         Root<CurrentElo> currentElo = criteria.from(CurrentElo.class);
-        CriteriaQuery<CurrentElo> eloJoinQuerry = criteria.where(criteriaBuilder.equal(currentElo.join("engine_name_id").get("engine_name"), engineName));
+        CriteriaQuery<CurrentElo> eloJoinQuerry = criteria.where(criteriaBuilder.equal(currentElo.join("engineNameId").get("engineName"), engineName));
 
         TypedQuery<CurrentElo> q = em.createQuery(eloJoinQuerry);
-        return q.getResultList();
+        List<CurrentElo> currentElos = q.getResultList();
+        return currentElos;
     }
 
 

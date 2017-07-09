@@ -1,4 +1,4 @@
-package AMQPManagment.AMQPSender.SendImpl;
+package AMQPManagment.AMQPSender.sendImpl;
 
 import AMQPManagment.utils.chessJSONParsers.ChessJSONReader;
 import AMQPManagment.utils.data.ChessJSONObject;

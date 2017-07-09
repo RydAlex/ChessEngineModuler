@@ -12,6 +12,7 @@ scalaVersion := "2.12.2"
 
 libraryDependencies ++= Seq(
   "com.rabbitmq" % "amqp-client" % "3.6.5",
+  "org.mockito" % "mockito-core" % "2.7.22" % "test",
   "com.typesafe.akka" %% "akka-actor" % "2.4.17",
   "com.typesafe.akka" %% "akka-agent" % "2.4.17",
   "com.typesafe.akka" %% "akka-camel" % "2.4.17",

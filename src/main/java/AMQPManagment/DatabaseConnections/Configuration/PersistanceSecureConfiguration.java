@@ -9,7 +9,7 @@ import java.util.Properties;
 /**
  * Created by aleksanderr on 18/06/17.
  */
-public class HibernateConfiguration {
+public class PersistanceSecureConfiguration {
 
     private static final String HIBERNATE_CONNECTION_URL_KEY = "hibernate.connection.url";
     private static final String HIBERNATE_CONNECTION_USERNAME_KEY = "hibernate.connection.username";

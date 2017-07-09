@@ -69,7 +69,7 @@ public class FenGenerator {
         }
     }
 
-    public boolean insertMove(String move){
+    public boolean insertMove(String move) throws Exception{
         try {
             String from = move.substring(0, 2);
             String to = move.substring(2, 4);
@@ -89,7 +89,7 @@ public class FenGenerator {
             changeSideWhichHaveMove();
             return isHalfMoveBroken(figure, figureTo);
         } catch (Exception ex){
-            throw new RuntimeException("Error while parsing move from engine --> " + move);
+            throw new Exception("Error while parsing move from engine --> " + move);
         }
     }
 

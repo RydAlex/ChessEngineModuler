@@ -1,7 +1,7 @@
 package simpleChessManagmentActor.actorimplementation
 
 import AMQPManagment.utils.TypeOfMessageExtraction
-import AMQPManagment.utils.data.SingleMoveResult
+import AMQPManagment.utils.data.{EngineEloPair, SingleMoveResult}
 import akka.actor._
 import akka.event.Logging
 import engineprocessor.core.enginemechanism.FenGenerator
@@ -13,7 +13,7 @@ import scala.util.Random
 /**
   * Created by aleksanderr on 09/04/17.
   */
-class ActorGame(system: ActorSystem, name: Seq[String]) extends Actor {
+class ActorGame(system: ActorSystem, name: Seq[String], elo: Seq[EngineEloPair]) extends Actor {
 
 
   val log = Logging(context.system, this)
@@ -31,7 +31,7 @@ class ActorGame(system: ActorSystem, name: Seq[String]) extends Actor {
   var enginesOne :List[ActorRef] = List[ActorRef]()
   var enginesTwo :List[ActorRef] = List[ActorRef]()
   var typeOfGame: TypeOfMessageExtraction = TypeOfMessageExtraction.RANDOM
-  val oneMoveMessagesParser = new OneMoveMessagesParser();
+  val oneMoveMessagesParser = new OneMoveMessagesParser()
 
   def receive = {
     case message: MessageBack =>
@@ -52,19 +52,25 @@ class ActorGame(system: ActorSystem, name: Seq[String]) extends Actor {
         if(activeListOne){
           self ! EndGame(1) // First Players Win Game
         } else {
-          self ! EndGame(-1) // Second Player Win Game
+          self ! EndGame(2) // Second Player Win Game
         }
-        log.info("Heyo i am here...")
       }
       else {
-        if(UpdateChessboardOrTellIsItDraw(answer)){
-          self ! EndGame(0) // Draw was detected
-        }
-        else if(isSingleMove){
-          self ! SingleMoves(singleMoveResults) // If single move than just return those moves
-        }
-        else {
-          tellForOtherHalfOfEnginesToStartCounting() // if no condition was detected just start counting at second side
+        try{
+          if(UpdateChessboardOrTellIsItDraw(answer)){
+            self ! EndGame(0) // Draw was detected
+          }
+          else if(isSingleMove){
+            self ! SingleMoves(singleMoveResults) // If single move than just return those moves
+          }
+          else {
+            tellForOtherHalfOfEnginesToStartCounting() // if no condition was detected just start counting at second side
+          }
+        } catch{
+          case ex: Exception => {
+            log.info("Engine takes move which does not exist")
+            self ! EndGame(-1)
+          }
         }
       }
 
@@ -134,15 +140,16 @@ class ActorGame(system: ActorSystem, name: Seq[String]) extends Actor {
       chessboard = new FenGenerator(timeoutRule.chessboardFen).returnFenStringPositions()
       timeOutGameOrAnother = true
       valOfGameRule = timeoutRule.timeout
-      //log.info(name + " game with timeout rule should be started shortly :" + timeoutRule.id)
-      while(enginesOne.length + enginesTwo.length != listLength){}
+      log.info(name + " game with timeout rule should be started shortly :" + timeoutRule.id)
+      while(enginesOne.length + enginesTwo.length != listLength){
+      }
       self ! new TimeOutMessage(chessboard,timeoutRule.timeout)
 
     case depthRule :StartNewGameWithDepthRule =>
       chessboard = new FenGenerator(depthRule.chessboardFen).returnFenStringPositions()
       timeOutGameOrAnother = false
       valOfGameRule = depthRule.depth
-      //log.info(name + " game with depth rule should be started shortly :" + depthRule.id)
+      log.info(name + " game with depth rule should be started shortly :" + depthRule.id)
       while(enginesOne.length + enginesTwo.length != listLength){}
       self ! new DepthMessage(chessboard,depthRule.depth)
 
@@ -156,7 +163,7 @@ class ActorGame(system: ActorSystem, name: Seq[String]) extends Actor {
   }
 
 
-  def UpdateChessboardOrTellIsItDraw(answer: MessageBack): Boolean = {
+  def UpdateChessboardOrTellIsItDraw(answer: MessageBack): Boolean= {
     val fen: FenGenerator = new FenGenerator(chessboard)
     val halfMoveShouldBroke = fen.insertMove(answer.message)
     if(halfMoveShouldBroke){
@@ -182,25 +189,38 @@ class ActorGame(system: ActorSystem, name: Seq[String]) extends Actor {
     var answer :MessageBack = null
     if (typeOfGame.equals(TypeOfMessageExtraction.RANDOM)) {
       answer = extractMessageInARandomApproach()
-    } else if (typeOfGame.equals(TypeOfMessageExtraction.ELO)) {
-      answer = extractMessageInAEloApproach()
-    } else if (typeOfGame.equals(TypeOfMessageExtraction.DEPTH_2)) {
-      answer = extractMessageInADepthTwoApproach()
-    } else if (typeOfGame.equals(TypeOfMessageExtraction.POSITION_WEIGHT)) {
-      answer = extractMessageInAWeightApproach()
+    } else if (typeOfGame.equals(TypeOfMessageExtraction.ELO_SIMPLE)) {
+      answer = extractMessageInAEloSimpleApproach()
+    } else if (typeOfGame.equals(TypeOfMessageExtraction.ELO_VOTE_WITH_ELO)) {
+      answer = extractMessageInAEloVotingApproach()
+    } else if (typeOfGame.equals(TypeOfMessageExtraction.ELO_VOTE_WITH_DISTRIBUTION)) {
+      answer = extractMessageInAEloDistributionApproach()
     }
     answer
   }
 
-  def extractMessageInAEloApproach(): MessageBack = {
+  def extractMessageInAEloSimpleApproach(): MessageBack = {
+    var eloOfActualMessage = 0
+    var chosenMessage: MessageBack = null
+    for(message <- answers){
+      for(engineEloVal <- elo){
+        if(engineEloVal.getEngineName.equals(message.engineName)){
+          if(engineEloVal.getEloValue > eloOfActualMessage){
+            //TODO: Add Trend recognition
+            chosenMessage = message
+            eloOfActualMessage = engineEloVal.getEloValue
+          }
+        }
+      }
+    }
+    return chosenMessage
+  }
+
+  def extractMessageInAEloVotingApproach(): MessageBack = {
     null
   }
 
-  def extractMessageInADepthTwoApproach(): MessageBack = {
-    null
-  }
-
-  def extractMessageInAWeightApproach(): MessageBack = {
+  def extractMessageInAEloDistributionApproach(): MessageBack = {
     null
   }
 

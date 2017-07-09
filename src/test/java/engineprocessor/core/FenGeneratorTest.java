@@ -43,8 +43,12 @@ public class FenGeneratorTest {
     @Test
     public void canChangeChessboardByMove() {
         assertEquals(fenGen.returnFenStringPositions(), "rnbqkbnr/pppppppp/8/8/8/8/PPPPPPPP/RNBQKBNR w - -");
-        fenGen.insertMove("e2e4");
-        fenGen.insertMove("c7c6");
+        try {
+            fenGen.insertMove("e2e4");
+            fenGen.insertMove("c7c6");
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
         assertEquals(fenGen.returnFenStringPositions(), "rnbqkbnr/pp1ppppp/2p5/8/4P3/8/PPPP1PPP/RNBQKBNR w - -");
     }
 
@@ -71,12 +75,24 @@ public class FenGeneratorTest {
         String fen = "8/K7/8/8/8/8/6p1/7k b - -";
         fenGen = new FenGenerator(fen);
         System.out.println(fenGen.returnFenStringPositions());
-        fenGen.insertMove("g2g1q");
+        try {
+            fenGen.insertMove("g2g1q");
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
         System.out.println(fenGen.returnFenStringPositions());
     }
 
+    @Test(expected = Exception.class)
+    public void canReactWithExceptionOnWrongMove() throws Exception {
+        String fen = "8/3Q4/3R1k2/8/5PK1/8/P7/8 b - -";
+        fenGen = new FenGenerator(fen);
+        System.out.println(fenGen.returnFenStringPositions());
+        fenGen.insertMove("c3a3n");
+    }
+
     @Test
-    public void canDetectEnPessant() {
+    public void canDetectEnPessant() throws Exception {
         fenGen.insertMove("e2e4");
         assertEquals(fenGen.returnFenStringPositions(), "rnbqkbnr/pppppppp/8/8/4P3/8/PPPP1PPP/RNBQKBNR b - e3");
         fenGen.insertMove("c7c6");

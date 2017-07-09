@@ -36,11 +36,11 @@ public class EngineAvailabilityScanner {
             enginePathsMap.remove("engines");
             enginePathsMap.remove("mac");
             enginePathsMap.remove("linux");
-            for (Map.Entry<String, String> link: enginePathsMap.entrySet()){
-                String[] linkElements = link.getValue().split("/");
-                link.setValue(link.getValue()+"/"+linkElements[linkElements.length-1]);
+            for (Map.Entry<String, String> enginePathMap: enginePathsMap.entrySet()){
+                String[] linkElements = enginePathMap.getValue().split("/");
+                enginePathMap.setValue(enginePathMap.getValue()+"/"+linkElements[linkElements.length-1]);
                 if(systemSufix.equals("linux")){
-                    setRightPermision(link.getValue());
+                    FilePermissionHelper.setFileFullPermisionForMeAndMyGroup(enginePathMap.getValue());
                 }
             }
         } catch (IOException e) {
@@ -62,21 +62,5 @@ public class EngineAvailabilityScanner {
         return list;
     }
 
-    private void setRightPermision(String name){
-        File file = new File(name);
 
-        Set<PosixFilePermission> perms = new HashSet<>();
-        perms.add(PosixFilePermission.OWNER_READ);
-        perms.add(PosixFilePermission.OWNER_WRITE);
-        perms.add(PosixFilePermission.OWNER_EXECUTE);
-        perms.add(PosixFilePermission.GROUP_EXECUTE);
-        perms.add(PosixFilePermission.GROUP_READ);
-        perms.add(PosixFilePermission.GROUP_WRITE);
-
-        try {
-            Files.setPosixFilePermissions(file.toPath(), perms);
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
-    }
 }

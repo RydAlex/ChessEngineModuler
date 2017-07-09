@@ -14,7 +14,7 @@ public class EngineName {
     @Id
     @Column(name = "id", nullable = false)
     @GeneratedValue(strategy=GenerationType.SEQUENCE, generator="engineName_seq")
-    @SequenceGenerator(name="engineName_seq", sequenceName="enginename_id_seq", allocationSize=20)
+    @SequenceGenerator(name="engineName_seq", sequenceName="enginename_id_seq", allocationSize=1)
     @Access(AccessType.PROPERTY)
     private Integer id;
 

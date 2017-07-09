@@ -21,7 +21,7 @@ public class EloGamesHistory {
     @Id
     @Column(name = "id", nullable = false)
     @GeneratedValue(strategy=GenerationType.SEQUENCE, generator="eloGameHistory_seq")
-    @SequenceGenerator(name="eloGameHistory_seq", sequenceName="elogamehistory_id_seq", allocationSize=20)
+    @SequenceGenerator(name="eloGameHistory_seq", sequenceName="elogameshistory_id_seq", allocationSize=1)
     @Access(AccessType.PROPERTY)
     private Integer id;
 
@@ -34,11 +34,11 @@ public class EloGamesHistory {
     private Integer oldElo;
 
     @Basic
-    @Column(name = "is_win", nullable = false)
+    @Column(name = "is_win")
     private Boolean isWin;
 
-    @Basic
-    @Column(name = "engine_name_id")
-    private Integer engineNameId;
+    @OneToOne(cascade = CascadeType.REFRESH)
+    @JoinColumn(name = "engine_name_id")
+    private EngineName engineNameId;
 
 }

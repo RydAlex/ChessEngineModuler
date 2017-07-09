@@ -8,6 +8,7 @@ import engineprocessor.core.utils.enums.GoEnum;
 import org.junit.BeforeClass;
 import org.junit.Test;
 
+import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.attribute.PosixFilePermission;
 import java.util.ArrayList;
@@ -105,7 +106,7 @@ public class EngineConnectionTest {
             while (commandMenu.isListOfCommandHaveElements()) {
                 sleep(10);
             }
-            String msgFound = commandMenu.returnMoveWhichEngineFound(500);
+            String msgFound = commandMenu.returnMoveWhichEngineFound();
             System.out.println(msgFound);
             commandMenu.exitTheGame();
             assert msgFound.length() == 4;
@@ -124,14 +125,14 @@ public class EngineConnectionTest {
 
     @Test
     public void playProperTypeOfGame() throws Exception {
-        int timeout = 5000;
+        int timeout = 60000;
         for(String enginePath : enginesPath) {
             EngineProcessor er = new EngineProcessor();
             CommandQuery commandMenu = er.setEngineConnection(enginePath);
             commandMenu
                     .getChessEngineInformation()                // uci
                     .setPosition("r1k4r/p2nb1p1/2b4p/1p1n1p2/2PP4/3Q1NB1/1P3PPP/R5K1 b - c3 0 19") //position Fen ....
-                    .go(GoEnum.searchInTime, timeout);             // go movetime 5000
+                    .go(GoEnum.searchInTime, timeout);             // go movetime 60000 -> 1min
             while (commandMenu.isListOfCommandHaveElements()) {
                 sleep(10);
             }
@@ -145,51 +146,32 @@ public class EngineConnectionTest {
 
     @Test
     public void playDepthTypeOfGame3() throws Exception {
-        for(String enginePath : enginesPath) {
-            EngineProcessor er = new EngineProcessor();
-            CommandQuery commandMenu = er.setEngineConnection(enginePath);
-            commandMenu
-                    .getChessEngineInformation()                // uci
-                    .setPosition("8/8/8/8/K7/8/6p1/7k b - -") //position Fen ....
-                    .go(GoEnum.searchDepth, 3);             // go depth 8
-            while (commandMenu.isListOfCommandHaveElements()) {
-                sleep(10);
-            }
-            String msgFound = commandMenu.returnMoveWhichEngineFound();
-            commandMenu.exitTheGame();
-            assert msgFound.length() == 4 || msgFound.length() == 5;
-            commandMenu.clearMessagesInLogs();
-        }
+        testGameWithDepth(3);
     }
 
     @Test
     public void playDepthTypeOfGame5() throws Exception {
-        for(String enginePath : enginesPath) {
-            EngineProcessor er = new EngineProcessor();
-            CommandQuery commandMenu = er.setEngineConnection(enginePath);
-            commandMenu
-                    .getChessEngineInformation()                // uci
-                    .setPosition("8/8/8/8/K7/8/6p1/7k b - -") //position Fen ....
-                    .go(GoEnum.searchDepth, 5);             // go depth 8
-            while (commandMenu.isListOfCommandHaveElements()) {
-                sleep(10);
-            }
-            String msgFound = commandMenu.returnMoveWhichEngineFound();
-            commandMenu.exitTheGame();
-            assert msgFound.length() == 4 || msgFound.length() == 5;
-            commandMenu.clearMessagesInLogs();
-        }
+        testGameWithDepth(5);
     }
 
     @Test
     public void playDepthTypeOfGame7() throws Exception {
+        testGameWithDepth(7);
+    }
+
+    @Test
+    public void playDepthTypeOfGame15() throws Exception {
+        testGameWithDepth(15);
+    }
+
+    public void testGameWithDepth(int depth) throws Exception {
         for(String enginePath : enginesPath) {
             EngineProcessor er = new EngineProcessor();
             CommandQuery commandMenu = er.setEngineConnection(enginePath);
             commandMenu
                     .getChessEngineInformation()                // uci
                     .setPosition("8/8/8/8/K7/8/6p1/7k b - -") //position Fen ....
-                    .go(GoEnum.searchDepth, 7);             // go depth 8
+                    .go(GoEnum.searchDepth, depth);             // go depth 8
             while (commandMenu.isListOfCommandHaveElements()) {
                 sleep(10);
             }

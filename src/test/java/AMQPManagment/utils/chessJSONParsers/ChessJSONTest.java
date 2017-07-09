@@ -19,7 +19,7 @@ public class ChessJSONTest {
         LinkedList<String> engineList = new LinkedList<>();
         engineList.add("stockfish");
         engineList.add("fruit");
-        String listofDepthJson = ChessJSONCreator.createChessJsonWithTimeoutRule("adhd",5000, TypeOfMessageExtraction.ELO, false ,engineList);
+        String listofDepthJson = ChessJSONCreator.createChessJsonWithTimeoutRule("adhd",5000, TypeOfMessageExtraction.ELO_SIMPLE, false ,engineList,null);
 
 
         Assert.assertEquals("{\n  \"chessGameName\" : \"stockfish\",\n  \"timeout\" : 5000,\n  \"fen\" : \"adhd\"\n}",listofDepthJson);
@@ -30,7 +30,7 @@ public class ChessJSONTest {
         LinkedList<String> engineList = new LinkedList<>();
         engineList.add("stockfish");
         engineList.add("fruit");
-        String listofDepthJson = ChessJSONCreator.createChessJsonWithDepthRule("adhd",5, TypeOfMessageExtraction.ELO, false ,engineList);
+        String listofDepthJson = ChessJSONCreator.createChessJsonWithDepthRule("adhd",5, TypeOfMessageExtraction.ELO_SIMPLE, false ,engineList,null);
 
         Assert.assertEquals("{\n  \"chessGameName\" : \"stockfish\",\n  \"depth\" : 5,\n  \"fen\" : \"adhd\"\n}",listofDepthJson);
         Assert.assertEquals("{\n  \"chessGameName\" : \"fruit\",\n  \"depth\" : 5,\n  \"fen\" : \"adhd\"\n}",listofDepthJson);

@@ -1,7 +1,7 @@
 package simpleChessManagmentActor
 
 import AMQPManagment.utils.TypeOfMessageExtraction
-import AMQPManagment.utils.data.{ChessJSONObject, SingleMoveResult}
+import AMQPManagment.utils.data.{ChessJSONObject, EngineEloPair, SingleMoveResult}
 import akka.actor.ActorRef
 
 import scala.collection.JavaConverters
@@ -18,8 +18,9 @@ object ChessScheduler {
     val typeOfGame : TypeOfMessageExtraction = chessObject.getTypeOfGame
     val isSingleMove : Boolean = chessObject.getIsSingleMove
     val chessEngineList: Seq[String] = JavaConverters.asScalaBuffer(chessObject.getChessGameName)
+    val chessEloList: Seq[EngineEloPair] = JavaConverters.asScalaBuffer(chessObject.getChessGamesEloValue)
 
-    val actor: ActorRef = GameShaper.defineNewGameWithThoseEngine(typeOfGame, isSingleMove ,chessEngineList)
+    val actor: ActorRef = GameShaper.defineNewGameWithThoseEngine(typeOfGame, isSingleMove ,chessEngineList, chessEloList)
     GameShaper.startGameWithDepthRule(actor, depth, chessboard) match {
       case gameResult : String => {
         chessObject.setAnswer(gameResult)
@@ -38,8 +39,9 @@ object ChessScheduler {
     val typeOfGame : TypeOfMessageExtraction = chessObject.getTypeOfGame
     val isSingleMove : Boolean = chessObject.getIsSingleMove
     val chessEngineList: Seq[String] = JavaConverters.asScalaBuffer(chessObject.getChessGameName)
+    val chessEloList: Seq[EngineEloPair] = JavaConverters.asScalaBuffer(chessObject.getChessGamesEloValue)
 
-    val actor: ActorRef = GameShaper.defineNewGameWithThoseEngine(typeOfGame, isSingleMove, chessEngineList)
+    val actor: ActorRef = GameShaper.defineNewGameWithThoseEngine(typeOfGame, isSingleMove, chessEngineList, chessEloList)
     GameShaper.startGameWithTimeOutRule(actor, timeout, chessboard) match {
       case gameResult : String => {
         chessObject.setAnswer(gameResult)

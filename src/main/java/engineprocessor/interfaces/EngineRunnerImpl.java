@@ -81,7 +81,7 @@ public class EngineRunnerImpl implements EngineRunner {
             while (commandQuery.isListOfCommandHaveElements()) {
                 sleep(100);
             }
-            String msgFound = commandQuery.returnMoveWhichEngineFound(timeout);
+            String msgFound = commandQuery.returnMoveWhichEngineFound();
             commandQuery.exitTheGame();
             er = null;
             commandQuery = null;

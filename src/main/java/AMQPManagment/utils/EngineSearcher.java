@@ -21,4 +21,35 @@ public class EngineSearcher {
         return listOfNames;
     }
 
+    public static List<List<String>> createPairsOfGames() {
+        List<List<String>> listOfEnginesPairsToReturn = new LinkedList<>();
+        List<String> engineList = new EngineRunnerImpl().getEngineNames();
+        String valuesAlreadyTaken = " ";
+        Random random = new Random();
+        for(int i=0 ; i<engineList.size()/2 ; i++){
+            LinkedList<String> engineNames = new LinkedList<>();
+            int engineOneListNumber = -1;
+            int engineTwoListNumber = -1;
+            boolean engineFreeFound = false;
+            while(!engineFreeFound) {
+                engineOneListNumber = random.nextInt(engineList.size());
+                if(!valuesAlreadyTaken.contains(" " + engineOneListNumber + " ")){
+                    engineFreeFound = true;
+                }
+            }
+            valuesAlreadyTaken += engineOneListNumber+" ";
+            engineFreeFound = false;
+            while(!engineFreeFound) {
+                engineTwoListNumber = random.nextInt(engineList.size());
+                if (!valuesAlreadyTaken.contains(" " + engineTwoListNumber + " ")) {
+                    engineFreeFound = true;
+                }
+            }
+            valuesAlreadyTaken += engineTwoListNumber + " ";
+            engineNames.add(engineList.get(engineOneListNumber));
+            engineNames.add(engineList.get(engineTwoListNumber));
+            listOfEnginesPairsToReturn.add(engineNames);
+        }
+        return listOfEnginesPairsToReturn;
+    }
 }

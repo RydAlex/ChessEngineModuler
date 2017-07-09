@@ -24,7 +24,7 @@ public class EngineProcessor {
         return readingFromEngine && sendingToEngine;
     }
 
-    public void brutallyKillEngine(){
+    void brutallyKillEngine(){
         engineProcess.destroy();
     }
 
@@ -48,7 +48,7 @@ public class EngineProcessor {
                     readingFromEngine = true;
                     while (input.hasNextLine()) {
                         String resultLine = input.nextLine();
-                        log.info(resultLine);
+                        //log.info(resultLine);
                         commandQuery.setResultOfCommand(resultLine);
                     }
                 }

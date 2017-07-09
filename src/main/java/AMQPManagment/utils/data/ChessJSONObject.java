@@ -23,6 +23,26 @@ import java.util.List;
 })
 public class ChessJSONObject {
 
+    @JsonProperty("chessGameName")
+    private List<String> chessGameName;
+    @JsonProperty("chessGamesEloValue")
+    private List<EngineEloPair> chessGamesEloValue;
+    @JsonProperty("singleMoveResults")
+    private List<SingleMoveResult> singleMoveResults = null;
+    @JsonProperty("depth")
+    private Integer depth;
+    @JsonProperty("isSingleMove")
+    private Boolean isSingleMove;
+    @JsonProperty("timeout")
+    private Integer timeout;
+    @JsonProperty("fen")
+    private String fen;
+    @JsonProperty("typeOfGame")
+    private TypeOfMessageExtraction typeOfGame;
+    @JsonProperty("answer")
+    private String answer;
+
+
     public List<String> getChessGameName() {
         return chessGameName;
     }
@@ -87,20 +107,11 @@ public class ChessJSONObject {
         this.answer = answer;
     }
 
-    @JsonProperty("chessGameName")
-    private List<String> chessGameName;
-    @JsonProperty("singleMoveResults")
-    private List<SingleMoveResult> singleMoveResults = null;
-    @JsonProperty("depth")
-    private Integer depth;
-    @JsonProperty("isSingleMove")
-    private Boolean isSingleMove;
-    @JsonProperty("timeout")
-    private Integer timeout;
-    @JsonProperty("fen")
-    private String fen;
-    @JsonProperty("typeOfGame")
-    private TypeOfMessageExtraction typeOfGame;
-    @JsonProperty("answer")
-    private String answer;
+    public List<EngineEloPair> getChessGamesEloValue() {
+        return chessGamesEloValue;
+    }
+
+    public void setChessGamesEloValue(List<EngineEloPair> chessGamesEloValue) {
+        this.chessGamesEloValue = chessGamesEloValue;
+    }
 }

@@ -66,12 +66,13 @@ public class CommandQuery {
         resultsOfCommand.add(er);
     }
 
-    public String returnMoveWhichEngineFound(){
-        return returnMoveWhichEngineFound(15000);
+
+    public String returnMoveWhichEngineFound() {
+        return returnMoveWhichEngineFound(20000);
     }
 
-
     public String returnMoveWhichEngineFound(int timeout){
+        timeout=timeout*3;
         String moveFound = "";
         ArrayList<String> answerList;
         try {
@@ -190,7 +191,7 @@ public class CommandQuery {
         int retryWait=0;
         while(!isMsgCanBeFoundInLogs("bestmove")) {
             sleep(1000);
-            if(retryWait >= 30000){
+            if(retryWait >= timeout){
                 commandList.add("quit");
                 break;
             }

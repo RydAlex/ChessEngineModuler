@@ -23,7 +23,7 @@ public class DepthWith2MoreEloUseWinLose {
     @Id
     @Column(name = "id", nullable = false)
     @GeneratedValue(strategy=GenerationType.SEQUENCE, generator="depth2_seq")
-    @SequenceGenerator(name="depth2_seq", sequenceName="depthwith2moreelousewinlose_id_seq", allocationSize=20)
+    @SequenceGenerator(name="depth2_seq", sequenceName="depthwith2moreelousewinlose_id_seq", allocationSize=1)
     @Access(AccessType.PROPERTY)
     private Integer id;
 
@@ -32,7 +32,7 @@ public class DepthWith2MoreEloUseWinLose {
     private Timestamp timestamp;
 
     @Basic
-    @Column(name = "is_win", nullable = false)
+    @Column(name = "is_win")
     private Boolean isWin;
 
     @Basic

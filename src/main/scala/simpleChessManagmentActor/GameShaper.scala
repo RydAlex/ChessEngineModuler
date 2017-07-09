@@ -1,6 +1,7 @@
 package simpleChessManagmentActor
 
 import AMQPManagment.utils.TypeOfMessageExtraction
+import AMQPManagment.utils.data.EngineEloPair
 import akka.actor.{ActorRef, ActorSystem, Props}
 import akka.pattern.ask
 import akka.util.Timeout
@@ -24,8 +25,8 @@ object GameShaper{
   val system = ActorSystem("System")
   var f : Future[Any]= Future(0)
 
-  def defineNewGameWithThoseEngine(typeOfGame: TypeOfMessageExtraction, isSingleMove: Boolean, chessEngineListForGame: Seq[String]): ActorRef = {
-    val actorGame = system.actorOf(Props(new ActorGame(system, chessEngineListForGame)))
+  def defineNewGameWithThoseEngine(typeOfGame: TypeOfMessageExtraction, isSingleMove: Boolean, chessEngineListForGame: Seq[String], chessEloListForGame: Seq[EngineEloPair]): ActorRef = {
+    val actorGame = system.actorOf(Props(new ActorGame(system, chessEngineListForGame, chessEloListForGame)))
     f = actorGame ? InitGame(typeOfGame, isSingleMove)
     actorGame
   }
