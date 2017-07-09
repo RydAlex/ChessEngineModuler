@@ -4,8 +4,6 @@ import sbt.Level
 name := "ChessEngineModuler"
 logLevel := Level.Warn
 
-mainClass in Compile := Some("simpleChessManagmentActor.ChessScheduler")
-
 version := "1.0"
 
 scalaVersion := "2.12.2"
@@ -50,6 +48,4 @@ libraryDependencies ++= Seq(
   "com.fasterxml.jackson.core" % "jackson-databind" % "2.8.7",
   "ch.qos.logback" % "logback-classic" % "1.1.7",
   "com.typesafe.slick" %% "slick" % "3.2.0"
-//"org.scalastyle" %% "scalastyle-sbt-plugin" % "0.8.0"
-
 )
