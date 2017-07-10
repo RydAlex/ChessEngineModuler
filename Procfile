@@ -1,0 +1,1 @@
+worker: sbt run AMQPManagment.AMQPConsumer.AMQPConsumer
