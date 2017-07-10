@@ -8,6 +8,8 @@ version := "1.0"
 
 scalaVersion := "2.12.2"
 
+lazy val root = (project in file("chessEngineModuler")).enablePlugins(JavaServerAppPackaging)
+
 libraryDependencies ++= Seq(
   "com.rabbitmq" % "amqp-client" % "3.6.5",
   "org.mockito" % "mockito-core" % "2.7.22" % "test",
