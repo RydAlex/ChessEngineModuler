@@ -6,6 +6,8 @@ logLevel := Level.Warn
 
 version := "1.0"
 
+mainClass in (Compile, run) := Some("AMQPManagment.AMQPConsumer.AMQPConsumer")
+
 scalaVersion := "2.12.2"
 
 lazy val root = (project in file("chessEngineModuler")).enablePlugins(JavaServerAppPackaging)
