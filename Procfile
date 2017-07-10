@@ -1,1 +1,1 @@
-worker: sbt run AMQPManagment.AMQPConsumer.AMQPConsumer
+worker: sbt run AMQPManagment.AMQPSender.AMQPGameManager

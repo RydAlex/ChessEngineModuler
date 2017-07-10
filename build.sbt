@@ -6,7 +6,7 @@ logLevel := Level.Warn
 
 version := "1.0"
 
-mainClass in (Compile, run) := Some("AMQPManagment.AMQPConsumer.AMQPConsumer")
+mainClass in (Compile, run) := Some("AMQPManagment.AMQPSender.AMQPGameManager")
 
 scalaVersion := "2.12.2"
 
