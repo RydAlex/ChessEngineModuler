@@ -12,6 +12,7 @@ scalaVersion := "2.12.2"
 
 lazy val root = (project in file("chessEngineModuler")).enablePlugins(JavaServerAppPackaging)
 
+fork in run := true
 
 val buildSettings = Defaults.coreDefaultSettings ++ Seq(
   javaOptions += "-Xmx400M"
