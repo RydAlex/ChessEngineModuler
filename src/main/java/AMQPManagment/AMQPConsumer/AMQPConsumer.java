@@ -19,25 +19,20 @@ public class AMQPConsumer {
     private static final String RPC_QUEUE_NAME = "ChessRPC";
     public static final String CLOUDAMQP_SYSTEM_URL = "CLOUDAMQP_URL";
 
-    private static int fib(int n) {
-        if (n ==0) return 0;
-        if (n == 1) return 1;
-        return fib(n-1) + fib(n-2);
-    }
-
     public static void main(String[] argv) throws NoSuchAlgorithmException, KeyManagementException, URISyntaxException {
         ConnectionFactory factory = new ConnectionFactory();
         factory.setUri(System.getenv(CLOUDAMQP_SYSTEM_URL));
 
         Connection connection = null;
         try {
+            log.info("I will start connection in a moment");
             connection = factory.newConnection();
             Channel channel = connection.createChannel();
 
             channel.queueDeclare(RPC_QUEUE_NAME, false, false, false, null);
             channel.basicQos(1);
 
-            System.out.println(" [x] Awaiting RPC requests");
+            log.info(" [x] Awaiting RPC requests");
 
             Consumer consumer = new DefaultConsumer(channel) {
                 @Override
