@@ -19,11 +19,6 @@ public class AMQPConsumer {
     private static final String RPC_QUEUE_NAME = "ChessRPC";
     public static final String CLOUDAMQP_SYSTEM_URL = "CLOUDAMQP_URL";
 
-    private static int fib(int n) {
-        if (n ==0) return 0;
-        if (n == 1) return 1;
-        return fib(n-1) + fib(n-2);
-    }
 
     public static void main(String[] argv) throws NoSuchAlgorithmException, KeyManagementException, URISyntaxException {
         ConnectionFactory factory = new ConnectionFactory();
