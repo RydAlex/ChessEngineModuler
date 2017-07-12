@@ -19,6 +19,7 @@ public class AMQPConsumer {
     private static final String RPC_QUEUE_NAME = "ChessRPC";
     public static final String CLOUDAMQP_SYSTEM_URL = "CLOUDAMQP_URL";
 
+
     public static void main(String[] argv) throws NoSuchAlgorithmException, KeyManagementException, URISyntaxException {
         ConnectionFactory factory = new ConnectionFactory();
         factory.setUri(System.getenv(CLOUDAMQP_SYSTEM_URL));
