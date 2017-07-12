@@ -23,17 +23,18 @@ public class AMQPConsumer {
     public static void main(String[] argv) throws NoSuchAlgorithmException, KeyManagementException, URISyntaxException {
         ConnectionFactory factory = new ConnectionFactory();
         factory.setUri(System.getenv(CLOUDAMQP_SYSTEM_URL));
-
+	System.out.println("test 0451");
+	System.out.flush();
         Connection connection = null;
         try {
-            log.info("I will start connection in a moment");
+            System.out.println("I will start connection in a moment");
             connection = factory.newConnection();
             Channel channel = connection.createChannel();
 
             channel.queueDeclare(RPC_QUEUE_NAME, false, false, false, null);
             channel.basicQos(1);
 
-            log.info(" [x] Awaiting RPC requests");
+            System.out.println(" [x] Awaiting RPC requests");
 
             Consumer consumer = new DefaultConsumer(channel) {
                 @Override
