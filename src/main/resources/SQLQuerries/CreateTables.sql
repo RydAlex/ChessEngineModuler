@@ -39,10 +39,3 @@ CREATE TABLE DepthWith2MoreEloUseWinLose(
   is_win                              BOOLEAN                                 ,
   engine_name_id                      INTEGER          REFERENCES     EngineName (ID)
 );
-
-DROP TABLE DepthWith2MoreEloUseWinLose;
-DROP TABLE RandomGameResult;
-DROP TABLE Score;
-DROP TABLE EloGamesHistory;
-DROP TABLE CurrentElo;
-DROP TABLE EngineName;
