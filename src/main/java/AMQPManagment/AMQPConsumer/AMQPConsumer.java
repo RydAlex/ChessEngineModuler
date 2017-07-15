@@ -16,7 +16,7 @@ import java.util.concurrent.TimeoutException;
 @Slf4j
 public class AMQPConsumer {
 
-    private static final String RPC_QUEUE_NAME = "ChessRPC";
+    private static final String chess_rpc_queue = "ChessRPC";
     public static final String CLOUDAMQP_SYSTEM_URL = "CLOUDAMQP_URL";
 
 
@@ -29,7 +29,7 @@ public class AMQPConsumer {
             connection = factory.newConnection();
             Channel channel = connection.createChannel();
 
-            channel.queueDeclare(RPC_QUEUE_NAME, false, false, false, null);
+            channel.queueDeclare(chess_rpc_queue, false, false, false, null);
             channel.basicQos(1);
 
             System.out.println(" [x] Awaiting RPC requests");
@@ -74,7 +74,7 @@ public class AMQPConsumer {
                 }
             };
 
-            channel.basicConsume(RPC_QUEUE_NAME, false, consumer);
+            channel.basicConsume(chess_rpc_queue, false, consumer);
 
             //loop to prevent reaching finally block
             while(true) {

@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <persistence xmlns="http://java.sun.com/xml/ns/persistence" version="2.0">
 
-    <persistence-unit name="NewPersistenceUnit" transaction-type="RESOURCE_LOCAL">
+    <persistence-unit name="NewPersistenceUnit">
         <provider>org.hibernate.jpa.HibernatePersistenceProvider</provider>
         <class>AMQPManagment.DatabaseConnections.Entities.CurrentElo</class>
         <class>AMQPManagment.DatabaseConnections.Entities.DepthWith2MoreEloUseWinLose</class>
