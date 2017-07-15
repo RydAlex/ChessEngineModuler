@@ -20,7 +20,7 @@ import scala.util.{Failure, Success}
 
 object GameShaper{
 
-  implicit var timeout: Timeout = Timeout(30 minutes)
+  implicit var timeout: Timeout = Timeout(120 minutes)
   val logger = Logger("GameShaper")
   val system = ActorSystem("System")
   var f : Future[Any]= Future(0)
