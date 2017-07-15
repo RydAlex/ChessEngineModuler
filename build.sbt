@@ -2,7 +2,7 @@ import sbt.Keys._
 
 name := "ChessEngineModuler"
 
-logLevel := sbt.Level.Info
+logLevel := Level.Info
 
 version := "1.0"
 
