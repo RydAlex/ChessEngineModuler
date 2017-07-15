@@ -3,6 +3,7 @@ package AMQPManagment.AMQPSender.sendImpl;
 import AMQPManagment.utils.chessJSONParsers.ChessJSONReader;
 import AMQPManagment.utils.data.ChessJSONObject;
 import com.rabbitmq.client.*;
+import lombok.extern.slf4j.Slf4j;
 
 import java.io.IOException;
 import java.net.URISyntaxException;
@@ -18,6 +19,7 @@ import java.util.concurrent.BlockingQueue;
  * Created by aleksanderr on 11/06/17.
  */
 
+@Slf4j
 class AMQPSenderConnImpl {
 
     public static final String CLOUDAMQP_SYSTEM_URL = "CLOUDAMQP_URL";
@@ -34,6 +36,9 @@ class AMQPSenderConnImpl {
         channel = connection.createChannel();
 
         replyQueueName = channel.queueDeclare().getQueue();
+
+        channel.queueDeclare(chess_rpc_queue, false, false, false, null);
+        channel.basicQos(1);
     }
 
     private List<ChessJSONObject> sendRequestToEngine(List<String> messages) throws Exception {
@@ -59,6 +64,7 @@ class AMQPSenderConnImpl {
                     }
                 });
             } catch (Exception e) {
+                log.info(e.getMessage());
                 e.printStackTrace();
             }
         });
