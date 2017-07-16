@@ -59,6 +59,7 @@ public class AMQPConsumer {
                         }
                         log.info("I have message ready To Parse And Send");
                         answer = ChessJSONCreator.createChessJsonFromObject(response);
+                        System.gc();
                     }
                     catch (RuntimeException e){
                         System.out.println(" [.] " + e.toString());
@@ -67,6 +68,7 @@ public class AMQPConsumer {
                         try{
                             channel.basicPublish("", properties.getReplyTo(), replyProps, answer.getBytes("UTF-8"));
                             channel.basicAck(envelope.getDeliveryTag(), false);
+                            System.gc();
                         } catch (Exception e){
                             System.out.println("I had problem with messeging back the answer");
                         }
