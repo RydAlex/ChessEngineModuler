@@ -32,14 +32,14 @@ public class AMQPGameManager {
                 .map(EngineEloPairParser::findElosForEngineNamesAndCreateEngineEloPair)
                 .forEach(engineEloPair -> {
                     // Elo simple games from longest to shortest
-//                    gameDefiner.playFullActorTimeoutGameWithDefindedEnginesNames(engineEloPair, 20000, TypeOfMessageExtraction.ELO_SIMPLE);
-//                    gameDefiner.playFullActorDepthGameWithDefinedEnginesNames(engineEloPair, 9, TypeOfMessageExtraction.ELO_SIMPLE);
-//
-//                    gameDefiner.playFullActorDepthGameWithDefinedEnginesNames(engineEloPair, 7, TypeOfMessageExtraction.ELO_SIMPLE);
-//                    gameDefiner.playFullActorTimeoutGameWithDefindedEnginesNames(engineEloPair, 9000, TypeOfMessageExtraction.ELO_SIMPLE);
-//
-//                    gameDefiner.playFullActorTimeoutGameWithDefindedEnginesNames(engineEloPair, 6000, TypeOfMessageExtraction.ELO_SIMPLE);
-//                    gameDefiner.playFullActorDepthGameWithDefinedEnginesNames(engineEloPair, 5, TypeOfMessageExtraction.ELO_SIMPLE);
+                    gameDefiner.playFullActorTimeoutGameWithDefindedEnginesNames(engineEloPair, 20000, TypeOfMessageExtraction.ELO_SIMPLE);
+                    gameDefiner.playFullActorDepthGameWithDefinedEnginesNames(engineEloPair, 9, TypeOfMessageExtraction.ELO_SIMPLE);
+
+                    gameDefiner.playFullActorDepthGameWithDefinedEnginesNames(engineEloPair, 7, TypeOfMessageExtraction.ELO_SIMPLE);
+                    gameDefiner.playFullActorTimeoutGameWithDefindedEnginesNames(engineEloPair, 9000, TypeOfMessageExtraction.ELO_SIMPLE);
+
+                    gameDefiner.playFullActorTimeoutGameWithDefindedEnginesNames(engineEloPair, 6000, TypeOfMessageExtraction.ELO_SIMPLE);
+                    gameDefiner.playFullActorDepthGameWithDefinedEnginesNames(engineEloPair, 5, TypeOfMessageExtraction.ELO_SIMPLE);
 
                     gameDefiner.playFullActorTimeoutGameWithDefindedEnginesNames(engineEloPair, 3000, TypeOfMessageExtraction.ELO_SIMPLE);
                     gameDefiner.playFullActorDepthGameWithDefinedEnginesNames(engineEloPair, 3, TypeOfMessageExtraction.ELO_SIMPLE);
