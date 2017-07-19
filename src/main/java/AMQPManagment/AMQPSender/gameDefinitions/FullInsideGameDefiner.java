@@ -28,7 +28,9 @@ public class FullInsideGameDefiner extends GameDefiner {
                 getEngineNamesFromEngineEloPair(engineEloPairs),
                 engineEloPairs
         ).get(0);
+        System.gc();
         extractAndSaveGameResult(answer);
+        System.gc();
     }
 
     public void playFullActorTimeoutGameWithDefindedEnginesNames(List<EngineEloPair> engineEloPairs, int timeout, TypeOfMessageExtraction type) {
@@ -45,7 +47,9 @@ public class FullInsideGameDefiner extends GameDefiner {
                 getEngineNamesFromEngineEloPair(engineEloPairs),
                 engineEloPairs
         ).get(0);
+        System.gc();
         extractAndSaveGameResult(answer);
+        System.gc();
     }
 
 
