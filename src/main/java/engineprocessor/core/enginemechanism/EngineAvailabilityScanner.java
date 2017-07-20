@@ -39,9 +39,7 @@ public class EngineAvailabilityScanner {
             for (Map.Entry<String, String> enginePathMap: enginePathsMap.entrySet()){
                 String[] linkElements = enginePathMap.getValue().split("/");
                 enginePathMap.setValue(enginePathMap.getValue()+"/"+linkElements[linkElements.length-1]);
-                if(systemSufix.equals("linux")){
-                    FilePermissionHelper.setFileFullPermisionForMeAndMyGroup(enginePathMap.getValue());
-                }
+                FilePermissionHelper.setFileFullPermisionForMeAndMyGroup(enginePathMap.getValue());
             }
         } catch (IOException e) {
             e.printStackTrace();
