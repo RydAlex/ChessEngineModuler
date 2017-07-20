@@ -1,12 +1,11 @@
 package simpleChessManagmentActor
 
-import AMQPManagment.utils.TypeOfMessageExtraction
-import AMQPManagment.utils.data.EngineEloPair
 import akka.actor.{ActorRef, ActorSystem, Props}
 import akka.pattern.ask
 import akka.util.Timeout
+import chess.amqp.message.{EngineEloPair, TypeOfMessageExtraction}
 import com.typesafe.scalalogging.Logger
-import engineprocessor.core.enginemechanism.FenGenerator
+import chess.engine.processor.core.enginemechanism.FenGenerator
 import simpleChessManagmentActor.actorimplementation._
 
 import scala.concurrent.ExecutionContext.Implicits.global

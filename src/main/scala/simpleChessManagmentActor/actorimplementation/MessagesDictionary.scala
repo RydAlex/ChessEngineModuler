@@ -1,8 +1,7 @@
 package simpleChessManagmentActor.actorimplementation
 
-import AMQPManagment.utils.TypeOfMessageExtraction
-import AMQPManagment.utils.data.SingleMoveResult
-import engineprocessor.core.enginemechanism.FenGenerator
+import chess.amqp.message.{SingleMoveResult, TypeOfMessageExtraction}
+import chess.engine.processor.core.enginemechanism.FenGenerator
 
 /**
   * Created by aleksanderr on 09/04/17.

@@ -1,8 +1,9 @@
 package AMQPManagment.AMQPSender.dataFetchers;
 
-import AMQPManagment.utils.TypeOfMessageExtraction;
-import AMQPManagment.utils.data.ChessJSONObject;
-import AMQPManagment.utils.data.EngineEloPair;
+import chess.amqp.message.TypeOfMessageExtraction;
+import chess.amqp.message.ChessJSONObject;
+import chess.amqp.message.EngineEloPair;
+import chess.manager.messages.processors.EloProcessor;
 import org.junit.Test;
 
 import java.util.LinkedList;

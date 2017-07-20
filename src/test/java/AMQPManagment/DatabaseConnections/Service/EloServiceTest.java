@@ -1,11 +1,8 @@
 package AMQPManagment.DatabaseConnections.Service;
 
-import AMQPManagment.utils.TypeOfMessageExtraction;
-import org.junit.Assert;
+import chess.amqp.message.TypeOfMessageExtraction;
+import chess.database.service.EloService;
 import org.junit.Test;
-
-import java.util.LinkedList;
-import java.util.List;
 
 /**
  * Created by aleksanderr on 08/07/17.
