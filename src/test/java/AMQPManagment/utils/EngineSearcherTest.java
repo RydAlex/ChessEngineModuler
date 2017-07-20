@@ -1,5 +1,6 @@
 package AMQPManagment.utils;
 
+import chess.utils.name.spy.EngineSearcher;
 import org.junit.Assert;
 import org.junit.Test;
 

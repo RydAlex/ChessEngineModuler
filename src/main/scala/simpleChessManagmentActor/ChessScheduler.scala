@@ -1,8 +1,7 @@
 package simpleChessManagmentActor
 
-import AMQPManagment.utils.TypeOfMessageExtraction
-import AMQPManagment.utils.data.{ChessJSONObject, EngineEloPair, SingleMoveResult}
 import akka.actor.ActorRef
+import chess.amqp.message.{ChessJSONObject, EngineEloPair, SingleMoveResult, TypeOfMessageExtraction}
 
 import scala.collection.JavaConverters
 

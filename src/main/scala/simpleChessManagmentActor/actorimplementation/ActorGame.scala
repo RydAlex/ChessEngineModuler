@@ -1,10 +1,9 @@
 package simpleChessManagmentActor.actorimplementation
 
-import AMQPManagment.utils.TypeOfMessageExtraction
-import AMQPManagment.utils.data.{EngineEloPair, SingleMoveResult}
 import akka.actor._
 import akka.event.Logging
-import engineprocessor.core.enginemechanism.FenGenerator
+import chess.amqp.message.{EngineEloPair, SingleMoveResult, TypeOfMessageExtraction}
+import chess.engine.processor.core.enginemechanism.FenGenerator
 
 import scala.collection.mutable.ListBuffer
 import scala.util.Random

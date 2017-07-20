@@ -2,7 +2,7 @@ package simpleChessManagmentActor.actorimplementation
 
 import akka.actor.Actor
 import akka.event.Logging
-import engineprocessor.interfaces.{EngineRunner, EngineRunnerImpl}
+import chess.engine.processor.interfaces.{EngineRunner, EngineRunnerImpl}
 
 import scala.language.postfixOps
 
@@ -18,6 +18,7 @@ class EngineActor(engineName: String, val engineRunner: EngineRunner = new Engin
       log.info(engineName + " receive timeoutClass request :" + timeoutClass.id )
       val engineNames = engineRunner.getEngineNames
       if(engineNames.contains(engineName)){
+        log.info(engineName + " was send with params : chessboard " + timeoutClass.chessboardFen +  " timeout: " + timeoutClass.duration)
         sender ! MessageBack(engineName, engineRunner.RunEngineWithGoTimeoutCommand(engineName,timeoutClass.chessboardFen, timeoutClass.duration))
       }
     case depthClass: DepthMessage =>
