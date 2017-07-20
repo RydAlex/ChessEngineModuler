@@ -5,7 +5,7 @@ logLevel := sbt.Level.Info
 
 version := "1.0"
 
-mainClass in (Compile, run) := Some("AMQPManagment.AMQPConsumer.AMQPConsumer")
+mainClass in (Compile, run) := Some("chess.amqp.receiver.AMQPConsumer")
 
 scalaVersion := "2.12.2"
 
@@ -36,6 +36,7 @@ libraryDependencies ++= Seq(
   "com.typesafe" % "config" % "1.3.1",
   "org.postgresql" % "postgresql" % "9.4.1212",
   "org.hibernate" % "hibernate-core" % "5.2.9.Final",
+  "org.springframework.boot" % "spring-boot-starter-web" % "1.5.3.RELEASE",
   "org.springframework" % "spring-core" % "4.3.8.RELEASE",
   "org.springframework" % "spring-context" % "4.3.8.RELEASE",
   "org.springframework" % "spring-web" % "4.3.8.RELEASE",
