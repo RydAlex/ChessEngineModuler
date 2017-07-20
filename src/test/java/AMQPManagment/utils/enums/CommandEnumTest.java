@@ -1,6 +1,6 @@
 package AMQPManagment.utils.enums;
 
-import engineprocessor.core.utils.enums.CommandEnum;
+import chess.engine.processor.core.utils.enums.CommandEnum;
 import org.junit.Assert;
 import org.junit.Test;
 
