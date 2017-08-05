@@ -21,6 +21,8 @@ case class SetTypeOfDecisionInGame(depthOrTimeout: Boolean, override val id: Str
 case class DepthMessage(chessboardFen: String, depth: Int, override val id: String = MessagesDictionary.uuid()) extends IdMessage
 case class TimeOutMessage(chessboardFen: String, duration: Int, override val id: String = MessagesDictionary.uuid()) extends IdMessage
 
+
+
 object MessagesDictionary {
   def uuid() = java.util.UUID.randomUUID.toString
 }

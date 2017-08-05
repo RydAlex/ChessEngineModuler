@@ -18,7 +18,6 @@ public enum EloGameResultValue {
         return value;
     }
 
-
     public Boolean isWin() {
         if(value.equals(1.0)){
             return true;

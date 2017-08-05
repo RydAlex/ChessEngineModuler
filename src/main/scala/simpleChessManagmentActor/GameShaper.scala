@@ -17,7 +17,7 @@ import scala.util.{Failure, Success}
   * Created by aleksanderr on 02/04/17.
   */
 
-object GameShaper{
+class GameShaper{
 
   implicit var timeout: Timeout = Timeout(120 minutes)
   val logger = Logger("GameShaper")
