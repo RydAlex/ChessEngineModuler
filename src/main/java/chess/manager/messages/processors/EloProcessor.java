@@ -29,7 +29,7 @@ public class EloProcessor {
                 extractGameResult(answer.getAnswer(), 2)
         );
 
-        EloService.updateEloValueForEntity(
+         EloService.updateEloValueForEntity(
                 firstGroupEngineElo.getEngineName(),
                 answer.getTypeOfGame(),
                 firstGroupEngineElo.getEloValue(),
