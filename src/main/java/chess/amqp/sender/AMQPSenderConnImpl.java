@@ -32,6 +32,8 @@ class AMQPSenderConnImpl {
         ConnectionFactory factory = new ConnectionFactory();
         factory.setUri(System.getenv(CLOUDAMQP_SYSTEM_URL));
 
+
+        factory.setConnectionTimeout(72000000);
         connection = factory.newConnection();
         channel = connection.createChannel();
 

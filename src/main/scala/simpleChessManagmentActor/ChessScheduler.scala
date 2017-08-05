@@ -19,14 +19,13 @@ object ChessScheduler {
     val chessEngineList: Seq[String] = JavaConverters.asScalaBuffer(chessObject.getChessGameName)
     val chessEloList: Seq[EngineEloPair] = JavaConverters.asScalaBuffer(chessObject.getChessGamesEloValue)
 
-    val actor: ActorRef = GameShaper.defineNewGameWithThoseEngine(typeOfGame, isSingleMove ,chessEngineList, chessEloList)
-    GameShaper.startGameWithDepthRule(actor, depth, chessboard) match {
-      case gameResult : String => {
-        chessObject.setAnswer(gameResult)
-      }
-      case move : List[SingleMoveResult] => {
-        chessObject.setSingleMoveResults(JavaConverters.seqAsJavaList(move))
-      }
+
+    val gameShaper = new GameShaper()
+    val actor: ActorRef = gameShaper.defineNewGameWithThoseEngine(typeOfGame, isSingleMove ,chessEngineList, chessEloList)
+
+    gameShaper.startGameWithDepthRule(actor, depth, chessboard) match {
+      case gameResult : String                  =>    chessObject.setAnswer(gameResult)
+      case move       : List[SingleMoveResult]  =>    chessObject.setSingleMoveResults(JavaConverters.seqAsJavaList(move))
     }
     chessObject
   }
@@ -40,14 +39,12 @@ object ChessScheduler {
     val chessEngineList: Seq[String] = JavaConverters.asScalaBuffer(chessObject.getChessGameName)
     val chessEloList: Seq[EngineEloPair] = JavaConverters.asScalaBuffer(chessObject.getChessGamesEloValue)
 
-    val actor: ActorRef = GameShaper.defineNewGameWithThoseEngine(typeOfGame, isSingleMove, chessEngineList, chessEloList)
-    GameShaper.startGameWithTimeOutRule(actor, timeout, chessboard) match {
-      case gameResult : String => {
-        chessObject.setAnswer(gameResult)
-      }
-      case move : List[SingleMoveResult] => {
-        chessObject.setSingleMoveResults(JavaConverters.seqAsJavaList(move))
-      }
+    val gameShaper = new GameShaper()
+    val actor: ActorRef = gameShaper.defineNewGameWithThoseEngine(typeOfGame, isSingleMove, chessEngineList, chessEloList)
+
+    gameShaper.startGameWithTimeOutRule(actor, timeout, chessboard) match {
+      case gameResult : String                  =>    chessObject.setAnswer(gameResult)
+      case move       : List[SingleMoveResult]  =>    chessObject.setSingleMoveResults(JavaConverters.seqAsJavaList(move))
     }
     chessObject
   }

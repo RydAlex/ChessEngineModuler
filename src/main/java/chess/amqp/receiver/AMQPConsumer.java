@@ -49,28 +49,37 @@ public class AMQPConsumer {
                         String message = new String(body,"UTF-8");
                         ChessJSONObject chessObject = ChessJSONReader.readDataFromJson(message);
                         log.info("I process " + chessObject.getChessGameName() + " with fen " + chessObject.getFen());
-                        if(chessObject.getDepth() != null) {
-                            response = ChessScheduler.startGameWithDepthRule(chessObject);
-                        }
-                        else if(chessObject.getTimeout() != null) {
-                            response = ChessScheduler.startGameWithTimeoutRule(chessObject);
-                        } else {
-                            response = null;
-                        }
+//                        if(chessObject.getDepth() != null) {
+//                            response = ChessScheduler.startGameWithDepthRule(chessObject);
+//                        }
+//                        else if(chessObject.getTimeout() != null) {
+//                            response = ChessScheduler.startGameWithTimeoutRule(chessObject);
+//                        } else {
+//                            response = null;
+//                        }
+                        response = chessObject;
+                        response.setAnswer("1");
                         log.info("I have message ready To Parse And Send");
                         answer = ChessJSONCreator.createChessJsonFromObject(response);
                         System.gc();
-                    }
-                    catch (RuntimeException e){
+                    } catch (RuntimeException e){
                         System.out.println(" [.] " + e.toString());
-                    }
-                    finally {
-                        try{
-                            channel.basicPublish("", properties.getReplyTo(), replyProps, answer.getBytes("UTF-8"));
-                            channel.basicAck(envelope.getDeliveryTag(), false);
-                            System.gc();
-                        } catch (Exception e){
-                            System.out.println("I had problem with messeging back the answer");
+                    } finally {
+                        for(int i=0; i<3; i++){
+                            try{
+                                channel.basicPublish("", properties.getReplyTo(), replyProps, answer.getBytes("UTF-8"));
+                                channel.basicAck(envelope.getDeliveryTag(), false);
+                                break;
+                            } catch (Exception e){
+                                System.out.println("I had problem with messaging back the answer");
+                                log.info(e.getMessage());
+                                try {
+                                    Thread.sleep(30000);
+                                } catch (InterruptedException e1) {
+                                    System.out.println("what the heck? Even sleep broke O.o ");
+                                    log.info(e.getMessage());
+                                }
+                            }
                         }
                     }
                 }
