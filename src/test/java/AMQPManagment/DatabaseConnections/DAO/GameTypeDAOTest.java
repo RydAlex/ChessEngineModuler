@@ -1,6 +1,7 @@
 package AMQPManagment.DatabaseConnections.DAO;
 
-import AMQPManagment.DatabaseConnections.Entities.DepthWith2MoreEloUseWinLose;
+import chess.database.dao.DepthWith2MoreEloUseWinLoseDAO;
+import chess.database.entities.DepthWith2MoreEloUseWinLose;
 import org.junit.Test;
 
 /**

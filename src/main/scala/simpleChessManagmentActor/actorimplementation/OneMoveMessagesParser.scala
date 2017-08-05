@@ -1,6 +1,6 @@
 package simpleChessManagmentActor.actorimplementation
 
-import AMQPManagment.utils.data.SingleMoveResult
+import chess.amqp.message.SingleMoveResult
 import com.typesafe.scalalogging.Logger
 
 import scala.collection.mutable.ListBuffer

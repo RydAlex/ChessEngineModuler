@@ -1,0 +1,26 @@
+<!DOCTYPE HTML>
+<html ng-app="app">
+<head>
+    <link rel="stylesheet" type="text/css" href="lib/chessboardjs/css/chessboard-0.3.0.min.css">
+    <link rel="stylesheet" type="text/css" href="lib/bootstrap/css/bootstrap.min.css">
+    <link rel="stylesheet" type="text/css" href="lib/bootstrap/css/bootstrap-theme.min.css">
+    <link rel="stylesheet" type="text/css" href="app/style/main.css">
+    <script src="lib/jquery/jquery.js"></script>
+    <script src="lib/bootstrap/js/bootstrap.min.js"></script>
+    <script src="node_modules/angular/angular.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/chess.js/0.10.2/chess.js"></script>
+    <script src="lib/chessboardjs/js/chessboard-0.3.0.min.js"></script>
+    <script src="lib/plotly.min.js"></script>
+    <script src="app/app.js"></script>
+    <script src="app/common/navbar/navbar.controller.js"></script>
+    <script src="app/common/navbar/navbar.directive.js"></script>
+    <script src="app/modules/chessboardMain/chessboard/chessboard.controller.js"></script>
+    <script src="app/modules/chessboardMain/chessboard/chessboard.directive.js"></script>
+    <title>Getting Started: Serving Web Content</title>
+    <meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
+</head>
+<body>
+    <navbar tab="1"></navbar>
+    <chess-board></chess-board>
+</body>
+</html>

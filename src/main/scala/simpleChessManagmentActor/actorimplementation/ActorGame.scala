@@ -1,10 +1,9 @@
 package simpleChessManagmentActor.actorimplementation
 
-import AMQPManagment.utils.TypeOfMessageExtraction
-import AMQPManagment.utils.data.{EngineEloPair, SingleMoveResult}
 import akka.actor._
 import akka.event.Logging
-import engineprocessor.core.enginemechanism.FenGenerator
+import chess.amqp.message.{EngineEloPair, SingleMoveResult, TypeOfMessageExtraction}
+import chess.engine.processor.core.enginemechanism.FenGenerator
 
 import scala.collection.mutable.ListBuffer
 import scala.util.Random
@@ -50,9 +49,9 @@ class ActorGame(system: ActorSystem, name: Seq[String], elo: Seq[EngineEloPair])
       if(isCheckmate) {
         log.info(name + " - " + answer.engineName + " LOST!")
         if(activeListOne){
-          self ! EndGame(1) // First Players Win Game
+          self ! EndGame(2) // Second Players Win Game
         } else {
-          self ! EndGame(2) // Second Player Win Game
+          self ! EndGame(1) // First Player Win Game -
         }
       }
       else {
@@ -187,47 +186,16 @@ class ActorGame(system: ActorSystem, name: Seq[String], elo: Seq[EngineEloPair])
 
   def extractMoveWhichShouldBeTakenInThisGame(): MessageBack = {
     var answer :MessageBack = null
+    val messageExtractionMethods = new MessageExtractionMethods(name,answers,elo)
     if (typeOfGame.equals(TypeOfMessageExtraction.RANDOM)) {
-      answer = extractMessageInARandomApproach()
+      answer = messageExtractionMethods.extractMessageInARandomApproach()
     } else if (typeOfGame.equals(TypeOfMessageExtraction.ELO_SIMPLE)) {
-      answer = extractMessageInAEloSimpleApproach()
+      answer = messageExtractionMethods.extractMessageInAEloSimpleApproach()
     } else if (typeOfGame.equals(TypeOfMessageExtraction.ELO_VOTE_WITH_ELO)) {
-      answer = extractMessageInAEloVotingApproach()
+      answer = messageExtractionMethods.extractMessageInAEloVotingApproach()
     } else if (typeOfGame.equals(TypeOfMessageExtraction.ELO_VOTE_WITH_DISTRIBUTION)) {
-      answer = extractMessageInAEloDistributionApproach()
+      answer = messageExtractionMethods.extractMessageInAEloDistributionApproach()
     }
-    answer
-  }
-
-  def extractMessageInAEloSimpleApproach(): MessageBack = {
-    var eloOfActualMessage = 0
-    var chosenMessage: MessageBack = null
-    for(message <- answers){
-      for(engineEloVal <- elo){
-        if(engineEloVal.getEngineName.equals(message.engineName)){
-          if(engineEloVal.getEloValue > eloOfActualMessage){
-            //TODO: Add Trend recognition
-            chosenMessage = message
-            eloOfActualMessage = engineEloVal.getEloValue
-          }
-        }
-      }
-    }
-    return chosenMessage
-  }
-
-  def extractMessageInAEloVotingApproach(): MessageBack = {
-    null
-  }
-
-  def extractMessageInAEloDistributionApproach(): MessageBack = {
-    null
-  }
-
-  def extractMessageInARandomApproach() : MessageBack = {
-    val randomNumber = Random.nextInt(answers.length)
-    log.info(name + " answer is taken from " + answers(randomNumber).engineName)
-    val answer = answers(randomNumber)
     answer
   }
 
