@@ -13,6 +13,9 @@ public class EloAlgorithm {
     }
 
     public static Integer calculateEloDelta(Integer myRating, Integer opponentRating, EloGameResultValue result){
+        if(result == EloGameResultValue.DRAW) {
+            return 0;
+        }
         Double myChanceToWin = 1 / (1 + Math.pow(10, (opponentRating - myRating) / 400.0));
         Long eloDelta = Math.round(getKFactor(myRating) * (result.getValue() - myChanceToWin));
         return eloDelta.intValue();
