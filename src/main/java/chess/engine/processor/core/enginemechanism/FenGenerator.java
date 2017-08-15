@@ -79,7 +79,9 @@ public class FenGenerator {
             }
             String figure = chessBoard.get(from);
             String figureTo = chessBoard.get(to);
-            isMoveExistForActivePlayer(move);
+            if(isMoveExistForActivePlayer(move)){
+                throw new Exception("Error while parsing move from engine --> " + move);
+            }
             isEnPessant(figure,from, to);
             chessBoard.put(to, figure);
             chessBoard.put(from, null);
@@ -106,12 +108,16 @@ public class FenGenerator {
     }
 
     public boolean isMoveExistForActivePlayer(String move) {
-        String figure = chessBoard.get(move.substring(0, 2));
-        boolean uppercase = Character.isUpperCase(figure.codePointAt(0));
-        if(uppercase && isWhiteActive){
-            return true;
-        } else if(!uppercase && !isWhiteActive){
-            return true;
+        if(move != null){
+            String figure = chessBoard.get(move.substring(0, 2));
+            if(figure != null){
+                boolean uppercase = Character.isUpperCase(figure.codePointAt(0));
+                if(uppercase && isWhiteActive){
+                    return true;
+                } else if(!uppercase && !isWhiteActive){
+                    return true;
+                }
+            }
         }
         return false;
     }

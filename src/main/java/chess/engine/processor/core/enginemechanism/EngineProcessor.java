@@ -6,6 +6,8 @@ import java.io.IOException;
 import java.io.PrintWriter;
 import java.util.Scanner;
 
+import static java.lang.Thread.sleep;
+
 /**
  * Class which allow communicate in and out with engine
  * Created by aleksanderr on 26/04/16.
@@ -72,7 +74,7 @@ public class EngineProcessor {
 
         int i=0;
         while (i<=3 && !(isEngineProcessorWorkFully() && commandQuery.isMsgWasSendToEngine("Initialize"))){
-            Thread.sleep(1000);
+            sleep(1000);
             i++;
         }
         return commandQuery;
