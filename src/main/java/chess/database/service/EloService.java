@@ -41,7 +41,7 @@ public class EloService {
             }
             //Add new current elo
             currentElo = new CurrentElo();
-            currentElo.setEloValue(1000);
+            currentElo.setEloValue(1500);
             currentElo.setEngineNameId(engineNameEntity);
             currElo.save(currentElo);
         } else {

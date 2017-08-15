@@ -7,3 +7,6 @@ CREATE TABLE VotingStats(
   vote_amount                         INTEGER                         NOT NULL,
   engine_name_id                      INTEGER          REFERENCES     EngineName (ID)
 );
+
+DROP INDEX public.enginename_engine_name_key RESTRICT;
+ALTER TABLE public.enginename DROP CONSTRAINT enginename_engine_name_key;

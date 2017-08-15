@@ -40,39 +40,35 @@ public class EngineProcessor {
         commandQuery = new CommandQuery(this);
 
         // Receive message
-        new Thread() {
-            public void run() {
-                while (engineProcess.isAlive())
-                {
-                    readingFromEngine = true;
-                    while (input.hasNextLine()) {
-                        String resultLine = input.nextLine();
-                        //log.info(resultLine);
-                        commandQuery.setResultOfCommand(resultLine);
-                    }
-                }
-                input.close();
-                //log.info("Slave just finish connection with Engine");
-            }
-        }.start();
+        new Thread(() -> {
+			while (engineProcess.isAlive())
+			{
+				readingFromEngine = true;
+				while (input.hasNextLine()) {
+					String resultLine = input.nextLine();
+					//log.info(resultLine);
+					commandQuery.setResultOfCommand(resultLine);
+				}
+			}
+			input.close();
+			//log.info("Slave just finish connection with Engine");
+		}).start();
 
         // Sending message
-        new Thread() {
-            public void run() {
-                while(engineProcess.isAlive())
-                {
-                    sendingToEngine = true;
-                    String command = null;
-                    while(command == null){
-                        command = commandQuery.getCommand();
-                    }
-                    output.println(command);
-                    output.flush();
-                }
-                output.close();
-                //log.info("Slave just finish connection with Engine");
-            }
-        }.start();
+        new Thread(() -> {
+			while(engineProcess.isAlive())
+			{
+				sendingToEngine = true;
+				String command = null;
+				while(command == null){
+					command = commandQuery.getCommand();
+				}
+				output.println(command);
+				output.flush();
+			}
+			output.close();
+			//log.info("Slave just finish connection with Engine");
+		}).start();
 
         int i=0;
         while (i<=3 && !(isEngineProcessorWorkFully() && commandQuery.isMsgWasSendToEngine("Initialize"))){
