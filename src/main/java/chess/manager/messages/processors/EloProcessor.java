@@ -6,13 +6,21 @@ import chess.amqp.message.ChessJSONObject;
 import chess.amqp.message.EngineEloPair;
 import chess.algorithms.elo.EloGameResultValue;
 
+import java.util.LinkedList;
+import java.util.List;
+
 /**
  * Created by aleksanderr on 09/07/17.
  */
 public class EloProcessor {
+    EloService eloService = new EloService();
+
     public void fetchDataAndUpdateElo(ChessJSONObject answer) {
-        EngineEloPair firstGroupEngineElo = answer.getChessGamesEloValue().get(0);
-        EngineEloPair secondGroupEngineElo = answer.getChessGamesEloValue().get(1);
+        List<String> packPlayNames = createEngineNameEnginesAnswer(answer);
+        EngineEloPair firstGroupEngineElo = new EngineEloPair();
+        firstGroupEngineElo.setEngineName(packPlayNames.get(0));
+        EngineEloPair secondGroupEngineElo = new EngineEloPair();
+        secondGroupEngineElo.setEngineName(packPlayNames.get(1));
 
         getCurrentEloValueForEngineAndSetProperNameOfEngine(firstGroupEngineElo, answer);
         getCurrentEloValueForEngineAndSetProperNameOfEngine(secondGroupEngineElo, answer);
@@ -29,7 +37,7 @@ public class EloProcessor {
                 extractGameResult(answer.getAnswer(), 2)
         );
 
-         EloService.updateEloValueForEntity(
+         eloService.updateEloValueForEntity(
                 firstGroupEngineElo.getEngineName(),
                 answer.getTypeOfGame(),
                 firstGroupEngineElo.getEloValue(),
@@ -37,13 +45,35 @@ public class EloProcessor {
                 extractGameResult(answer.getAnswer(), 1).isWin()
         );
 
-        EloService.updateEloValueForEntity(
+        eloService.updateEloValueForEntity(
                 secondGroupEngineElo.getEngineName(),
                 answer.getTypeOfGame(),
                 secondGroupEngineElo.getEloValue(),
                 newRatingOfSecondGroup,
                 extractGameResult(answer.getAnswer(), 2).isWin()
         );
+    }
+
+    public List<String> createEngineNameEnginesAnswer(ChessJSONObject answer){
+        List<String> enginesNames = new LinkedList<>();
+        Integer enginesGroupSize = answer.getChessGameName().size()/2;
+        String pack_one = "", pack_two = "";
+        for(int i=0 ; i<answer.getChessGameName().size() ; i++){
+            if(i<enginesGroupSize){
+                if(!pack_one.isEmpty()){
+                    pack_one += "_";
+                }
+                pack_one += answer.getChessGameName().get(i);
+            } else {
+                if(!pack_two.isEmpty()){
+                    pack_two += "_";
+                }
+                pack_two += answer.getChessGameName().get(i);
+            }
+        }
+        enginesNames.add(pack_one);
+        enginesNames.add(pack_two);
+        return enginesNames;
     }
 
     private void getCurrentEloValueForEngineAndSetProperNameOfEngine(EngineEloPair groupEngineElo, ChessJSONObject answer) {
@@ -56,7 +86,7 @@ public class EloProcessor {
         groupEngineElo.setEngineName(groupEngineElo.getEngineName()+nameSufix);
 
         groupEngineElo.setEloValue(
-            EloService.getEloValuesForEngineWithType(
+                eloService.getEloValuesForEngineWithType(
                 groupEngineElo.getEngineName(),
                 answer.getTypeOfGame()
             )

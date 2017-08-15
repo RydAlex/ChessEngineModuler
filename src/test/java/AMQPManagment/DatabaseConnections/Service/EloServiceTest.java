@@ -8,14 +8,15 @@ import org.junit.Test;
  * Created by aleksanderr on 08/07/17.
  */
 public class EloServiceTest {
+    EloService eloService = new EloService();
 
     @Test
     public void CheckIfEloCanBeFetchedFromDatabase(){
-        Integer integerVal = EloService.getEloValuesForEngineWithType("daydreamer", TypeOfMessageExtraction.ELO_SIMPLE);
+        Integer integerVal = eloService.getEloValuesForEngineWithType("daydreamer", TypeOfMessageExtraction.ELO_SIMPLE);
     }
 
     @Test
     public void CheckIfEloCanBeUpdatedInDatabase(){
-        EloService.updateEloValueForEntity("gull",TypeOfMessageExtraction.ELO_SIMPLE,1000,1030,true);
+        eloService.updateEloValueForEntity("gull",TypeOfMessageExtraction.ELO_SIMPLE,1000,1030,true);
     }
 }

@@ -17,3 +17,8 @@ SELECT *
       LIMIT 4;
 
 
+SELECT *
+  FROM enginename
+    INNER JOIN currentelo ON enginename.id = currentelo.engine_name_id
+      WHERE engine_name LIKE '%3'
+        ORDER BY currentelo.elo_value ASC

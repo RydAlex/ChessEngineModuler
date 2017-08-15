@@ -191,6 +191,7 @@ public class CommandQuery {
             sleep(1000);
             if(retryWait >= timeout){
                 commandList.add("quit");
+                Thread.sleep(1000);
                 break;
             }
             retryWait += 1000;
@@ -199,7 +200,20 @@ public class CommandQuery {
 
 
     private void destroyEngineInside(){
-        engineHandler.brutallyKillEngine();
+        int i=0;
+        while(engineHandler.isEngineStillWork()){
+            i++;
+            engineHandler.brutallyKillEngine();
+            if(i%10==0){
+                log.info("Waited " + (i/10)*5 + " sec for now to see if engine is killed for sure");
+            }
+            try {
+                // wait to be sure engine is killed.
+                Thread.sleep(500);
+            } catch (InterruptedException e) {
+                e.printStackTrace();
+            }
+        }
     }
 
 }

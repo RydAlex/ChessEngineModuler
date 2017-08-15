@@ -3,11 +3,12 @@ package simpleChessManagmentActor.actorimplementation
 import chess.amqp.message.EngineEloPair
 import com.typesafe.scalalogging.Logger
 import utils.VotingHolder
+import scala.util.control.Breaks._
 
 import scala.collection.mutable.ListBuffer
 import scala.util.Random
 
-class MessageExtractionMethods(name: Seq[String], answers :ListBuffer[MessageBack], elo: Seq[EngineEloPair] ) {
+class MessageExtractionMethods(answers :ListBuffer[MessageBack], elo: Seq[EngineEloPair] ) {
 
   val log = Logger("MessageExtractionMethods")
 
@@ -18,7 +19,6 @@ class MessageExtractionMethods(name: Seq[String], answers :ListBuffer[MessageBac
       elo.foreach(engineEloVal => {
         if(engineEloVal.getEngineName.equals(message.engineName)){
           if(engineEloVal.getEloValue > eloOfActualMessage){
-            //TODO: Add Trend recognition
             chosenMessage = message
             eloOfActualMessage = engineEloVal.getEloValue
           }
@@ -32,34 +32,43 @@ class MessageExtractionMethods(name: Seq[String], answers :ListBuffer[MessageBac
     var messageToReturn: MessageBack = null
     var elements = ListBuffer[VotingHolder]()
     for(message <- answers){
-      for(engineEloVal <- elo) {
-        if(engineEloVal.getEngineName.equals(message.engineName)){
-          var isFound = false
-          for(element <- elements){
-            if(element.voteMessage.message.equals(message.message)){
-              element.voteWeight += engineEloVal.getEloValue
-              isFound = true
+      breakable {
+        for (engineEloVal <- elo) {
+          if (engineEloVal.getEngineName.equals(message.engineName)) {
+            var isFound = false
+            for (element <- elements) {
+              if (element.voteMessage.message.equals(message.message)) {
+                element.voteMessage.engineName = element.voteMessage.engineName + "_" + message.engineName
+                element.voteWeight += engineEloVal.getEloValue
+                isFound = true
+
+              }
             }
-          }
-          if(!isFound){
-            var messageWithWeight = new VotingHolder(message, engineEloVal.getEloValue)
-            elements += messageWithWeight
+            if (!isFound) {
+              var messageWithWeight = new VotingHolder(message, engineEloVal.getEloValue)
+              elements += messageWithWeight
+            }
+            break
           }
         }
       }
     }
     messageToReturn = elements.minBy(- _.voteWeight).voteMessage
+    log.info("ELO VOTE MODE: answer: " + messageToReturn)
     messageToReturn
   }
 
   def extractMessageInAEloDistributionApproach(): MessageBack = {
     var seed = 0
-    var eloPairs  = Seq[EngineEloPair]()
-    for(message <- answers){
-      for(engineEloVal <- elo){
-        if(engineEloVal.getEngineName.equals(message.engineName)){
-          eloPairs :+ engineEloVal
-          seed += engineEloVal.getEloValue
+    var eloPairs  = ListBuffer[EngineEloPair]()
+    for(answer <- answers){
+      breakable {
+        for(engineEloVal <- elo){
+          if(engineEloVal.getEngineName.equals(answer.engineName)){
+            eloPairs += engineEloVal
+            seed += engineEloVal.getEloValue
+            break
+          }
         }
       }
     }
@@ -74,6 +83,7 @@ class MessageExtractionMethods(name: Seq[String], answers :ListBuffer[MessageBac
       if(valueOfRandomEloDist < enginesElo.getEloValue){
         for(message <- answers){
           if(enginesElo.getEngineName.equals(message.engineName)){
+            log.info("ELO DIST MODE -> choosen msg: " + message)
             return message
           }
         }
@@ -86,9 +96,14 @@ class MessageExtractionMethods(name: Seq[String], answers :ListBuffer[MessageBac
 
   def extractMessageInARandomApproach() : MessageBack = {
     val randomNumber = Random.nextInt(answers.length)
-    log.info(name + " answer is taken from " + answers(randomNumber).engineName)
-    val answer = answers(randomNumber)
-    answer
+    log.info("RANDOM MODE answer: " +answers(randomNumber) )
+    //strange for caused by that answers and names are set in different order
+    for(engineMessage <- answers){
+      if(engineMessage.engineName.equals(answers(randomNumber).engineName)){
+        return engineMessage
+      }
+    }
+    null
   }
 
 }
