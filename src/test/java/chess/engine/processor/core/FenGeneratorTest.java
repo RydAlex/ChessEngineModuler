@@ -53,6 +53,15 @@ public class FenGeneratorTest {
     }
 
     @Test
+    public void isMoveExistForActivePlayer(){
+        assertFalse(fenGen.isMoveExistForActivePlayer(null)); // null
+        assertFalse(fenGen.isMoveExistForActivePlayer("a7a6")); // invalidMove cause other player
+        assertFalse(fenGen.isMoveExistForActivePlayer("d4e4")); // invalidMove cause not exist
+        assertTrue(fenGen.isMoveExistForActivePlayer("a2a4")); // validMove
+    }
+
+
+    @Test
     public void isCheckmateCanBeDetected(){
         assertTrue(fenGen.isMoveACheckmate(""));
         assertTrue(fenGen.isMoveACheckmate("a1a1"));
