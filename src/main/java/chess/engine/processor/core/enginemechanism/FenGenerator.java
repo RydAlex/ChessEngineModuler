@@ -79,7 +79,7 @@ public class FenGenerator {
             }
             String figure = chessBoard.get(from);
             String figureTo = chessBoard.get(to);
-            if(isMoveExistForActivePlayer(move)){
+            if(!isMoveExistForActivePlayer(move)){
                 throw new Exception("Error while parsing move from engine --> " + move);
             }
             isEnPessant(figure,from, to);
