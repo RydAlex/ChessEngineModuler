@@ -29,7 +29,7 @@ public class AMQPConsumer {
             connection = factory.newConnection();
             Channel channel = connection.createChannel();
 
-            channel.queueDeclare(chess_rpc_queue, false, false, false, null);
+            channel.queueDeclare(chess_rpc_queue, true, false, false, null);
             channel.basicQos(1);
 
             System.out.println(" [x] Awaiting RPC requests");
@@ -57,16 +57,23 @@ public class AMQPConsumer {
                         } else {
                             response = null;
                         }
+//                        response = chessObject;
+//                        response.setAnswer("1");
+//                        List<GameVotingStats> gameVotingStatsList = new LinkedList<>();
+//                        gameVotingStatsList.add(new GameVotingStats("aha",2));
+//                        gameVotingStatsList.add(new GameVotingStats("nah",5));
+//                        gameVotingStatsList.add(new GameVotingStats("mhm",5));
+//                        response.setEngineNamesVotesMap(gameVotingStatsList);
+
                         log.info("I have message ready To Parse And Send");
                         answer = ChessJSONCreator.createChessJsonFromObject(response);
                         System.gc();
                     } catch (RuntimeException e){
                         System.out.println(" [.] " + e.toString());
                     } finally {
-                        for(int i=0; i<3; i++){
+                        for(int i=0; i<10; i++){
                             try{
                                 channel.basicPublish("", properties.getReplyTo(), replyProps, answer.getBytes("UTF-8"));
-                                channel.basicAck(envelope.getDeliveryTag(), false);
                                 break;
                             } catch (Exception e){
                                 System.out.println("I had problem with messaging back the answer");
@@ -79,6 +86,7 @@ public class AMQPConsumer {
                                 }
                             }
                         }
+                        channel.basicAck(envelope.getDeliveryTag(), false);
                     }
                 }
             };

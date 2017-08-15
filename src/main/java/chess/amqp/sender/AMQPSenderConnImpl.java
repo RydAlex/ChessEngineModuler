@@ -39,7 +39,7 @@ class AMQPSenderConnImpl {
 
         replyQueueName = channel.queueDeclare().getQueue();
 
-        channel.queueDeclare(chess_rpc_queue, false, false, false, null);
+        channel.queueDeclare(chess_rpc_queue, true, false, false, null);
         channel.basicQos(1);
     }
 

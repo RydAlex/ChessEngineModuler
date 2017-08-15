@@ -16,7 +16,9 @@ import java.util.List;
         "timeout",
         "fen",
         "typeOfGame",
-        "answer"
+        "answer",
+        "chessGamesEloValue",
+        "engineNamesVotesMap"
 })
 public class ChessJSONObject {
 
@@ -24,6 +26,8 @@ public class ChessJSONObject {
     private List<String> chessGameName;
     @JsonProperty("chessGamesEloValue")
     private List<EngineEloPair> chessGamesEloValue;
+    @JsonProperty("engineNamesVotesMap")
+    private List<GameVotingStats> engineNamesVotesMap = null;
     @JsonProperty("singleMoveResults")
     private List<SingleMoveResult> singleMoveResults = null;
     @JsonProperty("depth")
@@ -38,7 +42,6 @@ public class ChessJSONObject {
     private TypeOfMessageExtraction typeOfGame;
     @JsonProperty("answer")
     private String answer;
-
 
     public List<String> getChessGameName() {
         return chessGameName;
@@ -96,9 +99,7 @@ public class ChessJSONObject {
         this.typeOfGame = typeOfGame;
     }
 
-    public String getAnswer() {
-        return answer;
-    }
+    public String getAnswer() { return answer; }
 
     public void setAnswer(String answer) {
         this.answer = answer;
@@ -110,5 +111,13 @@ public class ChessJSONObject {
 
     public void setChessGamesEloValue(List<EngineEloPair> chessGamesEloValue) {
         this.chessGamesEloValue = chessGamesEloValue;
+    }
+
+    public List<GameVotingStats> getEngineNamesVotesMap() {
+        return engineNamesVotesMap;
+    }
+
+    public void setEngineNamesVotesMap(List<GameVotingStats> engineNamesVotesMap) {
+        this.engineNamesVotesMap = engineNamesVotesMap;
     }
 }

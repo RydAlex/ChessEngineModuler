@@ -21,7 +21,7 @@ public class CurrentElo {
     @Column(name = "elo_value", nullable = false)
     private Integer eloValue;
 
-    @OneToOne(cascade = CascadeType.REFRESH)
+    @ManyToOne(cascade = CascadeType.REFRESH)
     @JoinColumn(name = "engine_name_id")
     private EngineName engineNameId;
 }

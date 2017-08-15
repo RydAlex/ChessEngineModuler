@@ -22,15 +22,15 @@ public class EloService {
 //    }
 
     @Transactional
-    public static Integer getEloValuesForEngineWithType(String engineName, TypeOfMessageExtraction type) {
+    public Integer getEloValuesForEngineWithType(String engineName, TypeOfMessageExtraction type) {
         CurrentEloDAO currElo = new CurrentEloDAO();
-        List<CurrentElo> currentEloList = currElo.findByEngineName(engineName);
+        List<CurrentElo> currentEloList = currElo.findByEngineName(engineName, type);
         CurrentElo currentElo = null;
         EngineName engineNameEntity = null;
         if(currentEloList.isEmpty()){
             //Add new engine to engine name
             EngineNameDAO engineNameDAO = new EngineNameDAO();
-            List<EngineName> engineNameEntitiesList = engineNameDAO.findByName(engineName);
+            List<EngineName> engineNameEntitiesList = engineNameDAO.findByNameAndType(engineName,type.getTypeOfGame());
             if(engineNameEntitiesList.isEmpty()) {
                 engineNameEntity = new EngineName();
                 engineNameEntity.setEngineName(engineName);
@@ -51,7 +51,8 @@ public class EloService {
         return currentElo.getEloValue();
     }
 
-    public static void updateEloValueForEntity(String engineName, TypeOfMessageExtraction type, Integer oldElo, Integer newElo, Boolean isWin) {
+    @Transactional
+    public void updateEloValueForEntity(String engineName, TypeOfMessageExtraction type, Integer oldElo, Integer newElo, Boolean isWin) {
         //Znajdz silnik
         EngineNameDAO engineNameDAO = new EngineNameDAO();
         EngineName engineNameEntity = engineNameDAO.findByNameAndType(engineName, type.getTypeOfGame()).get(0);
@@ -66,9 +67,10 @@ public class EloService {
 
         //Wpisz nowe Elo do CurrentElo
         CurrentEloDAO currentEloDAO = new CurrentEloDAO();
-        CurrentElo currentElo = currentEloDAO.findByEngineName(engineName).get(0);
+        CurrentElo currentElo = currentEloDAO.findByEngineName(engineName,type).get(0);
         currentElo.setEloValue(newElo);
         currentEloDAO.edit(currentElo);
+
 
     }
 }

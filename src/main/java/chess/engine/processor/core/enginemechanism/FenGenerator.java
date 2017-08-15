@@ -79,7 +79,7 @@ public class FenGenerator {
             }
             String figure = chessBoard.get(from);
             String figureTo = chessBoard.get(to);
-            isMoveExistForActivePlayer(figure);
+            isMoveExistForActivePlayer(move);
             isEnPessant(figure,from, to);
             chessBoard.put(to, figure);
             chessBoard.put(from, null);
@@ -105,7 +105,8 @@ public class FenGenerator {
         return false;
     }
 
-    private boolean isMoveExistForActivePlayer(String figure) {
+    public boolean isMoveExistForActivePlayer(String move) {
+        String figure = chessBoard.get(move.substring(0, 2));
         boolean uppercase = Character.isUpperCase(figure.codePointAt(0));
         if(uppercase && isWhiteActive){
             return true;
@@ -116,11 +117,7 @@ public class FenGenerator {
     }
 
     public boolean isMoveACheckmate(String move){
-        if((move == null) ||
-            move.equals("null") ||
-            move.equals("NULL") ||
-            move.equals("(none)") ||
-            move.equals("")){
+        if((move == null) || move.equals("null") || move.equals("NULL") || move.equals("(none)") || move.equals("0000") || move.equals("")){
             return true;
         }
         String from = move.substring(0,2);

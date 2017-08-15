@@ -28,6 +28,14 @@ class MessageExtractionMethodsTest extends FunSpec with BeforeAndAfter {
         eloList :+= engineEloElement
         eloValue += 200
       })
+
+      names.foreach(name => {
+        var engineEloElement = new EngineEloPair()
+        engineEloElement.setEloValue(eloValue)
+        engineEloElement.setEngineName(name)
+        eloList :+= engineEloElement
+        eloValue -= 200
+      })
       eloList
     }
 
@@ -42,7 +50,7 @@ class MessageExtractionMethodsTest extends FunSpec with BeforeAndAfter {
 
   describe("Elo Voting extract works fine") {
     it("and it extract two lower elo with same option") {
-      val messageExtractionMethods = new MessageExtractionMethods(names,answers,elo)
+      val messageExtractionMethods = new MessageExtractionMethods(answers,elo)
       var message = messageExtractionMethods.extractMessageInAEloVotingApproach()
       assert(message.message === "a")
     }
@@ -50,7 +58,7 @@ class MessageExtractionMethodsTest extends FunSpec with BeforeAndAfter {
 
   describe("Elo Simple extract works fine") {
     it("cause it gets highest elo value"){
-      val messageExtractionMethods = new MessageExtractionMethods(names,answers,elo)
+      val messageExtractionMethods = new MessageExtractionMethods(answers,elo)
       var message = messageExtractionMethods.extractMessageInAEloSimpleApproach()
       assert(message.message === "c")
     }
@@ -58,15 +66,15 @@ class MessageExtractionMethodsTest extends FunSpec with BeforeAndAfter {
 
   describe("Random Approach extract works fine") {
     it("cause it takes random value"){
-      val messageExtractionMethods = new MessageExtractionMethods(names,answers,elo)
+      val messageExtractionMethods = new MessageExtractionMethods(answers,elo)
       var message = messageExtractionMethods.extractMessageInARandomApproach()
     }
   }
 
   describe("Elo Distribution extract works fine") {
     it("cause it takes exact value as it should") {
-      val messageExtractionMethods = new MessageExtractionMethods(names, answers, elo)
-      var message = messageExtractionMethods.decideWhichEloShouldBeGet(elo, 1000)
+      val messageExtractionMethods = new MessageExtractionMethods(answers, elo)
+      var message = messageExtractionMethods.decideWhichEloShouldBeGet(elo, 500)
       assert(message.message === "b")
 
       message = messageExtractionMethods.decideWhichEloShouldBeGet(elo, 2000)
@@ -74,7 +82,7 @@ class MessageExtractionMethodsTest extends FunSpec with BeforeAndAfter {
     }
 
     it("cause it extract value on narrow points") {
-      val messageExtractionMethods = new MessageExtractionMethods(names, answers, elo)
+      val messageExtractionMethods = new MessageExtractionMethods(answers, elo)
       var message = messageExtractionMethods.decideWhichEloShouldBeGet(elo, 999)
       assert(message.message === "b")
 

@@ -18,12 +18,6 @@ import java.util.List;
  * Created by aleksanderr on 25/07/17.
  */
 
-//TODO: Uporzadkowac
-// TODO: Napisac dla ostatniego elementu i dla current Elo
-//  TODO: Sprawdzic na malym tescie danych na bazie darmowej
-//   TODO: ZASTPOWAC SILNIKI
-//    TODO: Odpalic!
-
 public class ReverseTheEloResult {
 
     public static void main(String ...args){
