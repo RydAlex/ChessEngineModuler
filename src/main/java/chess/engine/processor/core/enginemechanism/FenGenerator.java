@@ -79,7 +79,9 @@ public class FenGenerator {
             }
             String figure = chessBoard.get(from);
             String figureTo = chessBoard.get(to);
-            isMoveExistForActivePlayer(figure);
+            if(!isMoveExistForActivePlayer(move)){
+                throw new Exception("Error while parsing move from engine --> " + move);
+            }
             isEnPessant(figure,from, to);
             chessBoard.put(to, figure);
             chessBoard.put(from, null);
@@ -105,22 +107,23 @@ public class FenGenerator {
         return false;
     }
 
-    private boolean isMoveExistForActivePlayer(String figure) {
-        boolean uppercase = Character.isUpperCase(figure.codePointAt(0));
-        if(uppercase && isWhiteActive){
-            return true;
-        } else if(!uppercase && !isWhiteActive){
-            return true;
+    public boolean isMoveExistForActivePlayer(String move) {
+        if(move != null){
+            String figure = chessBoard.get(move.substring(0, 2));
+            if(figure != null){
+                boolean uppercase = Character.isUpperCase(figure.codePointAt(0));
+                if(uppercase && isWhiteActive){
+                    return true;
+                } else if(!uppercase && !isWhiteActive){
+                    return true;
+                }
+            }
         }
         return false;
     }
 
     public boolean isMoveACheckmate(String move){
-        if((move == null) ||
-            move.equals("null") ||
-            move.equals("NULL") ||
-            move.equals("(none)") ||
-            move.equals("")){
+        if((move == null) || move.equals("null") || move.equals("NULL") || move.equals("(none)") || move.equals("0000") || move.equals("")){
             return true;
         }
         String from = move.substring(0,2);

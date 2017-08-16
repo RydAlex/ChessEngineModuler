@@ -19,7 +19,7 @@ import scala.util.{Failure, Success}
 
 class GameShaper{
 
-  implicit var timeout: Timeout = Timeout(120 minutes)
+  implicit var timeout: Timeout = Timeout(4 hours)
   val logger = Logger("GameShaper")
   val system = ActorSystem("System")
   var f : Future[Any]= Future(0)
@@ -35,7 +35,7 @@ class GameShaper{
     actor ! StartNewGameWithDepthRule(depth, fenChessboard)
 
     val enginesAnswer = Await.result(f, Duration.Inf) match {
-      case endGame: EndGame => endGame.whoWin.toString
+      case endGame: EndGame => endGame
       case singleMove: SingleMoves => singleMove.singleMoveResult
       case Failure(fail) => logger.info("Failure in Await.result at GameShaper")
     }
@@ -47,7 +47,7 @@ class GameShaper{
     actor ! StartNewGameWithTimeoutRule(timeout, fenChessboard)
 
     val enginesAnswer = Await.result(f, Duration.Inf) match {
-      case endGame: EndGame => endGame.whoWin.toString
+      case endGame: EndGame => endGame
       case singleMove: SingleMoves => singleMove.singleMoveResult
       case Failure(fail) => logger.info("Failure in Await.result at GameShaper")
     }

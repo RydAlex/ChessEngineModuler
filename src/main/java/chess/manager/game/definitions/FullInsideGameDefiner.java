@@ -6,6 +6,7 @@ import chess.amqp.message.TypeOfMessageExtraction;
 import chess.amqp.message.ChessJSONObject;
 import chess.amqp.message.EngineEloPair;
 import chess.engine.processor.core.enginemechanism.FenGenerator;
+import chess.manager.messages.processors.VotingProcessor;
 
 import java.util.List;
 
@@ -15,7 +16,7 @@ import java.util.List;
 public class FullInsideGameDefiner extends GameDefiner {
 
     public void playFullActorDepthGameWithDefinedEnginesNames(List<EngineEloPair> engineEloPairs, int depth, TypeOfMessageExtraction type){
-        FenGenerator fenGenerator = new FenGenerator(); //mate board -> "3Q4/8/4kQ2/6K1/8/6P1/8/8 b - -"
+        FenGenerator fenGenerator = new FenGenerator(); // GAME NEAR TO END - 2 kings 8/8/5K2/8/8/5k2/8/8 w - -
         String fenStringPositions = fenGenerator.returnFenStringPositions();
 
         AMQPSender sender = new AMQPSender();
@@ -31,12 +32,13 @@ public class FullInsideGameDefiner extends GameDefiner {
         System.gc();
 
         extractAndSaveGameResult(answer);
+        saveEnginesVotesStats(answer);
 
         System.gc();
     }
 
     public void playFullActorTimeoutGameWithDefindedEnginesNames(List<EngineEloPair> engineEloPairs, int timeout, TypeOfMessageExtraction type) {
-        FenGenerator fenGenerator = new FenGenerator();
+        FenGenerator fenGenerator = new FenGenerator(); // GAME NEAR TO END - 2 kings 8/8/5K2/8/8/5k2/8/8 w - -
         String fenStringPositions = fenGenerator.returnFenStringPositions();
 
         AMQPSender sender = new AMQPSender();
@@ -52,20 +54,22 @@ public class FullInsideGameDefiner extends GameDefiner {
         System.gc();
 
         extractAndSaveGameResult(answer);
+        saveEnginesVotesStats(answer);
 
         System.gc();
     }
 
-
     private void extractAndSaveGameResult(ChessJSONObject answer) {
         if(answer != null && !answer.getAnswer().equals("-1")){
-            if(answer.getTypeOfGame().equals(TypeOfMessageExtraction.ELO_SIMPLE)) {
-                EloProcessor eloProcessor = new EloProcessor();
-                eloProcessor.fetchDataAndUpdateElo(answer);
-            } else if(answer.getTypeOfGame().equals(TypeOfMessageExtraction.RANDOM)) {
-                EloProcessor eloProcessor = new EloProcessor();
-                eloProcessor.fetchDataAndUpdateElo(answer);
-            }
+            EloProcessor eloProcessor = new EloProcessor();
+            eloProcessor.fetchDataAndUpdateElo(answer);
+        }
+    }
+
+    private void saveEnginesVotesStats(ChessJSONObject answer) {
+        if(answer != null && !answer.getAnswer().equals("-1")) {
+            VotingProcessor votingProcessor = new VotingProcessor();
+            votingProcessor.applyVotesToDatabase(answer);
         }
     }
 

@@ -1,16 +1,18 @@
 package simpleChessManagmentActor.actorimplementation
 
-import chess.amqp.message.{SingleMoveResult, TypeOfMessageExtraction}
+import chess.amqp.message.{SingleMoveResult, TypeOfMessageExtraction, GameVotingStats}
 import chess.engine.processor.core.enginemechanism.FenGenerator
+
+import scala.collection.mutable.ListBuffer
 
 /**
   * Created by aleksanderr on 09/04/17.
   */
 
 
-case class MessageBack(engineName: String, message :String, override val id: String = MessagesDictionary.uuid()) extends IdMessage
+case class MessageBack(var engineName: String,var message :String, override val id: String = MessagesDictionary.uuid()) extends IdMessage
 case class AssumingMessage(override val id: String = MessagesDictionary.uuid()) extends IdMessage
-case class EndGame(whoWin: Integer, override val id: String = MessagesDictionary.uuid()) extends IdMessage
+case class EndGame(whoWin: Integer, decisionMadeInThisGame :ListBuffer[GameVotingStats], override val id: String = MessagesDictionary.uuid()) extends IdMessage
 case class SingleMoves(singleMoveResult: List[SingleMoveResult], override val id: String = MessagesDictionary.uuid()) extends IdMessage
 case class InitGame(typeOfGame: TypeOfMessageExtraction, isSingleMove: Boolean, override val id: String = MessagesDictionary.uuid()) extends IdMessage
 case class StartNewGameWithTimeoutRule(timeout: Int, chessboardFen: String = new FenGenerator().returnFenStringPositions(), override val id: String = MessagesDictionary.uuid()) extends IdMessage

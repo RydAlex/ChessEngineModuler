@@ -2,6 +2,7 @@ package simpleChessManagmentActor
 
 import akka.actor.ActorRef
 import chess.amqp.message.{ChessJSONObject, EngineEloPair, SingleMoveResult, TypeOfMessageExtraction}
+import simpleChessManagmentActor.actorimplementation.EndGame
 
 import scala.collection.JavaConverters
 
@@ -24,7 +25,10 @@ object ChessScheduler {
     val actor: ActorRef = gameShaper.defineNewGameWithThoseEngine(typeOfGame, isSingleMove ,chessEngineList, chessEloList)
 
     gameShaper.startGameWithDepthRule(actor, depth, chessboard) match {
-      case gameResult : String                  =>    chessObject.setAnswer(gameResult)
+      case gameResult : EndGame  =>  {
+          chessObject.setAnswer(gameResult.whoWin.toString)
+          chessObject.setEngineNamesVotesMap(JavaConverters.bufferAsJavaList(gameResult.decisionMadeInThisGame))
+      }
       case move       : List[SingleMoveResult]  =>    chessObject.setSingleMoveResults(JavaConverters.seqAsJavaList(move))
     }
     chessObject
@@ -43,7 +47,10 @@ object ChessScheduler {
     val actor: ActorRef = gameShaper.defineNewGameWithThoseEngine(typeOfGame, isSingleMove, chessEngineList, chessEloList)
 
     gameShaper.startGameWithTimeOutRule(actor, timeout, chessboard) match {
-      case gameResult : String                  =>    chessObject.setAnswer(gameResult)
+      case gameResult : EndGame  =>  {
+        chessObject.setAnswer(gameResult.whoWin.toString)
+        chessObject.setEngineNamesVotesMap(JavaConverters.bufferAsJavaList(gameResult.decisionMadeInThisGame))
+      }
       case move       : List[SingleMoveResult]  =>    chessObject.setSingleMoveResults(JavaConverters.seqAsJavaList(move))
     }
     chessObject

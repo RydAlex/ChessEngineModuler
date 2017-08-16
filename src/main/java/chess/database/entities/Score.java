@@ -21,7 +21,7 @@ public class Score {
     @Id
     @Column(name = "id", nullable = false)
     @GeneratedValue(strategy=GenerationType.SEQUENCE, generator="score_seq")
-    @SequenceGenerator(name="score_seq", sequenceName="score_id_seq", allocationSize=20)
+    @SequenceGenerator(name="score_seq", sequenceName="score_id_seq", allocationSize=1)
     @Access(AccessType.PROPERTY)
     private Integer id;
 

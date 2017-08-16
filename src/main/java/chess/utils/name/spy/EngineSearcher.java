@@ -94,14 +94,16 @@ public class EngineSearcher {
             String cvsSplitBy = ",";
             BufferedReader br = new BufferedReader(new FileReader(csvFile));
             while ((line = br.readLine()) != null) {
-                EnginesCluster cluster = new EnginesCluster();
-                String[] lineItem = line.split(cvsSplitBy);
-                for(int i=0 ; i<4 ; i++){
-                    cluster.addEngineToCluster(lineItem[i]);
+                if(!line.contains("//") && !line.isEmpty()){
+                    EnginesCluster cluster = new EnginesCluster();
+                    String[] lineItem = line.split(cvsSplitBy);
+                    for(int i=0 ; i<4 ; i++){
+                        cluster.addEngineToCluster(lineItem[i]);
+                    }
+                    Integer rule_value = Integer.parseInt(lineItem[4]);
+                    cluster.setPlayRule(rule_value);
+                    listOfEnginesPairsToReturn.add(cluster);
                 }
-                Integer rule_value = Integer.parseInt(lineItem[4]);
-                cluster.setPlayRule(rule_value);
-                listOfEnginesPairsToReturn.add(cluster);
             }
         } catch(Exception ex){
             log.info(ex.getMessage());

@@ -37,7 +37,7 @@ public class EloGamesHistory {
     @Column(name = "is_win")
     private Boolean isWin;
 
-    @OneToOne(cascade = CascadeType.REFRESH)
+    @ManyToOne(cascade = CascadeType.REFRESH)
     @JoinColumn(name = "engine_name_id")
     private EngineName engineNameId;
 

@@ -9,8 +9,10 @@ import chess.utils.parsing.objects.ClusterBattlePairingService;
 import chess.utils.parsing.objects.EnginesCluster;
 import lombok.extern.slf4j.Slf4j;
 
+import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.List;
+import java.util.stream.Stream;
 
 /**
  * Created by aleksanderr on 04/06/17.
@@ -22,8 +24,8 @@ public class GameManager {
         //Learning manager
         FullInsideGameDefiner gameDefiner = new FullInsideGameDefiner();
         while(true){
-            doLearningCallWithEloTypeAndFightOneVsOne(gameDefiner);
-//            doLearningCallForClusters(gameDefiner);
+//            doLearningCallWithEloTypeAndFightOneVsOne(gameDefiner);
+            doLearningCallForClusters(gameDefiner);
         }
     }
 
@@ -35,26 +37,29 @@ public class GameManager {
                 .parallel()
                 .map(EngineEloPairParser::findElosForEnginesInClusters)
                 .forEach(enginesClusters -> {
+                    List<EngineEloPair> processingEngineEloList = new ArrayList<>();
+
                     EnginesCluster cluster = enginesClusters.get(0);
                     log.info("Play Rule: " + cluster.getPlayRule());
                     for(EngineEloPair pair : cluster.getEngineList()){
                         log.info("Engine Name: " + pair.getEngineName() + " Elo Value: " + pair.getEloValue());
                     }
+                    processingEngineEloList.addAll(cluster.getEngineList());
                     cluster = enginesClusters.get(1);
                     log.info("Play Rule: " + cluster.getPlayRule());
                     for(EngineEloPair pair : cluster.getEngineList()){
                         log.info("Engine Name: " + pair.getEngineName() + " Elo Value: " + pair.getEloValue());
                     }
+                    processingEngineEloList.addAll(cluster.getEngineList());
+
                     if(cluster.getRuleType().equals("timeout")){
-                        gameDefiner.playFullActorTimeoutGameWithDefindedEnginesNames(cluster.getEngineList(), cluster.getRuleValue(), TypeOfMessageExtraction.ELO_SIMPLE);
-//                        gameDefiner.playFullActorTimeoutGameWithDefindedEnginesNames(cluster.getEngineList(), cluster.getRuleValue(), TypeOfMessageExtraction.ELO_VOTE_WITH_DISTRIBUTION);
-//                        gameDefiner.playFullActorTimeoutGameWithDefindedEnginesNames(cluster.getEngineList(), cluster.getRuleValue(), TypeOfMessageExtraction.ELO_VOTE_WITH_ELO);
-//                        gameDefiner.playFullActorTimeoutGameWithDefindedEnginesNames(cluster.getEngineList(), cluster.getRuleValue(), TypeOfMessageExtraction.RANDOM);
+                        gameDefiner.playFullActorTimeoutGameWithDefindedEnginesNames(processingEngineEloList, cluster.getRuleValue(), TypeOfMessageExtraction.ELO_VOTE_WITH_DISTRIBUTION);
+                        gameDefiner.playFullActorTimeoutGameWithDefindedEnginesNames(processingEngineEloList, cluster.getRuleValue(), TypeOfMessageExtraction.ELO_VOTE_WITH_ELO);
+                        gameDefiner.playFullActorTimeoutGameWithDefindedEnginesNames(processingEngineEloList, cluster.getRuleValue(), TypeOfMessageExtraction.RANDOM);
                     } else if(cluster.getRuleType().equals("depth")){
-                        gameDefiner.playFullActorTimeoutGameWithDefindedEnginesNames(cluster.getEngineList(), cluster.getRuleValue(), TypeOfMessageExtraction.ELO_SIMPLE);
-//                        gameDefiner.playFullActorTimeoutGameWithDefindedEnginesNames(cluster.getEngineList(), cluster.getRuleValue(), TypeOfMessageExtraction.ELO_VOTE_WITH_DISTRIBUTION);
-//                        gameDefiner.playFullActorTimeoutGameWithDefindedEnginesNames(cluster.getEngineList(), cluster.getRuleValue(), TypeOfMessageExtraction.ELO_VOTE_WITH_ELO);
-//                        gameDefiner.playFullActorTimeoutGameWithDefindedEnginesNames(cluster.getEngineList(), cluster.getRuleValue(), TypeOfMessageExtraction.RANDOM);
+                        gameDefiner.playFullActorDepthGameWithDefinedEnginesNames(processingEngineEloList, cluster.getRuleValue(), TypeOfMessageExtraction.ELO_VOTE_WITH_DISTRIBUTION);
+                        gameDefiner.playFullActorDepthGameWithDefinedEnginesNames(processingEngineEloList, cluster.getRuleValue(), TypeOfMessageExtraction.ELO_VOTE_WITH_ELO);
+                        gameDefiner.playFullActorDepthGameWithDefinedEnginesNames(processingEngineEloList, cluster.getRuleValue(), TypeOfMessageExtraction.RANDOM);
                     }
 
                 });
@@ -62,23 +67,23 @@ public class GameManager {
 
     private static void doLearningCallWithEloTypeAndFightOneVsOne(FullInsideGameDefiner gameDefiner) {
         //type choise - DEPTH
-        //List<List<String>> listOfEnginesGames = EngineSearcher.createPairsOfGames();
-        List<List<String>> listOfEnginesGames = EngineSearcher.rematchBestEnginesForDepthOrTimeout();
+        List<List<String>> listOfEnginesGames = EngineSearcher.createPairsOfGames();                      // Normal Game between all engines
+        //List<List<String>> listOfEnginesGames = EngineSearcher.rematchBestEnginesForDepthOrTimeout();   // Rematch for 4 bests
         listOfEnginesGames.stream()
                 .parallel()
                 .map(EngineEloPairParser::findElosForEngineNamesAndCreateEngineEloPair)
                 .forEach(engineEloPair -> {
 //                    // Elo simple games from longest to shortest
-                    gameDefiner.playFullActorTimeoutGameWithDefindedEnginesNames(engineEloPair, 20000, TypeOfMessageExtraction.ELO_SIMPLE);
-                    gameDefiner.playFullActorDepthGameWithDefinedEnginesNames(engineEloPair, 9, TypeOfMessageExtraction.ELO_SIMPLE);
-
-                    gameDefiner.playFullActorDepthGameWithDefinedEnginesNames(engineEloPair, 7, TypeOfMessageExtraction.ELO_SIMPLE);
-                    gameDefiner.playFullActorTimeoutGameWithDefindedEnginesNames(engineEloPair, 9000, TypeOfMessageExtraction.ELO_SIMPLE);
-
-                    gameDefiner.playFullActorTimeoutGameWithDefindedEnginesNames(engineEloPair, 6000, TypeOfMessageExtraction.ELO_SIMPLE);
-                    gameDefiner.playFullActorDepthGameWithDefinedEnginesNames(engineEloPair, 5, TypeOfMessageExtraction.ELO_SIMPLE);
-
-                    gameDefiner.playFullActorTimeoutGameWithDefindedEnginesNames(engineEloPair, 3000, TypeOfMessageExtraction.ELO_SIMPLE);
+//                    gameDefiner.playFullActorTimeoutGameWithDefindedEnginesNames(engineEloPair, 20000, TypeOfMessageExtraction.ELO_SIMPLE);
+//                    gameDefiner.playFullActorDepthGameWithDefinedEnginesNames(engineEloPair, 9, TypeOfMessageExtraction.ELO_SIMPLE);
+//
+//                    gameDefiner.playFullActorDepthGameWithDefinedEnginesNames(engineEloPair, 7, TypeOfMessageExtraction.ELO_SIMPLE);
+//                    gameDefiner.playFullActorTimeoutGameWithDefindedEnginesNames(engineEloPair, 9000, TypeOfMessageExtraction.ELO_SIMPLE);
+//
+//                    gameDefiner.playFullActorTimeoutGameWithDefindedEnginesNames(engineEloPair, 6000, TypeOfMessageExtraction.ELO_SIMPLE);
+//                    gameDefiner.playFullActorDepthGameWithDefinedEnginesNames(engineEloPair, 5, TypeOfMessageExtraction.ELO_SIMPLE);
+//
+//                    gameDefiner.playFullActorTimeoutGameWithDefindedEnginesNames(engineEloPair, 3000, TypeOfMessageExtraction.ELO_SIMPLE);
                     gameDefiner.playFullActorDepthGameWithDefinedEnginesNames(engineEloPair, 3, TypeOfMessageExtraction.ELO_SIMPLE);
 
                 });
