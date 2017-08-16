@@ -4,6 +4,7 @@ import chess.utils.json.object.ChessJSONCreator;
 import chess.utils.json.object.ChessJSONReader;
 import chess.amqp.message.ChessJSONObject;
 import com.rabbitmq.client.*;
+import com.rabbitmq.client.impl.ForgivingExceptionHandler;
 import lombok.extern.slf4j.Slf4j;
 import simpleChessManagmentActor.ChessScheduler;
 
@@ -21,11 +22,11 @@ public class AMQPConsumer {
 
 
     public static void main(String[] argv) throws NoSuchAlgorithmException, KeyManagementException, URISyntaxException {
-        ConnectionFactory factory = new ConnectionFactory();
-        factory.setUri(System.getenv(CLOUDAMQP_SYSTEM_URL));
-
         Connection connection = null;
         try {
+            ConnectionFactory factory = new ConnectionFactory();
+            factory.setUri(System.getenv(CLOUDAMQP_SYSTEM_URL));
+            factory.setExceptionHandler(new ForgivingExceptionHandler());
             connection = factory.newConnection();
             Channel channel = connection.createChannel();
 
@@ -77,12 +78,12 @@ public class AMQPConsumer {
                                 break;
                             } catch (Exception e){
                                 System.out.println("I had problem with messaging back the answer");
-                                log.info(e.getMessage());
+                                log.error(e.getMessage(), e.getCause());
                                 try {
                                     Thread.sleep(30000);
                                 } catch (InterruptedException e1) {
                                     System.out.println("what the heck? Even sleep broke O.o ");
-                                    log.info(e.getMessage());
+                                    log.error(e.getMessage(), e.getCause());
                                 }
                             }
                         }
@@ -101,7 +102,7 @@ public class AMQPConsumer {
                     System.out.println("nooope");
                 }
             }
-        } catch (IOException | TimeoutException e) {
+        } catch (Exception e) {
             e.printStackTrace();
         }
         finally {
