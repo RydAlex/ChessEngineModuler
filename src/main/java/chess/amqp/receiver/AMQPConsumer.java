@@ -26,6 +26,16 @@ public class AMQPConsumer {
         try {
             ConnectionFactory factory = new ConnectionFactory();
             factory.setUri(System.getenv(CLOUDAMQP_SYSTEM_URL));
+
+            factory.setConnectionTimeout(600000);
+            factory.setHandshakeTimeout(60000);
+            factory.setChannelRpcTimeout(3600000);
+            factory.setRequestedHeartbeat(20000);
+
+            log.info("Connection timeout" + factory.getConnectionTimeout());
+            log.info("Handshake timeout" + factory.getHandshakeTimeout());
+            log.info("HeartBeat timeout" + factory.getRequestedHeartbeat());
+
             factory.setExceptionHandler(new ForgivingExceptionHandler());
             connection = factory.newConnection();
             Channel channel = connection.createChannel();
@@ -58,13 +68,6 @@ public class AMQPConsumer {
                         } else {
                             response = null;
                         }
-//                        response = chessObject;
-//                        response.setAnswer("1");
-//                        List<GameVotingStats> gameVotingStatsList = new LinkedList<>();
-//                        gameVotingStatsList.add(new GameVotingStats("aha",2));
-//                        gameVotingStatsList.add(new GameVotingStats("nah",5));
-//                        gameVotingStatsList.add(new GameVotingStats("mhm",5));
-//                        response.setEngineNamesVotesMap(gameVotingStatsList);
 
                         log.info("I have message ready To Parse And Send");
                         answer = ChessJSONCreator.createChessJsonFromObject(response);
