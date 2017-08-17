@@ -4,6 +4,7 @@ import chess.utils.json.object.ChessJSONCreator;
 import chess.utils.json.object.ChessJSONReader;
 import chess.amqp.message.ChessJSONObject;
 import com.rabbitmq.client.*;
+import com.rabbitmq.client.impl.ForgivingExceptionHandler;
 import lombok.extern.slf4j.Slf4j;
 import simpleChessManagmentActor.ChessScheduler;
 
@@ -21,13 +22,23 @@ public class AMQPConsumer {
 
 
     public static void main(String[] argv) throws NoSuchAlgorithmException, KeyManagementException, URISyntaxException {
-        ConnectionFactory factory = new ConnectionFactory();
-        factory.setUri(System.getenv(CLOUDAMQP_SYSTEM_URL));
-	System.out.println("test 0451");
-	System.out.flush();
+
         Connection connection = null;
         try {
-            System.out.println("I will start connection in a moment");
+            ConnectionFactory factory = new ConnectionFactory();
+            factory.setUri(System.getenv(CLOUDAMQP_SYSTEM_URL));
+
+            factory.setConnectionTimeout(600000);
+            factory.setHandshakeTimeout(60000);
+            factory.setChannelRpcTimeout(3600000);
+            factory.setRequestedHeartbeat(20000);
+
+            log.info("Connection timeout" + factory.getConnectionTimeout());
+            log.info("Handshake timeout" + factory.getHandshakeTimeout());
+            log.info("HeartBeat timeout" + factory.getRequestedHeartbeat());
+
+            factory.setExceptionHandler(new ForgivingExceptionHandler());
+
             connection = factory.newConnection();
             Channel channel = connection.createChannel();
 
@@ -59,13 +70,6 @@ public class AMQPConsumer {
                         } else {
                             response = null;
                         }
-//                        response = chessObject;
-//                        response.setAnswer("1");
-//                        List<GameVotingStats> gameVotingStatsList = new LinkedList<>();
-//                        gameVotingStatsList.add(new GameVotingStats("aha",2));
-//                        gameVotingStatsList.add(new GameVotingStats("nah",5));
-//                        gameVotingStatsList.add(new GameVotingStats("mhm",5));
-//                        response.setEngineNamesVotesMap(gameVotingStatsList);
 
                         log.info("I have message ready To Parse And Send");
                         answer = ChessJSONCreator.createChessJsonFromObject(response);
@@ -79,12 +83,12 @@ public class AMQPConsumer {
                                 break;
                             } catch (Exception e){
                                 System.out.println("I had problem with messaging back the answer");
-                                log.info(e.getMessage());
+                                log.error(e.getMessage(), e.getCause());
                                 try {
                                     Thread.sleep(30000);
                                 } catch (InterruptedException e1) {
                                     System.out.println("what the heck? Even sleep broke O.o ");
-                                    log.info(e.getMessage());
+                                    log.error(e.getMessage(), e.getCause());
                                 }
                             }
                         }
@@ -103,7 +107,7 @@ public class AMQPConsumer {
                     System.out.println("nooope");
                 }
             }
-        } catch (IOException | TimeoutException e) {
+        } catch (Exception e) {
             e.printStackTrace();
         }
         finally {
