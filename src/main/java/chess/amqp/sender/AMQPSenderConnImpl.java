@@ -4,6 +4,11 @@ import chess.utils.json.object.ChessJSONReader;
 import chess.amqp.message.ChessJSONObject;
 import com.rabbitmq.client.*;
 import lombok.extern.slf4j.Slf4j;
+import net.jodah.lyra.ConnectionOptions;
+import net.jodah.lyra.Connections;
+import net.jodah.lyra.config.Config;
+import net.jodah.lyra.config.RecoveryPolicies;
+import net.jodah.lyra.util.Duration;
 
 import java.io.IOException;
 import java.net.URISyntaxException;
@@ -29,12 +34,17 @@ class AMQPSenderConnImpl {
     private String replyQueueName;
 
     private AMQPSenderConnImpl() throws Exception {
-        ConnectionFactory factory = new ConnectionFactory();
-        factory.setUri(System.getenv(CLOUDAMQP_SYSTEM_URL));
 
+        Config config = new Config()
+                .withRecoveryPolicy(
+                        RecoveryPolicies
+                                .recoverAlways()
+                                .withInterval(Duration.seconds(5))
+                );
 
-        factory.setConnectionTimeout(72000000);
-        connection = factory.newConnection();
+        ConnectionOptions connectionOptions = new ConnectionOptions()
+                .withUri(System.getenv(CLOUDAMQP_SYSTEM_URL));
+        connection = Connections.create(connectionOptions, config);
         channel = connection.createChannel();
 
         replyQueueName = channel.queueDeclare().getQueue();

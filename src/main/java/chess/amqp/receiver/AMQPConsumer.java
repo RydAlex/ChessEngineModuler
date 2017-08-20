@@ -6,6 +6,12 @@ import chess.amqp.message.ChessJSONObject;
 import com.rabbitmq.client.*;
 import com.rabbitmq.client.impl.ForgivingExceptionHandler;
 import lombok.extern.slf4j.Slf4j;
+import net.jodah.lyra.ConnectionOptions;
+import net.jodah.lyra.Connections;
+import net.jodah.lyra.config.Config;
+import net.jodah.lyra.config.RecoveryPolicies;
+import net.jodah.lyra.config.RecoveryPolicy;
+import net.jodah.lyra.util.Duration;
 import simpleChessManagmentActor.ChessScheduler;
 
 import java.io.IOException;
@@ -24,20 +30,16 @@ public class AMQPConsumer {
     public static void main(String[] argv) throws NoSuchAlgorithmException, KeyManagementException, URISyntaxException {
         Connection connection = null;
         try {
-            ConnectionFactory factory = new ConnectionFactory();
-            factory.setUri(System.getenv(CLOUDAMQP_SYSTEM_URL));
+            Config config = new Config()
+                .withRecoveryPolicy(
+                        RecoveryPolicies
+                                .recoverAlways()
+                                .withInterval(Duration.seconds(5))
+                );
 
-            factory.setConnectionTimeout(600000);
-            factory.setHandshakeTimeout(60000);
-            factory.setChannelRpcTimeout(3600000);
-            factory.setRequestedHeartbeat(20000);
-
-            log.info("Connection timeout" + factory.getConnectionTimeout());
-            log.info("Handshake timeout" + factory.getHandshakeTimeout());
-            log.info("HeartBeat timeout" + factory.getRequestedHeartbeat());
-
-            factory.setExceptionHandler(new ForgivingExceptionHandler());
-            connection = factory.newConnection();
+            ConnectionOptions connectionOptions = new ConnectionOptions()
+                    .withUri(System.getenv(CLOUDAMQP_SYSTEM_URL));
+            connection = Connections.create(connectionOptions, config);
             Channel channel = connection.createChannel();
 
             channel.queueDeclare(chess_rpc_queue, true, false, false, null);
