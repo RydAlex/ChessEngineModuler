@@ -15,6 +15,7 @@ lazy val root = (project in file("chessEngineModuler")).enablePlugins(JavaServer
 
 libraryDependencies ++= Seq(
   "com.rabbitmq" % "amqp-client" % "4.1.0",
+  "net.jodah" % "lyra" % "0.5.4",
   "org.mockito" % "mockito-core" % "2.7.22" % "test",
   "org.specs2" %% "specs2-core" % "3.9.1" % "test",
   "com.typesafe.akka" %% "akka-actor" % "2.4.17",

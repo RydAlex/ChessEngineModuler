@@ -217,9 +217,11 @@ class ActorGame(system: ActorSystem, name: Seq[String], elo: Seq[EngineEloPair])
     }
     for(answer <- answersInRightOrder){
       if(fenGenerator.isMoveACheckmate(answer.message)){
-        log.info(answer + " was removed cause was not exist or was checkmate")
+        log.info(answer + " was removed cause was a checkmate")
       } else if(new FenGenerator(chessboard).isMoveExistForActivePlayer(answer.message)) {
         filteredAnswers += answer
+      } else {
+        log.info(answer + " was removed cause was not exist for that player")
       }
     }
     def methodTest: Unit = {
