@@ -9,6 +9,8 @@ mainClass in (Compile, run) := Some("chess.amqp.receiver.AMQPConsumer")
 
 scalaVersion := "2.12.2"
 
+fork in run := true
+
 scalacOptions in Test ++= Seq("-Yrangepos")
 
 lazy val root = (project in file("chessEngineModuler")).enablePlugins(JavaServerAppPackaging)
