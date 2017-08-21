@@ -12,6 +12,6 @@ public class CurrentEloDAOTest {
     @Test
     public void canSearchEloDependsOnEngineName(){
         CurrentEloDAO currentEloDAO = new CurrentEloDAO();
-        CurrentElo currElo = currentEloDAO.findByEngineName("daydreamer", TypeOfMessageExtraction.ELO_SIMPLE).get(0);
+        CurrentElo currElo = currentEloDAO.findByEngineNameAndType("daydreamer", TypeOfMessageExtraction.ELO_SIMPLE).get(0);
     }
 }

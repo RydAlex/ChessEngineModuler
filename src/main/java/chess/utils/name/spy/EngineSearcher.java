@@ -2,6 +2,7 @@ package chess.utils.name.spy;
 
 import chess.engine.processor.core.enginemechanism.OsCheck;
 import chess.engine.processor.interfaces.EngineRunnerImpl;
+import chess.ui.data.EngineClustersType;
 import chess.utils.parsing.objects.EnginesCluster;
 import lombok.extern.slf4j.Slf4j;
 

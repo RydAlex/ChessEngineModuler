@@ -1,4 +1,4 @@
-// Best four
+//FourStrong
 gull,senpai,ethereal,komodo,3
 gull,ethereal,fire,senpai,5
 senpai,ethereal,gull,komodo,7
@@ -8,7 +8,7 @@ stockfish,gull,komodo,ethereal,6000
 stockfish,gull,senpai,komodo,9000
 stockfish,gull,komodo,ethereal,20000
 
-// average four
+//FourAverage
 fire,cheng,greko,stockfish,3
 ruy,cheng,greko,komodo,5
 stockfish,greko,cheng,fire,7
@@ -18,7 +18,7 @@ protector,cheng,senpai,fire,6000
 ruy,cheng,protector,fire,9000
 protector,cheng,fire,senpai,20000
 
-// Worst four
+//FourWeak
 cinnamon,fruit,ruy,protector,3
 protector,stockfish,fruit,cinnamon,5
 protector,fruit,ruy,cinnamon,7
@@ -28,7 +28,7 @@ fruit,cinnamon,ruy,greko,6000
 ethereal,fruit,cinnamon,greko,9000
 cinnamon,fruit,greko,ruy,20000
 
-// 2 best depth 2 best timeout
+//2 best depth 2 best timeout
 gull,senpai,stockfish,komodo,3
 senpai,fire,stockfish,komodo,5
 senpai,ethereal,stockfish,komodo,7
@@ -38,7 +38,7 @@ gull,ethereal,stockfish,komodo,6000
 gull,ethereal,stockfish,komodo,9000
 gull,ethereal,stockfish,komodo,20000
 
-// 3 best 1 average
+//BlackSheep
 gull,senpai,ethereal,greko,3
 senpai,fire,ethereal,cheng,5
 senpai,ethereal,gull,greko,7
@@ -49,7 +49,7 @@ stockfish,gull,senpai,cheng,9000
 stockfish,gull,komodo,cheng,20000
 
 
-// 3 worst + 1 best
+//WeaklingsWithLeader
 protector,ruy,fruit,gull,3
 protector,stockfish,fruit,cinnamon,5
 protector,fruit,ruy,senpai,7

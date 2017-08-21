@@ -15,16 +15,11 @@ import java.util.List;
  * Created by aleksanderr on 02/07/17.
  */
 public class EloService {
-//    public static List<Integer> getEloValuesForEngines(List<String> engineNames){
-//        return engineNames.stream()
-//                .map(EloService::getEloValuesForEngineWithType)
-//                .collect(Collectors.toCollection(LinkedList::new));
-//    }
 
     @Transactional
     public Integer getEloValuesForEngineWithType(String engineName, TypeOfMessageExtraction type) {
         CurrentEloDAO currElo = new CurrentEloDAO();
-        List<CurrentElo> currentEloList = currElo.findByEngineName(engineName, type);
+        List<CurrentElo> currentEloList = currElo.findByEngineNameAndType(engineName, type);
         CurrentElo currentElo = null;
         EngineName engineNameEntity = null;
         if(currentEloList.isEmpty()){
@@ -67,10 +62,8 @@ public class EloService {
 
         //Wpisz nowe Elo do CurrentElo
         CurrentEloDAO currentEloDAO = new CurrentEloDAO();
-        CurrentElo currentElo = currentEloDAO.findByEngineName(engineName,type).get(0);
+        CurrentElo currentElo = currentEloDAO.findByEngineNameAndType(engineName,type).get(0);
         currentElo.setEloValue(newElo);
         currentEloDAO.edit(currentElo);
-
-
     }
 }

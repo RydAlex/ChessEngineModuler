@@ -29,7 +29,7 @@ public class EngineEloPairParser {
         for(EnginesCluster cluster: enginesClusters){
             for(EngineEloPair eloPair : cluster.getEngineList()){
                 eloPair.setEloValue(
-                        eloDAO.findByEngineName(
+                        eloDAO.findByEngineNameAndType(
                                 eloPair.getEngineName()+"_"+cluster.getPlayRule()
                         ).get(0).getEloValue()
                 );
