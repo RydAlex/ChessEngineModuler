@@ -38,7 +38,8 @@ public class AMQPConsumer {
                 );
 
             ConnectionOptions connectionOptions = new ConnectionOptions()
-                    .withUri(System.getenv(CLOUDAMQP_SYSTEM_URL));
+                    .withUri(System.getenv(CLOUDAMQP_SYSTEM_URL))
+                    .withConnectionTimeout(Duration.hours(1));
             connection = Connections.create(connectionOptions, config);
             Channel channel = connection.createChannel();
 
