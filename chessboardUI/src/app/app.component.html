@@ -1,0 +1,27 @@
+<!--The content below is only a placeholder and can be replaced.-->
+<app-nav></app-nav>
+<div class="content">
+  <div class="col-md-4">
+    <div class="same-height">
+      <app-rule-box
+        class="col-md-6 no-margin-right"
+        (engineEloTableChange)="onTableElementChange($event)">
+      </app-rule-box>
+      <app-engine-box
+        *ngIf="enginesValues != undefined"
+        class="col-md-6 no-margin-left left-side-splitter"
+        [enginesValues]='enginesValues'>
+      </app-engine-box>
+    </div>
+    <div class="general-info-styling">
+      <p class="col-md-12 text-justify">Engine name: Name_name_NaMe_NAME</p>
+      <p class="col-md-12 text-justify">Engine rule: timeout_3000</p>
+      <p class="col-md-12 text-justify">Cluster play mode: ELO VOTE</p>
+    </div>
+  </div>
+  <div class="col-md-4">
+    <app-chessboard></app-chessboard>
+    <button type="button" class="btn btn-success btn-lg btn-block">Start Game</button>
+  </div>
+</div>
+

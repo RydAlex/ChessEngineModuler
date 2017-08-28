@@ -19,15 +19,4 @@ public class ChessUserInterfaceApplication {
 	public static void main(String[] args) {
 		SpringApplication.run(ChessUserInterfaceApplication.class, args);
 	}
-
-	@RequestMapping("/")
-	public String home(){
-		return "app/modules/chessboardMain/home.html";
-	}
-
-
-	@RequestMapping("/stats")
-	public String stats(){
-		return "app/modules/statsMain/home.html";
-	}
 }
