@@ -1,7 +1,5 @@
 package chess.utils;
 
-import chess.algorithms.elo.EloAlgorithm;
-import chess.algorithms.elo.EloGameResultValue;
 import chess.database.dao.CurrentEloDAO;
 import chess.database.dao.EloGamesHistoryDAO;
 import chess.database.dao.EngineNameDAO;
@@ -10,7 +8,6 @@ import chess.database.entities.EloGamesHistory;
 import chess.database.entities.EngineName;
 
 import java.util.Collections;
-import java.util.Comparator;
 import java.util.LinkedList;
 import java.util.List;
 
@@ -44,7 +41,7 @@ public class ReverseTheEloResult {
             System.out.println("Elo calculated: " + elo + " Elo db: " + gameHistoryRecord2.getOldElo() + " record id: " + gameHistoryRecord2.getId());
         }
         EloGamesHistory lastGameHistoryRecord = historyGames.get(historyGames.size()-1);
-        CurrentElo currentElo = currentEloDao.findByEngineName(engineName.getEngineName()).get(0);
+        CurrentElo currentElo = currentEloDao.findByEngineNameAndType(engineName.getEngineName()).get(0);
         Integer difference = currentElo.getEloValue() - lastGameHistoryRecord.getOldElo();
         elo = elo - difference;
         System.out.println("Last elo calculated: " + elo + " Elo db: " + currentElo.getEloValue() + " Id: " + engineName.getId());

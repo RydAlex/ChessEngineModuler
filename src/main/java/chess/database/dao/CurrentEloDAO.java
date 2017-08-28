@@ -20,23 +20,19 @@ import java.util.List;
 public class CurrentEloDAO extends CoreDAO<CurrentElo>{
 
 
-    public CurrentElo find(int gameType){
-        return em.find(CurrentElo.class, 1);
-    }
-
-    public List<CurrentElo> findByEngineName(String engineName, TypeOfMessageExtraction typeOfGame) {
+    public List<CurrentElo> findByEngineNameAndType(String engineName, TypeOfMessageExtraction typeOfGame) {
         CriteriaBuilder criteriaBuilder = em.getCriteriaBuilder();
 
         CriteriaQuery<CurrentElo> criteria= criteriaBuilder.createQuery(CurrentElo.class);
         Root<CurrentElo> currentElo = criteria.from(CurrentElo.class);
         Join<CurrentElo, EngineName> join = currentElo.join("engineNameId");
         CriteriaQuery<CurrentElo> eloJoinQuerry = criteria.where(
-            criteriaBuilder.and(
-                criteriaBuilder.equal(
-                    join.get("engineName"), engineName),
-                criteriaBuilder.equal(
-                    join.get("typeOfGameUsedByThatEngine"), typeOfGame.getTypeOfGame())
-            )
+                criteriaBuilder.and(
+                        criteriaBuilder.equal(
+                                join.get("engineName"), engineName),
+                        criteriaBuilder.equal(
+                                join.get("typeOfGameUsedByThatEngine"), typeOfGame.getTypeOfGame())
+                )
         );
 
         TypedQuery<CurrentElo> q = em.createQuery(eloJoinQuerry);
@@ -44,13 +40,8 @@ public class CurrentEloDAO extends CoreDAO<CurrentElo>{
         return currentElos;
     }
 
-    public List<CurrentElo> findByEngineName(String engineName){
-        return findByEngineName(engineName, TypeOfMessageExtraction.ELO_SIMPLE);
-    }
-
-
-    public List<CurrentElo> findAll(){
-        return em.createQuery("from CurrentElo").getResultList();
+    public List<CurrentElo> findByEngineNameAndType(String engineName){
+        return findByEngineNameAndType(engineName, TypeOfMessageExtraction.ELO_SIMPLE);
     }
 
 }
