@@ -1,0 +1,19 @@
+<div>
+  <div *ngIf="loading">
+    <spinner [tickness]="2" [size]="17"></spinner>
+    <span>This can take a while...</span>
+  </div>
+  <div *ngIf="!loading">
+    <strong> Choose mode of your play: </strong>
+    <div class="radio" *ngFor="let nameEloElement of nameElo">
+      <label>
+        <input type="radio"
+               [(ngModel)]="chosenClusterGameType"
+               (ngModelChange)="typeChange($event)"
+               value="{{nameEloElement.name}}">
+        {{nameEloElement.name}} - {{nameEloElement.elo}}
+      </label>
+    </div>
+  </div>
+</div>
+

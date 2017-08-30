@@ -51,7 +51,7 @@ object ChessScheduler {
         chessObject.setAnswer(gameResult.whoWin.toString)
         chessObject.setEngineNamesVotesMap(JavaConverters.bufferAsJavaList(gameResult.decisionMadeInThisGame))
       }
-      case move       : List[SingleMoveResult]  =>    chessObject.setSingleMoveResults(JavaConverters.seqAsJavaList(move))
+      case singleMove : String  =>    chessObject.setAnswer(singleMove)
     }
     chessObject
   }

@@ -8,6 +8,8 @@ import { NavComponent } from './nav/nav.component';
 import { ChessboardComponent } from './chessboard/chessboard.component';
 import { EngineBoxComponent } from './enginesChooser/engine-box/engine-box.component';
 import { RuleBoxComponent } from './enginesChooser/rule-box/rule-box.component';
+import { ClusterPlayModeComponent } from './enginesChooser/cluster-play-mode/cluster-play-mode.component';
+import { SpinnerModule } from 'angular2-spinner/dist';
 
 @NgModule({
   declarations: [
@@ -15,12 +17,14 @@ import { RuleBoxComponent } from './enginesChooser/rule-box/rule-box.component';
     NavComponent,
     ChessboardComponent,
     EngineBoxComponent,
-    RuleBoxComponent
+    RuleBoxComponent,
+    ClusterPlayModeComponent
   ],
   imports: [
     BrowserModule,
     FormsModule,
-    HttpModule
+    HttpModule,
+    SpinnerModule
   ],
   providers: [],
   bootstrap: [AppComponent]

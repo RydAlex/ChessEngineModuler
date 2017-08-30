@@ -1,5 +1,5 @@
-import { Component, Input, OnChanges, OnInit } from '@angular/core';
-import { EloEngineValue } from "../elo-engine-value";
+import {Component, EventEmitter, Input, OnChanges, OnInit, Output} from '@angular/core';
+import { EloEngineValue } from '../elo-engine-value';
 
 @Component({
   selector: 'app-engine-box',
@@ -8,12 +8,15 @@ import { EloEngineValue } from "../elo-engine-value";
 })
 export class EngineBoxComponent implements OnInit, OnChanges {
   @Input() enginesValues: EloEngineValue[] = [];
-  selectedName: string = '';
+  @Output() chosenEnginesNames:  EventEmitter<string[]>;
+  selectedName = '';
   engineNames: EloEngineValue[];
   engineNamesUsed: string[] = [];
-  isEnabled: boolean = true;
+  isEnabled = true;
 
-  constructor() { }
+  constructor() {
+    this.chosenEnginesNames = new EventEmitter<string[]>();
+  }
 
   ngOnChanges() {
     this.engineNames = this.enginesValues;
@@ -24,24 +27,26 @@ export class EngineBoxComponent implements OnInit, OnChanges {
   }
 
   onSelect(engineName: string): void {
-    if(this.engineNamesUsed.indexOf(engineName) < 0) {
-      if(this.isEnabled){
+    if (this.engineNamesUsed.indexOf(engineName) < 0) {
+      if (this.isEnabled){
         this.engineNamesUsed.push(engineName);
-        if(this.engineNamesUsed.length >=4 ){
+        if (this.engineNamesUsed.length >= 4 ){
+          this.chosenEnginesNames.emit(this.engineNamesUsed);
           this.isEnabled = false;
         }
       }
     } else {
       this.engineNamesUsed.splice(this.engineNamesUsed.indexOf(engineName), 1);
+      this.chosenEnginesNames.emit([]);
       this.isEnabled = true;
     }
-    this.constructName()
+    this.constructName();
   }
 
   constructName(){
-    this.selectedName='';
-    for(let name of this.engineNamesUsed){
-      if(this.selectedName == ''){
+    this.selectedName = '';
+    for (const name of this.engineNamesUsed){
+      if (this.selectedName == ''){
         this.selectedName = name;
       } else {
         this.selectedName = this.selectedName + '_' + name;
@@ -50,10 +55,10 @@ export class EngineBoxComponent implements OnInit, OnChanges {
   }
 
   checkIfDisabled(engineName: string) {
-    if(this.isEnabled){
+    if (this.isEnabled){
       return false;
     } else {
-      return !(this.engineNamesUsed.indexOf(engineName) >= 0)
+      return !(this.engineNamesUsed.indexOf(engineName) >= 0);
     }
   }
 

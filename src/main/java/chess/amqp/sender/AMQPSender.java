@@ -21,7 +21,6 @@ public class AMQPSender {
         for(int i=1; i<=howManyTimeCalculate; i++){
             jsonsToSend.add(json);
         }
-
         try {
             return AMQPSenderConnImpl.sendMessages(jsonsToSend);
         } catch (Exception e) {
@@ -38,7 +37,6 @@ public class AMQPSender {
         for(int i=1; i<=howManyTimeCalculate; i++){
             jsonsToSend.add(json);
         }
-
         try {
             return AMQPSenderConnImpl.sendMessages(jsonsToSend);
         } catch (Exception e) {

@@ -1,24 +1,33 @@
-function chessboardManager(){
-  var vm = this;
+chessboardManager = function(){
+  var board,
+    game = new Chess('rnbqkbnr/pppppppp/8/8/8/8/PPPPPPPP/RNBQKBNR w - - 0 1'),
+    statusEl = $('#status'),
+    fenEl = $('#fen');
 
-  vm.board = {};
-  vm.game = new Chess();
-  vm.statusEl = $('#status');
-  vm.fenEl = $('#fen');
+  this.getFenPositions = function(){
+    return game.fen();
+  };
 
-  function onDragStart(source, piece, position, orientation) {
-    if (vm.game.game_over() === true ||
-      (vm.game.turn() === 'w' && piece.search(/^b/) !== -1) ||
-      (vm.game.turn() === 'b' && piece.search(/^w/) !== -1)) {
+  this.setFenPositions = function(fen){
+    var valToInsert = fen.trim()+" 0 1";
+    var k = game.load(valToInsert);
+    board.position(game.fen());
+    updateStatus();
+  };
+
+// do not pick up pieces if the game is over
+// only pick up pieces for the side to move
+  var onDragStart = function(source, piece, position, orientation) {
+    if (game.game_over() === true ||
+      (game.turn() === 'w' && piece.search(/^b/) !== -1) ||
+      (game.turn() === 'b' && piece.search(/^w/) !== -1)) {
       return false;
     }
-  }
+  };
 
-  function onDrop(source, target) {
+  var onDrop = function(source, target) {
     // see if the move is legal
-    console.log(source);
-    console.log(target);
-    var move = vm.game.move({
+    var move = game.move({
       from: source,
       to: target,
       promotion: 'q' // NOTE: always promote to a queen for example simplicity
@@ -28,29 +37,29 @@ function chessboardManager(){
     if (move === null) return 'snapback';
 
     updateStatus();
-  }
+  };
 
-  // update the board position after the piece snap
-  // for castling, en passant, pawn promotion
-  function onSnapEnd() {
-    vm.board.position(vm.game.fen());
-  }
+// update the board position after the piece snap
+// for castling, en passant, pawn promotion
+  var onSnapEnd = function() {
+    board.position(game.fen());
+  };
 
-  function updateStatus() {
+  var updateStatus = function() {
     var status = '';
 
     var moveColor = 'White';
-    if (vm.game.turn() === 'b') {
+    if (game.turn() === 'b') {
       moveColor = 'Black';
     }
 
     // checkmate?
-    if (vm.game.in_checkmate() === true) {
+    if (game.in_checkmate() === true) {
       status = 'Game over, ' + moveColor + ' is in checkmate.';
     }
 
     // draw?
-    else if (vm.game.in_draw() === true) {
+    else if (game.in_draw() === true) {
       status = 'Game over, drawn position';
     }
 
@@ -59,24 +68,24 @@ function chessboardManager(){
       status = moveColor + ' to move';
 
       // check?
-      if (vm.game.in_check() === true) {
+      if (game.in_check() === true) {
         status += ', ' + moveColor + ' is in check';
       }
     }
 
-    vm.statusEl.html(status);
-    vm.fenEl.html(vm.game.fen());
-  }
+    statusEl.html(status);
+    fenEl.html(game.fen());
+  };
 
   var cfg = {
     draggable: true,
-    position: 'rnbqkbnr/pppppppp/8/8/8/8/PPPPPPPP/RNBQKBNR',
+    position: 'rnbqkbnr/pppppppp/8/8/8/8/PPPPPPPP/RNBQKBNR w - - 0 1',
     pieceTheme: 'assets/chessboardjs/img/chesspieces/wikipedia/{piece}.png',
     onDragStart: onDragStart,
     onDrop: onDrop,
     onSnapEnd: onSnapEnd
   };
-  vm.board = ChessBoard('board', cfg);
+  board = ChessBoard('board', cfg);
 
   updateStatus();
-}
+};

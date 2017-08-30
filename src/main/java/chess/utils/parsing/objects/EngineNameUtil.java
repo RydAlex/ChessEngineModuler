@@ -14,6 +14,10 @@ public class EngineNameUtil {
 		return rule.split("_")[1];
 	}
 
+	public static String fetchRuleTypeFromRule(String rule){
+		return rule.split("_")[0];
+	}
+
 	public static String changeNumberToGameRule(String ruleValue){
 		return Integer.parseInt(ruleValue) > 100 ? ("timeout_" + ruleValue) : ("depth_" + ruleValue);
 	}

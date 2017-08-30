@@ -65,7 +65,7 @@ class ActorGame(system: ActorSystem, name: Seq[String], elo: Seq[EngineEloPair])
             self ! EndGame(0, decisionMadeInThisGame) // Draw was detected
           }
           else if(isSingleMove){
-            self ! SingleMoves(singleMoveResults) // If single move than just return those moves
+            self ! SingleMoves(chessboard) // If single move than just return those moves
           }
           else {
             tellForOtherHalfOfEnginesToStartCounting() // if no condition was detected just start counting at second side

@@ -21,7 +21,7 @@ public class EngineAvailabilityScanner {
 
     private EngineAvailabilityScanner() {
         try {
-            String systemSufix = "linux"; //OsCheck.isMac() ? "mac" :
+            String systemSufix = OsCheck.isMac() ? "mac" : "linux";
             String path = EngineAvailabilityScanner.class.getClassLoader().getResource("engines/").getPath();//.getLocation().getFile()+ "/engineprocessor/core/engines/";
             try (Stream<Path> paths = Files.walk(Paths.get(path))) {
                 paths.filter(filePath -> Files.isDirectory(filePath))
