@@ -1,10 +1,7 @@
 package chess.ui.rest.endpoints;
 
-import chess.engine.processor.interfaces.EngineRunner;
-import chess.engine.processor.interfaces.EngineRunnerImpl;
 import chess.manager.game.definitions.SingleMoveGameDefiner;
 import chess.ui.data.GameSpecification;
-import chess.ui.data.NameWithRuleHolder;
 import chess.utils.parsing.objects.EngineNameUtil;
 import org.springframework.web.bind.annotation.*;
 
@@ -18,7 +15,7 @@ import java.util.List;
 public class PlayGameEndpoint {
 
 	@RequestMapping(value = "/play", method = RequestMethod.POST)
-	public String eloSimpleGame(@RequestBody GameSpecification gameSpecification){
+	public String playAnyGame(@RequestBody GameSpecification gameSpecification){
 		SingleMoveGameDefiner singleMoveGameDefiner = new SingleMoveGameDefiner();
 		String answer = "";
 		fillEnginesListWithDummies(gameSpecification);

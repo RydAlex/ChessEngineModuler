@@ -4,13 +4,11 @@ import chess.utils.json.object.ChessJSONCreator;
 import chess.utils.json.object.ChessJSONReader;
 import chess.amqp.message.ChessJSONObject;
 import com.rabbitmq.client.*;
-import com.rabbitmq.client.impl.ForgivingExceptionHandler;
 import lombok.extern.slf4j.Slf4j;
 import net.jodah.lyra.ConnectionOptions;
 import net.jodah.lyra.Connections;
 import net.jodah.lyra.config.Config;
 import net.jodah.lyra.config.RecoveryPolicies;
-import net.jodah.lyra.config.RecoveryPolicy;
 import net.jodah.lyra.util.Duration;
 import simpleChessManagmentActor.ChessScheduler;
 
@@ -18,7 +16,6 @@ import java.io.IOException;
 import java.net.URISyntaxException;
 import java.security.KeyManagementException;
 import java.security.NoSuchAlgorithmException;
-import java.util.concurrent.TimeoutException;
 
 @Slf4j
 public class AMQPConsumer {

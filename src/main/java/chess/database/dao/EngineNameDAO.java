@@ -15,18 +15,6 @@ import java.util.List;
 public class EngineNameDAO extends CoreDAO<EngineName> {
 
 
-    public EngineName find(int gameType){
-        return em.find(EngineName.class, 1);
-    }
-
-    public List<EngineName> findByName(String name) {
-        List<EngineName> engineNames = em.createQuery(
-                "FROM EngineName engine WHERE engine.engineName LIKE :name")
-                .setParameter("name", name)
-                .getResultList();
-        return engineNames;
-    }
-
     public List<EngineName> findByNameAndType(String name, String typeOfGame) {
         List<EngineName> engineNames = em.createQuery(
                 "FROM EngineName engine WHERE engine.engineName LIKE :name AND engine.typeOfGameUsedByThatEngine LIKE :gameType")

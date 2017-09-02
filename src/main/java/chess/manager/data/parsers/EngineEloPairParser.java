@@ -8,7 +8,7 @@ import java.util.LinkedList;
 import java.util.List;
 
 /**
- * Created by aleksanderr on 09/07/17.
+ * Created by aleksanderr on 09/07/17.a
  */
 public class EngineEloPairParser {
     public static List<EngineEloPair> findElosForEngineNamesAndCreateEngineEloPair(List<String> listOfEngines) {
@@ -17,7 +17,7 @@ public class EngineEloPairParser {
         for(String engineName : listOfEngines){
             EngineEloPair engineEloPair = new EngineEloPair();
             engineEloPair.setEngineName(engineName);
-            engineEloPair.setEloValue(1000);//TODO: GET PROPER VALUES
+            engineEloPair.setEloValue(1000);
             eloEngine.add(engineEloPair);
         }
         return eloEngine;

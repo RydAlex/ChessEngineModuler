@@ -95,18 +95,6 @@ public class FenGenerator {
         }
     }
 
-    private boolean isHalfMoveBroken(String figure, String figureTo) {
-        // If Pone was moved than HalfMove should reset
-        if(figure.equals("p") || figure.equals("P")){
-            return true;
-        }
-        // if opponent figure was beaten also HalfMove should reset
-        else if(figureTo != null) {
-            return true;
-        }
-        return false;
-    }
-
     public boolean isMoveExistForActivePlayer(String move) {
         if(move != null){
             String figure = chessBoard.get(move.substring(0, 2));
@@ -134,37 +122,18 @@ public class FenGenerator {
             }
             if(!from.equals("00") &&
                     (chessBoard.get(from).equals(ChessEnum.King.getBlackFigure()) ||
-                    chessBoard.get(from).equals(ChessEnum.King.getWhiteFigure()))) {
-               return false;
+                            chessBoard.get(from).equals(ChessEnum.King.getWhiteFigure()))) {
+                return false;
             }
             return true;
         } else {
             return false;
         }
-
     }
 
-    private void isEnPessant(String figure,String from, String to) {
-        String[] exactPositionFrom = from.split("");
-        String[] exactPosition = to.split("");
-        if(exactPositionFrom[1].equals("2") || exactPositionFrom[1].equals("7")) {
-            if (figure.equals("p")) {
-                if (exactPosition[1].equals("5")) {
-                    enPessant = exactPosition[0] + "6";
-                    return;
-                }
-            }
-
-            if (figure.equals("P")) {
-                if (exactPosition[1].equals("4")) {
-                    enPessant = exactPosition[0] + "3";
-                    return;
-                }
-            }
-        }
-        enPessant = "-";
+    public SortedMap<String,String> returnChessboard(){
+        return chessBoard;
     }
-
 
     public String returnFenStringPositions(){
         StringBuilder sb = new StringBuilder();
@@ -196,6 +165,39 @@ public class FenGenerator {
                 .append(" ").append(returnCastlingAllowance())
                 .append(" ").append(enPessant);
         return sb.toString();
+    }
+
+    private boolean isHalfMoveBroken(String figure, String figureTo) {
+        // If Pone was moved than HalfMove should reset
+        if(figure.equals("p") || figure.equals("P")){
+            return true;
+        }
+        // if opponent figure was beaten also HalfMove should reset
+        else if(figureTo != null) {
+            return true;
+        }
+        return false;
+    }
+
+    private void isEnPessant(String figure,String from, String to) {
+        String[] exactPositionFrom = from.split("");
+        String[] exactPosition = to.split("");
+        if(exactPositionFrom[1].equals("2") || exactPositionFrom[1].equals("7")) {
+            if (figure.equals("p")) {
+                if (exactPosition[1].equals("5")) {
+                    enPessant = exactPosition[0] + "6";
+                    return;
+                }
+            }
+
+            if (figure.equals("P")) {
+                if (exactPosition[1].equals("4")) {
+                    enPessant = exactPosition[0] + "3";
+                    return;
+                }
+            }
+        }
+        enPessant = "-";
     }
 
     private void setWhoseTurnIsNow(char turnSymbolic){
@@ -258,8 +260,5 @@ public class FenGenerator {
         isWhiteActive = !isWhiteActive;
     }
 
-    public SortedMap<String,String> returnChessboard(){
-        return chessBoard;
-    }
 
 }

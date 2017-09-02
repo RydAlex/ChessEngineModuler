@@ -19,6 +19,11 @@ import java.util.Map;
 public class GameApproachEndpoint {
 	GameApproachService gameApproachService = new GameApproachService();
 
+	@RequestMapping("/")
+	public List<String> fetchAll(){
+		return gameApproachService.fetchAllEngineApproaches();
+	}
+
 	@RequestMapping(value = "/best", method = RequestMethod.POST)
 	public Map<TypeOfMessageExtraction, Integer> fetchBest(@RequestBody NameWithRuleHolder namesWithRules){
 		log.info(EngineNameUtil.constructClusterNameFromEngineName(namesWithRules.getNames()));
@@ -26,10 +31,5 @@ public class GameApproachEndpoint {
 		Map<TypeOfMessageExtraction, Integer> map = ClusterTypeAssociationSearch.findAssociationTo(levelEloPairs, namesWithRules.getRule());
 		map.put(TypeOfMessageExtraction.ELO_SIMPLE, gameApproachService.findBestEngineInSingleEloGames(levelEloPairs));
 		return map;
-	}
-
-	@RequestMapping("/all")
-	public List<String> fetchAll(){
-		return gameApproachService.fetchAllEngineApproaches();
 	}
 }

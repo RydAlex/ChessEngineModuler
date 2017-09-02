@@ -27,7 +27,7 @@ import java.util.concurrent.BlockingQueue;
 @Slf4j
 class AMQPSenderConnImpl {
 
-    public static final String CLOUDAMQP_SYSTEM_URL = "CLOUDAMQP_URL";
+    private static final String CLOUDAMQP_SYSTEM_URL = "CLOUDAMQP_URL";
     private Connection connection;
     private Channel channel;
     private String chess_rpc_queue = "ChessRPC";

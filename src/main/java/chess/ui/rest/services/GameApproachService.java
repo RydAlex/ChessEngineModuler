@@ -2,7 +2,7 @@ package chess.ui.rest.services;
 
 import chess.amqp.message.EngineEloPair;
 import chess.amqp.message.TypeOfMessageExtraction;
-import chess.database.service.EngineNameService;
+import chess.database.service.EloPairService;
 import chess.ui.data.LevelEloPair;
 import chess.ui.data.NameWithRuleHolder;
 import chess.ui.helpers.EngineLevelsSearcher;
@@ -11,7 +11,7 @@ import java.util.LinkedList;
 import java.util.List;
 
 public class GameApproachService {
-	EngineNameService engineNameService = new EngineNameService();
+	EloPairService engineNameService = new EloPairService();
 
 	public List<String> fetchAllEngineApproaches(){
 		List<String> listOfTypes = new LinkedList<>();

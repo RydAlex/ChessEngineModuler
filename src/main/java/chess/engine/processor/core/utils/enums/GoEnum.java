@@ -14,16 +14,4 @@ public enum GoEnum {
     searchInTime        ("movetime");
 
     private String text;
-
-    public static GoEnum fromString(String text) {
-        if (text != null) {
-            for (GoEnum goOption : GoEnum.values()) {
-                if (text.equalsIgnoreCase(goOption.text)) {
-                    return goOption;
-                }
-            }
-        }
-        return null;
-    }
-
 }

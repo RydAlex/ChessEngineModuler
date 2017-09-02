@@ -1,9 +1,7 @@
 package chess.ui.rest.endpoints;
 
 import chess.amqp.message.EngineEloPair;
-import chess.amqp.message.TypeOfMessageExtraction;
-import chess.database.service.EloService;
-import chess.database.service.EngineNameService;
+import chess.database.service.EloPairService;
 import chess.engine.processor.interfaces.EngineRunner;
 import chess.engine.processor.interfaces.EngineRunnerImpl;
 import org.springframework.web.bind.annotation.CrossOrigin;
@@ -11,7 +9,6 @@ import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
-import java.util.LinkedList;
 import java.util.List;
 
 /**
@@ -21,7 +18,7 @@ import java.util.List;
 @CrossOrigin(origins = "*")
 @RequestMapping("/engine/names/")
 public class EngineNameEndpoint {
-    EngineNameService engineNameService = new EngineNameService();
+    EloPairService engineNameService = new EloPairService();
 
     @RequestMapping("/")
     public List<String> fetchEnginesNames(){

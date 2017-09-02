@@ -1,14 +1,14 @@
 package chess.ui.helpers;
 
 import chess.amqp.message.EngineEloPair;
-import chess.database.service.EngineNameService;
+import chess.database.service.EloPairService;
 import chess.ui.data.EngineLevel;
 import chess.utils.parsing.objects.EngineNameUtil;
 
 import java.util.List;
 
 public class EngineLevelsSearcher {
-	EngineNameService engineNameService = new EngineNameService();
+	EloPairService engineNameService = new EloPairService();
 
 	public EngineLevel setLevelOfEngine(EngineEloPair eloPairOfSearchEngine, String rule){
 		List<EngineEloPair> eloPairs =

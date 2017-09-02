@@ -12,7 +12,7 @@ public class EloAlgorithm {
         return myRating;
     }
 
-    public static Integer calculateEloDelta(Integer myRating, Integer opponentRating, EloGameResultValue result){
+    private static Integer calculateEloDelta(Integer myRating, Integer opponentRating, EloGameResultValue result){
         if(result == EloGameResultValue.DRAW) {
             return 0;
         }
@@ -25,20 +25,5 @@ public class EloAlgorithm {
         if(myRating < 2100) return 32.0;
         else if(myRating >= 2100 && myRating < 2400) return 24.0;
         else return 16.0;
-    }
-
-    public static Integer fetchOponentRatingFromDifference(int myOldRating, int myNewRating, EloGameResultValue result){
-        double difference = myNewRating - myOldRating;
-
-        double k = getKFactor(myOldRating);
-        double myChanceToWin =  (k* result.getValue() - difference)/k ;
-
-        if(myChanceToWin<0) {myChanceToWin = 0.0001;}
-        if(myChanceToWin>1) {myChanceToWin = 0.9977;}
-
-        double log = Math.log10(1/myChanceToWin - 1);
-        Double resultToReturn = 400.0 * log + myOldRating;
-
-        return (int)Math.round(resultToReturn);
     }
 }

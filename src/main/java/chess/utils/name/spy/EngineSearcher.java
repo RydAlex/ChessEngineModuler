@@ -15,17 +15,6 @@ import java.util.*;
  */
 @Slf4j
 public class EngineSearcher {
-    public static List<String> searchFewRandomEngineNames(int numberOfEngines){
-        LinkedList<String> listOfNames = new LinkedList<>();
-        List<String> engineList = new EngineRunnerImpl().getEngineNames();
-        for(int i=0 ; i<numberOfEngines ; i++){
-            int randomEngineNumber = new Random().nextInt(engineList.size());
-            listOfNames.add(engineList.get(randomEngineNumber));
-            engineList.remove(randomEngineNumber);
-        }
-        return listOfNames;
-    }
-
 
     public static List<List<String>> rematchBestEnginesForDepthOrTimeout(){
         List<List<String>> listOfEnginesPairsToReturn = new LinkedList<>();

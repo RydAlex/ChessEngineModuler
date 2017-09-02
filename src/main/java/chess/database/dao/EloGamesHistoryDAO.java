@@ -19,23 +19,6 @@ import java.util.List;
 @Repository
 public class EloGamesHistoryDAO extends CoreDAO<EloGamesHistory>{
 
-
-    public EloGamesHistory find(int gameType){
-        return em.find(EloGamesHistory.class, 1);
-    }
-
-    public List findByName(String name) {
-        return em.createQuery(
-                "FROM EloGamesHistory curr WHERE curr.rule LIKE :rule")
-                .setParameter("rule", name)
-                .getResultList();
-    }
-
-
-    public List<EloGamesHistory> findAll(){
-        return em.createQuery("from EloGamesHistory").getResultList();
-    }
-
     public List<EloGamesHistory> findByEngineName(String engineName) {
         CriteriaBuilder criteriaBuilder = em.getCriteriaBuilder();
 

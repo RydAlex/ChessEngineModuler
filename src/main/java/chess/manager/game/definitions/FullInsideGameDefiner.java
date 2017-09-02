@@ -6,7 +6,7 @@ import chess.amqp.message.TypeOfMessageExtraction;
 import chess.amqp.message.ChessJSONObject;
 import chess.amqp.message.EngineEloPair;
 import chess.engine.processor.core.enginemechanism.FenGenerator;
-import chess.manager.messages.processors.VotingProcessor;
+import chess.database.service.VotingService;
 
 import java.util.List;
 
@@ -68,8 +68,8 @@ public class FullInsideGameDefiner extends GameDefiner {
 
     private void saveEnginesVotesStats(ChessJSONObject answer) {
         if(answer != null && !answer.getAnswer().equals("-1")) {
-            VotingProcessor votingProcessor = new VotingProcessor();
-            votingProcessor.applyVotesToDatabase(answer);
+            VotingService votingService = new VotingService();
+            votingService.applyVotesToDatabase(answer);
         }
     }
 

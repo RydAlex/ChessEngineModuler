@@ -2,7 +2,7 @@ package chess.ui.helpers;
 
 import chess.amqp.message.EngineEloPair;
 import chess.amqp.message.TypeOfMessageExtraction;
-import chess.database.service.EngineNameService;
+import chess.database.service.EloPairService;
 import chess.ui.data.EngineClustersType;
 import chess.ui.data.EngineLevel;
 import chess.ui.data.LevelEloPair;
@@ -110,7 +110,7 @@ public class ClusterTypeAssociationSearch {
 	 */
 	private static Map<EngineEloPair, TypeOfMessageExtraction> fetchDatabasePosibilities(Map<EngineClustersType, Double> similarity, String rule) {
 		Map<EngineEloPair, TypeOfMessageExtraction> mapToCheck = new HashMap<>();
-		EngineNameService nameService = new EngineNameService();
+		EloPairService nameService = new EloPairService();
 		double checkValue = 1.0;
 
 		while(mapToCheck.isEmpty()){
