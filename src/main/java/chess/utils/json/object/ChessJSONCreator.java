@@ -12,14 +12,15 @@ import java.util.List;
 public class ChessJSONCreator {
 
     public static String createChessJsonWithTimeoutRule(String fenString, Integer timeout, TypeOfMessageExtraction typeOfGame,
-                                                        boolean isSingleMove, List<String> chessGameNames, List<EngineEloPair> eloValues) {
-        ChessJSONObject createdObj = createChessJsonObjects(fenString, null, timeout, typeOfGame, isSingleMove, chessGameNames, eloValues);
+                                                        boolean isSingleMove, List<String> chessGameNames, List<EngineEloPair> eloValues,
+                                                        int sizeOne, int sizeTwo) {
+        ChessJSONObject createdObj = createChessJsonObjects(fenString, null, timeout, typeOfGame, isSingleMove, chessGameNames, eloValues, sizeOne, sizeTwo);
         return ChessJSONParser.createChessJson(createdObj);
     }
 
     public static String createChessJsonWithDepthRule(String fenString, Integer depth, TypeOfMessageExtraction typeOfGame,
-                                                      boolean isSingleMove, List<String> chessGameNames, List<EngineEloPair> eloValues) {
-        ChessJSONObject createdObj = createChessJsonObjects(fenString, depth, null, typeOfGame, isSingleMove, chessGameNames, eloValues);
+                                                      boolean isSingleMove, List<String> chessGameNames, List<EngineEloPair> eloValues, int sizeOne, int sizeTwo) {
+        ChessJSONObject createdObj = createChessJsonObjects(fenString, depth, null, typeOfGame, isSingleMove, chessGameNames, eloValues, sizeOne, sizeTwo);
         return ChessJSONParser.createChessJson(createdObj);
     }
 
@@ -28,10 +29,13 @@ public class ChessJSONCreator {
     }
 
     private static ChessJSONObject createChessJsonObjects(String fenString, Integer depth, Integer timeout, TypeOfMessageExtraction typeOfGame,
-                                                          boolean isSingleMove, List<String> chessGameNames, List<EngineEloPair> eloValues){
+                                                          boolean isSingleMove, List<String> chessGameNames, List<EngineEloPair> eloValues,
+                                                            int sizeOne, int sizeTwo){
         ChessJSONObject obj = new ChessJSONObject();
         obj.setAnswer(null);
         obj.setTypeOfGame(typeOfGame);
+        obj.addEngineSizeToFirstGrp(sizeOne);
+        obj.addEngineSizeToSecondGrp(sizeTwo);
         obj.setFen(fenString);
         obj.setChessGameName(chessGameNames);
         obj.setIsSingleMove(isSingleMove);

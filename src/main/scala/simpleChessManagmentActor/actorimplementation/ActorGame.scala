@@ -13,7 +13,7 @@ import scala.util.Random
 /**
   * Created by aleksanderr on 09/04/17.
   */
-class ActorGame(system: ActorSystem, name: Seq[String], elo: Seq[EngineEloPair]) extends Actor {
+class ActorGame(system: ActorSystem, name: Seq[String], elo: Seq[EngineEloPair], clusterOneSize: Int, clusterTwoSize: Int) extends Actor {
 
 
   val log = Logging(context.system, this)
@@ -40,8 +40,14 @@ class ActorGame(system: ActorSystem, name: Seq[String], elo: Seq[EngineEloPair])
     case message: MessageBack =>
       log.info(name + "msg from engine received from " + message.engineName +  " no :" + message.id + " with answer: " + message.message)
       answers += message
-      if(answers.length == listLength/2) {
-        self ! AssumingMessage()
+      if(activeListOne){
+        if(answers.length == clusterOneSize) {
+          self ! AssumingMessage()
+        }
+      } else {
+        if(answers.length == clusterTwoSize) {
+          self ! AssumingMessage()
+        }
       }
 
     case assumingMsg: AssumingMessage =>
@@ -130,15 +136,14 @@ class ActorGame(system: ActorSystem, name: Seq[String], elo: Seq[EngineEloPair])
        this.isSingleMove = initGame.isSingleMove
        this.senderRef = sender
        listLength = name.length
-        if(name.length % 2 != 0 ){
+       if(this.clusterOneSize == 0 || this.clusterTwoSize == 0){
           throw new RuntimeException("game do not have same number of engines on both sides")
         }
-        val engineLength = name.length/2
-        for(i <- Range(0, engineLength)){
+        for(i <- Range(0, clusterOneSize)){
           enginesOneName = name(i).trim :: enginesOneName
           self ! CreateNewActorInFirstGroup(name(i).trim)
         }
-        for(i <- Range(engineLength, name.length)){
+        for(i <- Range(clusterOneSize, name.length)){
           enginesTwoName = name(i).trim :: enginesTwoName
           self ! CreateNewActorInSecondGroup(name(i).trim)
         }

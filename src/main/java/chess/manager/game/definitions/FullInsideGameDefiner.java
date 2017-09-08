@@ -15,7 +15,8 @@ import java.util.List;
  */
 public class FullInsideGameDefiner extends GameDefiner {
 
-    public void playFullActorDepthGameWithDefinedEnginesNames(List<EngineEloPair> engineEloPairs, int depth, TypeOfMessageExtraction type){
+    public void playFullActorDepthGameWithDefinedEnginesNames(List<EngineEloPair> engineEloPairs,
+                                                        int depth, TypeOfMessageExtraction type, int sizeOne, int sizeTwo){
         FenGenerator fenGenerator = new FenGenerator(); // GAME NEAR TO END - 2 kings 8/8/5K2/8/8/5k2/8/8 w - -
         String fenStringPositions = fenGenerator.returnFenStringPositions();
 
@@ -27,7 +28,9 @@ public class FullInsideGameDefiner extends GameDefiner {
                 false ,
                 1,
                 getEngineNamesFromEngineEloPair(engineEloPairs),
-                engineEloPairs
+                engineEloPairs,
+                sizeOne,
+                sizeTwo
         ).get(0);
         System.gc();
 
@@ -37,7 +40,9 @@ public class FullInsideGameDefiner extends GameDefiner {
         System.gc();
     }
 
-    public void playFullActorTimeoutGameWithDefindedEnginesNames(List<EngineEloPair> engineEloPairs, int timeout, TypeOfMessageExtraction type) {
+    public void playFullActorTimeoutGameWithDefindedEnginesNamesAndDefinedSize(List<EngineEloPair> engineEloPairs,
+                                            int timeout, TypeOfMessageExtraction type, int sizeOne, int sizeTwo) {
+
         FenGenerator fenGenerator = new FenGenerator(); // GAME NEAR TO END - 2 kings 8/8/5K2/8/8/5k2/8/8 w - -
         String fenStringPositions = fenGenerator.returnFenStringPositions();
 
@@ -49,7 +54,9 @@ public class FullInsideGameDefiner extends GameDefiner {
                 false,
                 1,
                 getEngineNamesFromEngineEloPair(engineEloPairs),
-                engineEloPairs
+                engineEloPairs,
+                sizeOne,
+                sizeTwo
         ).get(0);
         System.gc();
 

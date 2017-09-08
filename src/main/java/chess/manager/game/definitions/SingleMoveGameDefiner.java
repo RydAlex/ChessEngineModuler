@@ -15,25 +15,36 @@ import java.util.List;
  */
 public class SingleMoveGameDefiner extends GameDefiner {
 
-    public String sendSimpleDepthMoveRequestWithDefinedNames(List<String> engineNames, int depth, TypeOfMessageExtraction type, String chessboardFen) {
+    public String sendSimpleDepthMoveRequestWithDefinedNames(List<String> engineNames,
+        int depth, TypeOfMessageExtraction type, String chessboardFen, int sizeOne, int sizeTwo) {
         return sendDistributedDepthMoveRequest(
                 EngineEloPairParser.findElosForEngineNamesAndCreateEngineEloPair(engineNames),
                 depth,
                 1,
                 type,
-                chessboardFen);
+                chessboardFen,
+                sizeOne,
+                sizeTwo
+        );
     }
 
-    public String sendSimpleTimeoutMoveRequestWithDefinedNames(List<String> enginesNames, int timeout, TypeOfMessageExtraction type, String chessboardFen){
+    public String sendSimpleTimeoutMoveRequestWithDefinedNames(List<String> enginesNames,
+        int timeout, TypeOfMessageExtraction type, String chessboardFen, int sizeOne, int sizeTwo){
+
         return sendDistributedTimeoutMoveRequest(
                 EngineEloPairParser.findElosForEngineNamesAndCreateEngineEloPair(enginesNames),
                 timeout,
                 1,
                 type,
-                chessboardFen);
+                chessboardFen,
+                sizeOne,
+                sizeTwo
+        );
     }
 
-    private String sendDistributedDepthMoveRequest(List<EngineEloPair> engineEloPairs, int depth, int distributedCalculation, TypeOfMessageExtraction type, String chessboardFen){
+    private String sendDistributedDepthMoveRequest(List<EngineEloPair> engineEloPairs, int depth,
+            int distributedCalculation, TypeOfMessageExtraction type, String chessboardFen, int sizeOne, int sizeTwo
+    ){
         FenGenerator fenGenerator = new FenGenerator(chessboardFen); //mate board -> "3Q4/8/4kQ2/6K1/8/6P1/8/8 b - -"
         String fenStringPositions = fenGenerator.returnFenStringPositions();
 
@@ -45,7 +56,9 @@ public class SingleMoveGameDefiner extends GameDefiner {
                 true ,
                 distributedCalculation,
                 getEngineNamesFromEngineEloPair(engineEloPairs),
-                engineEloPairs
+                engineEloPairs,
+                sizeOne,
+                sizeTwo
         );
         if(!answer.isEmpty()){
             return answer.get(0).getAnswer();
@@ -53,7 +66,8 @@ public class SingleMoveGameDefiner extends GameDefiner {
         return "";
     }
 
-    private String sendDistributedTimeoutMoveRequest(List<EngineEloPair> engineEloPairs, int timeout, int distributedCalculation, TypeOfMessageExtraction type, String chessboardFen) {
+    private String sendDistributedTimeoutMoveRequest(List<EngineEloPair> engineEloPairs,
+            int timeout, int distributedCalculation, TypeOfMessageExtraction type, String chessboardFen, int sizeOne, int sizeTwo) {
         FenGenerator fenGenerator = new FenGenerator(chessboardFen);
         String fenStringPositions = fenGenerator.returnFenStringPositions();
 
@@ -65,7 +79,9 @@ public class SingleMoveGameDefiner extends GameDefiner {
                 true,
                 distributedCalculation,
                 getEngineNamesFromEngineEloPair(engineEloPairs),
-                engineEloPairs
+                engineEloPairs,
+                sizeOne,
+                sizeTwo
         );
         if (!answer.isEmpty()) {
             return answer.get(0).getAnswer();

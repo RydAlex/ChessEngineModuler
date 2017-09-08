@@ -56,10 +56,9 @@ public class EloProcessor {
 
     public List<String> createEngineNameEnginesAnswer(ChessJSONObject answer){
         List<String> enginesNames = new LinkedList<>();
-        Integer enginesGroupSize = answer.getChessGameName().size()/2;
         String pack_one = "", pack_two = "";
         for(int i=0 ; i<answer.getChessGameName().size() ; i++){
-            if(i<enginesGroupSize){
+            if(i < answer.getSizeOfEnginesInFight().get("GroupOneSize")){
                 if(!pack_one.isEmpty()){
                     pack_one += "_";
                 }
@@ -71,8 +70,8 @@ public class EloProcessor {
                 pack_two += answer.getChessGameName().get(i);
             }
         }
-        enginesNames.add(pack_one);
-        enginesNames.add(pack_two);
+        enginesNames.add(pack_one+"_vs_"+pack_two);
+        enginesNames.add(pack_two+"_vs_"+pack_one);
         return enginesNames;
     }
 

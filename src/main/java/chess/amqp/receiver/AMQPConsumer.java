@@ -1,5 +1,6 @@
 package chess.amqp.receiver;
 
+import chess.amqp.message.GameVotingStats;
 import chess.utils.json.object.ChessJSONCreator;
 import chess.utils.json.object.ChessJSONReader;
 import chess.amqp.message.ChessJSONObject;
@@ -68,13 +69,15 @@ public class AMQPConsumer {
                         } else {
                             response = null;
                         }
+//                        response = chessObject;
+//                        response.setAnswer("1");
 
                         log.info("I have message ready To Parse And Send");
                         answer = ChessJSONCreator.createChessJsonFromObject(response);
                         System.gc();
                     } catch (RuntimeException e){
                         System.out.println(" [.] " + e.toString());
-                    } finally {
+                    }  finally {
                         for(int i=0; i<10; i++){
                             try{
                                 channel.basicPublish("", properties.getReplyTo(), replyProps, answer.getBytes("UTF-8"));

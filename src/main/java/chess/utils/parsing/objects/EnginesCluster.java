@@ -15,6 +15,11 @@ public class EnginesCluster {
     private LinkedList<EngineEloPair> engineList = new LinkedList<>();
     private String playRule;
 
+    EnginesCluster(EnginesCluster enginesCluster){
+        this.engineList = enginesCluster.getEngineList();
+        this.playRule = enginesCluster.getPlayRule();
+    }
+
     public void addEngineToCluster(String name){
         EngineEloPair eloPair = new EngineEloPair();
         eloPair.setEngineName(name);

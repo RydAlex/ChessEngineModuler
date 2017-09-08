@@ -1,5 +1,6 @@
 package chess.utils.parsing.objects;
 
+import chess.amqp.message.EngineEloPair;
 import chess.utils.name.spy.EngineSearcher;
 
 import java.util.*;
@@ -28,6 +29,23 @@ public class ClusterBattlePairingService {
         }
 
         return clustersBattles;
+    }
+
+    public static HashSet<List<EnginesCluster>> fetchEngineClusters(){
+        List<EnginesCluster> clusters = EngineSearcher.createClustersToBattleVersusEnginesInIt();
+        HashSet<List<EnginesCluster>> clustersToReturn= new HashSet<>();
+        for(EnginesCluster enginesCluster : clusters){
+            for(EngineEloPair engine : enginesCluster.getEngineList()){
+                List<EnginesCluster> battlesList = new LinkedList<>();
+                battlesList.add(enginesCluster);
+                EnginesCluster enginesClusterNew = new EnginesCluster();
+                enginesClusterNew.addEngineToCluster(engine.getEngineName());
+                enginesClusterNew.setPlayRule(enginesCluster.getRuleValue());
+                battlesList.add(enginesClusterNew);
+                clustersToReturn.add(battlesList);
+            }
+        }
+        return clustersToReturn;
     }
 
     private static HashSet<List<EnginesCluster>> createBattlePairForThisLevel(List<EnginesCluster> currentClusters) {

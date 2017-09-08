@@ -14,9 +14,10 @@ import java.util.List;
 public class AMQPSender {
 
     public List<ChessJSONObject> sendMessageWithDepthRule(String fen, int depth, TypeOfMessageExtraction typeOfGame, boolean isSingleMove,
-                                                          int howManyTimeCalculate, List<String> engineNames, List<EngineEloPair> engineEloPairs){
+                                                          int howManyTimeCalculate, List<String> engineNames, List<EngineEloPair> engineEloPairs,
+                                                            int sizeOne, int sizeTwo){
 
-        String json = ChessJSONCreator.createChessJsonWithDepthRule(fen, depth, typeOfGame, isSingleMove, engineNames, engineEloPairs);
+        String json = ChessJSONCreator.createChessJsonWithDepthRule(fen, depth, typeOfGame, isSingleMove, engineNames, engineEloPairs, sizeOne, sizeTwo);
         List<String> jsonsToSend = new LinkedList<>();
         for(int i=1; i<=howManyTimeCalculate; i++){
             jsonsToSend.add(json);
@@ -30,9 +31,10 @@ public class AMQPSender {
     }
 
     public List<ChessJSONObject> sendMessageWithTimeoutRule(String fen, int timeout, TypeOfMessageExtraction typeOfGame, boolean isSingleMove,
-                                                            int howManyTimeCalculate, List<String> engineNames, List<EngineEloPair> eloValues){
+                                                            int howManyTimeCalculate, List<String> engineNames, List<EngineEloPair> eloValues,
+                                                            int sizeOne, int sizeTwo){
 
-        String json = ChessJSONCreator.createChessJsonWithTimeoutRule(fen, timeout, typeOfGame, isSingleMove, engineNames, eloValues);
+        String json = ChessJSONCreator.createChessJsonWithTimeoutRule(fen, timeout, typeOfGame, isSingleMove, engineNames, eloValues, sizeOne, sizeTwo);
         List<String> jsonsToSend = new LinkedList<>();
         for(int i=1; i<=howManyTimeCalculate; i++){
             jsonsToSend.add(json);

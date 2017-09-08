@@ -17,26 +17,33 @@ public class VotingService {
 		String firstClusterName = "";
 		String secondClusterName = "";
 
+		String temp1="";
+		String temp2="";
 		List<String> enginesNames =  answer.getChessGameName();
 
 		for(int i=0 ;i<enginesNames.size() ; i++){
 			String name = enginesNames.get(i);
-			if(i<enginesNames.size()/2){
-				firstClusterName = joinNamesIntoClusterName(firstClusterName, name);
+			if(i<answer.getSizeOfEnginesInFight().get("GroupOneSize")){
+				temp1 = joinNamesIntoClusterName(temp1, name);
 			} else {
-				secondClusterName = joinNamesIntoClusterName(secondClusterName, name);
+				temp2 = joinNamesIntoClusterName(temp2, name);
 			}
 		}
+		firstClusterName = temp1 + "_vs_" + temp2;
+		secondClusterName = temp2 + "_vs_" + temp1;
 
 		String suffix = extractSufix(answer);
 		firstClusterName += suffix;
 		secondClusterName += suffix;
-
-		EngineName engineNameEntityForFirstCluster = engineNameDAO.findByNameAndType(firstClusterName, answer.getTypeOfGame().getTypeOfGame()).get(0);
-		EngineName engineNameEntityForSecondCluster = engineNameDAO.findByNameAndType(secondClusterName, answer.getTypeOfGame().getTypeOfGame()).get(0);
-
+		EngineName engineNameEntityForFirstCluster = null;
+		EngineName engineNameEntityForSecondCluster = null;
+		try{
+			engineNameEntityForFirstCluster = engineNameDAO.findByNameAndType(firstClusterName, answer.getTypeOfGame().getTypeOfGame()).get(0);
+			engineNameEntityForSecondCluster = engineNameDAO.findByNameAndType(secondClusterName, answer.getTypeOfGame().getTypeOfGame()).get(0);
+		} catch(Exception e){
+			System.out.println(firstClusterName + answer.getTypeOfGame().getTypeOfGame());
+		}
 		for(GameVotingStats voteStatsFromGame: answer.getEngineNamesVotesMap()){
-
 			if(isFirstEngine(voteStatsFromGame)){
 				voteStatsFromGame.setEngineName(removeSuffix(voteStatsFromGame.getEngineName()));
 				findElementAndUpdateOrCreateNew(answer, engineNameEntityForFirstCluster, voteStatsFromGame);

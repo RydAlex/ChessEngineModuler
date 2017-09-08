@@ -28,7 +28,9 @@ public class PlayGameEndpoint {
 							)
 					),
 					gameSpecification.getType(),
-					gameSpecification.getChessboardFen()
+					gameSpecification.getChessboardFen(),
+					4,
+					4
 			);
 		} else {
 			answer = singleMoveGameDefiner.sendSimpleDepthMoveRequestWithDefinedNames(
@@ -39,7 +41,9 @@ public class PlayGameEndpoint {
 							)
 					),
 					gameSpecification.getType(),
-					gameSpecification.getChessboardFen()
+					gameSpecification.getChessboardFen(),
+					4,
+					4
 			);
 		}
 		return "{ \"answer\" : \"" +  answer + "\"}";

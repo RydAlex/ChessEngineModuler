@@ -7,6 +7,7 @@ import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.annotation.JsonPropertyOrder;
 
+import java.util.HashMap;
 import java.util.List;
 
 @JsonInclude(JsonInclude.Include.NON_NULL)
@@ -34,6 +35,8 @@ public class ChessJSONObject {
     private Integer depth;
     @JsonProperty("isSingleMove")
     private Boolean isSingleMove;
+    @JsonProperty("sizeOfEnginesInFight")
+    private HashMap<String, Integer> sizeOfEnginesInFight;
     @JsonProperty("timeout")
     private Integer timeout;
     @JsonProperty("fen")
@@ -119,5 +122,21 @@ public class ChessJSONObject {
 
     public void setEngineNamesVotesMap(List<GameVotingStats> engineNamesVotesMap) {
         this.engineNamesVotesMap = engineNamesVotesMap;
+    }
+
+    public HashMap<String, Integer> getSizeOfEnginesInFight() { return sizeOfEnginesInFight; }
+
+    public void addEngineSizeToFirstGrp(Integer size) {
+        if(this.sizeOfEnginesInFight == null){
+            this.sizeOfEnginesInFight = new HashMap<>();
+        }
+        this.sizeOfEnginesInFight.put("GroupOneSize", size);
+    }
+
+    public void addEngineSizeToSecondGrp(Integer size) {
+        if(this.sizeOfEnginesInFight == null){
+            this.sizeOfEnginesInFight = new HashMap<>();
+        }
+        this.sizeOfEnginesInFight.put("GroupSecSize", size);
     }
 }

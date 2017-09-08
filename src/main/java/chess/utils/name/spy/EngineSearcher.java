@@ -78,6 +78,18 @@ public class EngineSearcher {
     public static List<EnginesCluster> createPreDefinedClusters(){
         List<EnginesCluster> listOfEnginesPairsToReturn = new LinkedList<>();
         String csvFileName = "PreDefinedClusters" + (OsCheck.isMac() ? "Mac.csv" : "Linux.csv");
+        fetchEnginesFromThisCSV(listOfEnginesPairsToReturn, csvFileName);
+        return listOfEnginesPairsToReturn;
+    }
+
+    public static List<EnginesCluster> createClustersToBattleVersusEnginesInIt(){
+        List<EnginesCluster> listOfEnginesPairsToReturn = new LinkedList<>();
+        String csvFileName = "ClusterWithInsideBattle" + (OsCheck.isMac() ? "Mac.csv" : "Linux.csv");
+        fetchEnginesFromThisCSV(listOfEnginesPairsToReturn, csvFileName);
+        return listOfEnginesPairsToReturn;
+    }
+
+    private static void fetchEnginesFromThisCSV(List<EnginesCluster> listOfEnginesPairsToReturn, String csvFileName) {
         String csvFile = EngineSearcher.class.getClassLoader().getResource("csvClustersDefinitions/" + csvFileName).getPath();
         try{
             String line = "";
@@ -99,6 +111,5 @@ public class EngineSearcher {
             log.info(ex.getMessage());
             throw new RuntimeException(ex);
         }
-        return listOfEnginesPairsToReturn;
     }
 }
