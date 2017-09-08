@@ -1,14 +1,14 @@
 package AMQPManagment.utils.chessJSONParsers;
 
-import AMQPManagment.utils.TypeOfMessageExtraction;
-import AMQPManagment.utils.data.ChessJSONObject;
+import chess.amqp.message.TypeOfMessageExtraction;
+import chess.amqp.message.ChessJSONObject;
+import chess.utils.json.object.ChessJSONCreator;
+import chess.utils.json.object.ChessJSONReader;
 import org.junit.Assert;
 import org.junit.Test;
 
 import java.util.LinkedList;
 import java.util.List;
-
-import static org.junit.Assert.*;
 
 /**
  * Created by aleksanderr on 03/06/17.
@@ -19,7 +19,7 @@ public class ChessJSONTest {
         LinkedList<String> engineList = new LinkedList<>();
         engineList.add("stockfish");
         engineList.add("fruit");
-        String listofDepthJson = ChessJSONCreator.createChessJsonWithTimeoutRule("adhd",5000, TypeOfMessageExtraction.ELO_SIMPLE, false ,engineList,null);
+        String listofDepthJson = ChessJSONCreator.createChessJsonWithTimeoutRule("adhd",5000, TypeOfMessageExtraction.ELO_SIMPLE, false ,engineList,null,0,0);
 
 
         Assert.assertEquals("{\n  \"chessGameName\" : \"stockfish\",\n  \"timeout\" : 5000,\n  \"fen\" : \"adhd\"\n}",listofDepthJson);
@@ -30,7 +30,7 @@ public class ChessJSONTest {
         LinkedList<String> engineList = new LinkedList<>();
         engineList.add("stockfish");
         engineList.add("fruit");
-        String listofDepthJson = ChessJSONCreator.createChessJsonWithDepthRule("adhd",5, TypeOfMessageExtraction.ELO_SIMPLE, false ,engineList,null);
+        String listofDepthJson = ChessJSONCreator.createChessJsonWithDepthRule("adhd",5, TypeOfMessageExtraction.ELO_SIMPLE, false ,engineList,null, 0,0);
 
         Assert.assertEquals("{\n  \"chessGameName\" : \"stockfish\",\n  \"depth\" : 5,\n  \"fen\" : \"adhd\"\n}",listofDepthJson);
         Assert.assertEquals("{\n  \"chessGameName\" : \"fruit\",\n  \"depth\" : 5,\n  \"fen\" : \"adhd\"\n}",listofDepthJson);

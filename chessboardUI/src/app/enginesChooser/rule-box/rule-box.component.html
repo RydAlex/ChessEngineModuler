@@ -1,0 +1,50 @@
+<div>
+  <strong> Choose rule: </strong>
+  <spinner *ngIf="loading" [tickness]="2" [size]="17"></spinner>
+  <p class="section-title"> Timeout: </p>
+  <div class="small-left-padding">
+    <div class="radio">
+      <label>
+        <input type="radio" [(ngModel)]="rule" name="rule" (ngModelChange)="ruleChange($event)" value="timeout_3000"> 3000
+      </label>
+    </div>
+    <div class="radio">
+      <label>
+        <input type="radio" [(ngModel)]="rule" name="rule" (ngModelChange)="ruleChange($event)" value="timeout_6000"> 6000
+      </label>
+    </div>
+    <div class="radio">
+      <label>
+        <input type="radio" [(ngModel)]="rule" name="rule" (ngModelChange)="ruleChange($event)" value="timeout_9000"> 9000
+      </label>
+    </div>
+    <div class="radio">
+      <label>
+        <input type="radio" [(ngModel)]="rule" name="rule" (ngModelChange)="ruleChange($event)" value="timeout_20000"> 20000
+      </label>
+    </div>
+  </div>
+  <p class="section-title"> Depth: </p>
+  <div class="small-left-padding">
+    <div class="radio">
+      <label>
+        <input type="radio" [(ngModel)]="rule" name="rule" (ngModelChange)="ruleChange($event)" value="depth_3"> 3
+      </label>
+    </div>
+    <div class="radio">
+      <label>
+        <input type="radio" [(ngModel)]="rule" name="rule" (ngModelChange)="ruleChange($event)" value="depth_5"> 5
+      </label>
+    </div>
+    <div class="radio">
+      <label>
+        <input type="radio" [(ngModel)]="rule" name="rule" (ngModelChange)="ruleChange($event)" value="depth_7"> 7
+      </label>
+    </div>
+    <div class="radio">
+      <label>
+        <input type="radio" [(ngModel)]="rule" name="rule" (ngModelChange)="ruleChange($event)" value="depth_9"> 9
+      </label>
+    </div>
+  </div>
+</div>

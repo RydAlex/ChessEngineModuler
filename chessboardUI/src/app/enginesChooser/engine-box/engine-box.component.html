@@ -1,0 +1,13 @@
+<div class="with-left-splitter">
+  <strong> Choose your engines: </strong>
+  <div class="radio" *ngFor="let engineName of engineNames">
+    <label>
+      <input type="checkbox"
+             [checked] = "isChecked(engineName.name)"
+             [disabled] = "checkIfDisabled(engineName.name)"
+             (change)="onSelect(engineName.name)"
+             name="engineName.name">
+      {{engineName.name}}<span *ngIf="engineName.elo > 0"> - {{engineName.elo}}</span>
+    </label>
+  </div>
+</div>
