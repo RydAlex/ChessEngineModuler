@@ -5,13 +5,11 @@ logLevel := sbt.Level.Info
 
 version := "1.0"
 
-mainClass in (Compile, run) := Some("AMQPManagment.AMQPSender.AMQPGameManager")
+mainClass in (Compile, run) := Some("chess.manager.game.GameManager")
 
 scalaVersion := "2.12.2"
 
 fork in run := true
-
-scalacOptions in Test ++= Seq("-Yrangepos")
 
 lazy val root = (project in file("chessEngineModuler")).enablePlugins(JavaServerAppPackaging)
 
