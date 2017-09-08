@@ -23,11 +23,11 @@ public class GameManager {
     public static void main(String[] argv){
         //Learning manager
         FullInsideGameDefiner gameDefiner = new FullInsideGameDefiner();
-//        while(true){
+        while(true){
             doClusterVsSingleEngineBattles(gameDefiner);
 //            doLearningCallWithEloTypeAndFightOneVsOne(gameDefiner);
 //            doLearningCallForClusters(gameDefiner);
-//        }
+        }
     }
 
 
