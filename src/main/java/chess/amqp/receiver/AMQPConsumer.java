@@ -1,6 +1,5 @@
 package chess.amqp.receiver;
 
-import chess.amqp.message.GameVotingStats;
 import chess.utils.json.object.ChessJSONCreator;
 import chess.utils.json.object.ChessJSONReader;
 import chess.amqp.message.ChessJSONObject;
