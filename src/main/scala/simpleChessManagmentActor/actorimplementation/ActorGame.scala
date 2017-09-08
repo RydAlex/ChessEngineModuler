@@ -1,10 +1,10 @@
 package simpleChessManagmentActor.actorimplementation
 
-import AMQPManagment.utils.TypeOfMessageExtraction
-import AMQPManagment.utils.data.{EngineEloPair, SingleMoveResult}
 import akka.actor._
 import akka.event.Logging
-import engineprocessor.core.enginemechanism.FenGenerator
+import akka.stream.Supervision
+import chess.amqp.message.{EngineEloPair, SingleMoveResult, TypeOfMessageExtraction, GameVotingStats}
+import chess.engine.processor.core.enginemechanism.FenGenerator
 
 import scala.collection.mutable.ListBuffer
 import scala.util.Random
@@ -13,7 +13,7 @@ import scala.util.Random
 /**
   * Created by aleksanderr on 09/04/17.
   */
-class ActorGame(system: ActorSystem, name: Seq[String], elo: Seq[EngineEloPair]) extends Actor {
+class ActorGame(system: ActorSystem, name: Seq[String], elo: Seq[EngineEloPair], clusterOneSize: Int, clusterTwoSize: Int) extends Actor {
 
 
   val log = Logging(context.system, this)
@@ -23,13 +23,16 @@ class ActorGame(system: ActorSystem, name: Seq[String], elo: Seq[EngineEloPair])
   var valOfGameRule: Int = 0
   var halfMoveCounter = 0
   var chessboard: String = ""
-  var senderRef: ActorRef = null
+  var senderRef: ActorRef = _
   var listLength: Int = 0
   var whoWin : Int = 0
   var activeListOne = true
   var answers :ListBuffer[MessageBack] = ListBuffer()
   var enginesOne :List[ActorRef] = List[ActorRef]()
   var enginesTwo :List[ActorRef] = List[ActorRef]()
+  var enginesOneName :List[String] = List[String]()
+  var enginesTwoName :List[String] = List[String]()
+  var decisionMadeInThisGame :ListBuffer[GameVotingStats] = ListBuffer()
   var typeOfGame: TypeOfMessageExtraction = TypeOfMessageExtraction.RANDOM
   val oneMoveMessagesParser = new OneMoveMessagesParser()
 
@@ -37,31 +40,38 @@ class ActorGame(system: ActorSystem, name: Seq[String], elo: Seq[EngineEloPair])
     case message: MessageBack =>
       log.info(name + "msg from engine received from " + message.engineName +  " no :" + message.id + " with answer: " + message.message)
       answers += message
-      if(answers.length == listLength/2) {
-        self ! AssumingMessage()
+      if(activeListOne){
+        if(answers.length == clusterOneSize) {
+          self ! AssumingMessage()
+        }
+      } else {
+        if(answers.length == clusterTwoSize) {
+          self ! AssumingMessage()
+        }
       }
 
     case assumingMsg: AssumingMessage =>
       logMessageOnEnterance(assumingMsg)
       val answer :MessageBack = extractMoveWhichShouldBeTakenInThisGame()
       val singleMoveResults : List[SingleMoveResult] = oneMoveMessagesParser.parseResultsToMoveResults(answers)
+      println(answer)
       val isCheckmate = new FenGenerator(chessboard).isMoveACheckmate(answer.message)
       log.info(answer.message + " is checkmate: " + isCheckmate)
       if(isCheckmate) {
         log.info(name + " - " + answer.engineName + " LOST!")
         if(activeListOne){
-          self ! EndGame(1) // First Players Win Game
+          self ! EndGame(2, decisionMadeInThisGame) // Second Players Win Game
         } else {
-          self ! EndGame(2) // Second Player Win Game
+          self ! EndGame(1, decisionMadeInThisGame) // First Player Win Game
         }
       }
       else {
         try{
           if(UpdateChessboardOrTellIsItDraw(answer)){
-            self ! EndGame(0) // Draw was detected
+            self ! EndGame(0, decisionMadeInThisGame) // Draw was detected
           }
           else if(isSingleMove){
-            self ! SingleMoves(singleMoveResults) // If single move than just return those moves
+            self ! SingleMoves(chessboard) // If single move than just return those moves
           }
           else {
             tellForOtherHalfOfEnginesToStartCounting() // if no condition was detected just start counting at second side
@@ -69,7 +79,7 @@ class ActorGame(system: ActorSystem, name: Seq[String], elo: Seq[EngineEloPair])
         } catch{
           case ex: Exception => {
             log.info("Engine takes move which does not exist")
-            self ! EndGame(-1)
+            self ! EndGame(-1, decisionMadeInThisGame)
           }
         }
       }
@@ -111,6 +121,7 @@ class ActorGame(system: ActorSystem, name: Seq[String], elo: Seq[EngineEloPair])
 
     case endGame: EndGame =>
       //log.info(name + " Lets kill everything... no:")
+      Supervision.resume
       for (engine <- enginesOne){
         engine ! PoisonPill
       }
@@ -125,14 +136,15 @@ class ActorGame(system: ActorSystem, name: Seq[String], elo: Seq[EngineEloPair])
        this.isSingleMove = initGame.isSingleMove
        this.senderRef = sender
        listLength = name.length
-        if(name.length % 2 != 0 ){
+       if(this.clusterOneSize == 0 || this.clusterTwoSize == 0){
           throw new RuntimeException("game do not have same number of engines on both sides")
         }
-        val engineLength = name.length/2
-        for(i <- Range(0, engineLength)){
+        for(i <- Range(0, clusterOneSize)){
+          enginesOneName = name(i).trim :: enginesOneName
           self ! CreateNewActorInFirstGroup(name(i).trim)
         }
-        for(i <- Range(engineLength, name.length)){
+        for(i <- Range(clusterOneSize, name.length)){
+          enginesTwoName = name(i).trim :: enginesTwoName
           self ! CreateNewActorInSecondGroup(name(i).trim)
         }
 
@@ -187,49 +199,78 @@ class ActorGame(system: ActorSystem, name: Seq[String], elo: Seq[EngineEloPair])
 
   def extractMoveWhichShouldBeTakenInThisGame(): MessageBack = {
     var answer :MessageBack = null
-    if (typeOfGame.equals(TypeOfMessageExtraction.RANDOM)) {
-      answer = extractMessageInARandomApproach()
-    } else if (typeOfGame.equals(TypeOfMessageExtraction.ELO_SIMPLE)) {
-      answer = extractMessageInAEloSimpleApproach()
-    } else if (typeOfGame.equals(TypeOfMessageExtraction.ELO_VOTE_WITH_ELO)) {
-      answer = extractMessageInAEloVotingApproach()
-    } else if (typeOfGame.equals(TypeOfMessageExtraction.ELO_VOTE_WITH_DISTRIBUTION)) {
-      answer = extractMessageInAEloDistributionApproach()
-    }
-    answer
-  }
-
-  def extractMessageInAEloSimpleApproach(): MessageBack = {
-    var eloOfActualMessage = 0
-    var chosenMessage: MessageBack = null
-    for(message <- answers){
-      for(engineEloVal <- elo){
-        if(engineEloVal.getEngineName.equals(message.engineName)){
-          if(engineEloVal.getEloValue > eloOfActualMessage){
-            //TODO: Add Trend recognition
-            chosenMessage = message
-            eloOfActualMessage = engineEloVal.getEloValue
+    var messageExtractionMethods: MessageExtractionMethods = null
+    var fenGenerator : FenGenerator = new FenGenerator()
+    var filteredAnswers :ListBuffer[MessageBack] = ListBuffer()
+    var answersInRightOrder :ListBuffer[MessageBack] = ListBuffer()
+    if (activeListOne) {
+      for(engine <- enginesOneName) {
+        for(answer <- answers) {
+          if(engine.equals(answer.engineName)){
+            answersInRightOrder += answer
+          }
+        }
+      }
+    } else {
+      for(engine <- enginesTwoName) {
+        for(answer <- answers) {
+          if(engine.equals(answer.engineName)){
+            answersInRightOrder += answer
           }
         }
       }
     }
-    return chosenMessage
-  }
+    for(answer <- answersInRightOrder){
+      if(fenGenerator.isMoveACheckmate(answer.message)){
+        log.info(answer + " was removed cause was a checkmate")
+      } else if(new FenGenerator(chessboard).isMoveExistForActivePlayer(answer.message)) {
+        filteredAnswers += answer
+      } else {
+        log.info(answer + " was removed cause was not exist for that player")
+      }
+    }
+    def methodTest: Unit = {
+      if (filteredAnswers.nonEmpty) {
+        if (activeListOne) {
+          messageExtractionMethods = new MessageExtractionMethods(filteredAnswers, elo)
+        } else {
+          messageExtractionMethods = new MessageExtractionMethods(filteredAnswers, elo)
+        }
+        if (typeOfGame.equals(TypeOfMessageExtraction.RANDOM)) {
+          answer = messageExtractionMethods.extractMessageInARandomApproach()
+        } else if (typeOfGame.equals(TypeOfMessageExtraction.ELO_SIMPLE)) {
+          answer = messageExtractionMethods.extractMessageInAEloSimpleApproach()
+        } else if (typeOfGame.equals(TypeOfMessageExtraction.ELO_VOTE_WITH_ELO)) {
+          answer = messageExtractionMethods.extractMessageInAEloVotingApproach()
+        } else if (typeOfGame.equals(TypeOfMessageExtraction.ELO_VOTE_WITH_DISTRIBUTION)) {
+          answer = messageExtractionMethods.extractMessageInAEloDistributionApproach()
+        }
+      }
+      if (answer == null) {
+        answer = MessageBack(answers.head.engineName, "a1a1") // default move which means lost the game - couldnt be null cause it was broke forward game
+      }
+    }
 
-  def extractMessageInAEloVotingApproach(): MessageBack = {
-    null
-  }
-
-  def extractMessageInAEloDistributionApproach(): MessageBack = {
-    null
-  }
-
-  def extractMessageInARandomApproach() : MessageBack = {
-    val randomNumber = Random.nextInt(answers.length)
-    log.info(name + " answer is taken from " + answers(randomNumber).engineName)
-    val answer = answers(randomNumber)
+    methodTest
+    markTheDecisionWasMadeBy(answer.engineName)
     answer
   }
+
+  def markTheDecisionWasMadeBy(engineName: String): Unit ={
+    var nameToPut = ""
+    if(activeListOne) nameToPut = engineName + "_1" else nameToPut = engineName + "_2"
+    var isFound :Boolean = false
+    for(engineInDecisionList <- decisionMadeInThisGame){
+      if(nameToPut.equals(engineInDecisionList.getEngineName)){
+        isFound = true
+        engineInDecisionList.setVoteCounter(engineInDecisionList.getVoteCounter +1 )
+      }
+    }
+    if(!isFound){
+      decisionMadeInThisGame += new GameVotingStats(nameToPut, 1)
+    }
+  }
+
 
   def tellForOtherHalfOfEnginesToStartCounting() = {
     answers.clear()

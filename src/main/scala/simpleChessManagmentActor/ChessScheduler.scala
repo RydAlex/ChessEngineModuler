@@ -1,8 +1,10 @@
 package simpleChessManagmentActor
 
-import AMQPManagment.utils.TypeOfMessageExtraction
-import AMQPManagment.utils.data.{ChessJSONObject, EngineEloPair, SingleMoveResult}
 import akka.actor.ActorRef
+import chess.amqp.message.{ChessJSONObject, EngineEloPair, SingleMoveResult, TypeOfMessageExtraction}
+import simpleChessManagmentActor.actorimplementation.EndGame
+import scala.collection.JavaConverters._
+import scala.collection.JavaConversions.mapAsScalaMap
 
 import scala.collection.JavaConverters
 
@@ -19,15 +21,20 @@ object ChessScheduler {
     val isSingleMove : Boolean = chessObject.getIsSingleMove
     val chessEngineList: Seq[String] = JavaConverters.asScalaBuffer(chessObject.getChessGameName)
     val chessEloList: Seq[EngineEloPair] = JavaConverters.asScalaBuffer(chessObject.getChessGamesEloValue)
+    val sizeOfFirstGroup: Int = chessObject.getSizeOfEnginesInFight.get("GroupOneSize")
+    val sizeOfSecondGroup : Int = chessObject.getSizeOfEnginesInFight.get("GroupSecSize")
 
-    val actor: ActorRef = GameShaper.defineNewGameWithThoseEngine(typeOfGame, isSingleMove ,chessEngineList, chessEloList)
-    GameShaper.startGameWithDepthRule(actor, depth, chessboard) match {
-      case gameResult : String => {
-        chessObject.setAnswer(gameResult)
+
+    val gameShaper = new GameShaper()
+    val actor: ActorRef = gameShaper.defineNewGameWithThoseEngine(typeOfGame, isSingleMove ,chessEngineList, chessEloList,
+                                                                                        sizeOfFirstGroup, sizeOfSecondGroup)
+
+    gameShaper.startGameWithDepthRule(actor, depth, chessboard) match {
+      case gameResult : EndGame  =>  {
+          chessObject.setAnswer(gameResult.whoWin.toString)
+          chessObject.setEngineNamesVotesMap(JavaConverters.bufferAsJavaList(gameResult.decisionMadeInThisGame))
       }
-      case move : List[SingleMoveResult] => {
-        chessObject.setSingleMoveResults(JavaConverters.seqAsJavaList(move))
-      }
+      case move       : List[SingleMoveResult]  =>    chessObject.setSingleMoveResults(JavaConverters.seqAsJavaList(move))
     }
     chessObject
   }
@@ -40,15 +47,19 @@ object ChessScheduler {
     val isSingleMove : Boolean = chessObject.getIsSingleMove
     val chessEngineList: Seq[String] = JavaConverters.asScalaBuffer(chessObject.getChessGameName)
     val chessEloList: Seq[EngineEloPair] = JavaConverters.asScalaBuffer(chessObject.getChessGamesEloValue)
+    val sizeOfFirstGroup: Int = chessObject.getSizeOfEnginesInFight.get("GroupOneSize").intValue()
+    val sizeOfSecondGroup: Int = chessObject.getSizeOfEnginesInFight.get("GroupSecSize").intValue()
 
-    val actor: ActorRef = GameShaper.defineNewGameWithThoseEngine(typeOfGame, isSingleMove, chessEngineList, chessEloList)
-    GameShaper.startGameWithTimeOutRule(actor, timeout, chessboard) match {
-      case gameResult : String => {
-        chessObject.setAnswer(gameResult)
+    val gameShaper = new GameShaper()
+    val actor: ActorRef = gameShaper.defineNewGameWithThoseEngine(typeOfGame, isSingleMove, chessEngineList, chessEloList,
+                                                                                          sizeOfFirstGroup, sizeOfSecondGroup)
+
+    gameShaper.startGameWithTimeOutRule(actor, timeout, chessboard) match {
+      case gameResult : EndGame  =>  {
+        chessObject.setAnswer(gameResult.whoWin.toString)
+        chessObject.setEngineNamesVotesMap(JavaConverters.bufferAsJavaList(gameResult.decisionMadeInThisGame))
       }
-      case move : List[SingleMoveResult] => {
-        chessObject.setSingleMoveResults(JavaConverters.seqAsJavaList(move))
-      }
+      case singleMove : String  =>    chessObject.setAnswer(singleMove)
     }
     chessObject
   }

@@ -1,0 +1,45 @@
+<!--The content below is only a placeholder and can be replaced.-->
+<app-nav></app-nav>
+<div class="content">
+  <div class="col-md-4">
+    <div class="same-height">
+      <app-rule-box
+        class="col-md-6 no-margin-right"
+        (engineEloTableChange)="onTableElementChange($event)"
+        (engineEloRule)="ruleChoose($event)">
+      </app-rule-box>
+      <app-engine-box
+        class="col-md-6 no-margin-left left-side-splitter"
+        *ngIf="enginesValues != undefined"
+        (chosenEnginesNames)="onEngineNameChoose($event)"
+        [enginesValues]='enginesValues'>
+      </app-engine-box>
+    </div>
+    <div class="general-info-styling">
+      <p class="col-md-12 text-justify">Cluster rule: {{displayEloRule}}</p>
+      <p class="col-md-12 text-justify">Cluster name: {{clusterName}}</p>
+      <p class="col-md-12 text-justify">Cluster play mode: {{displayClusterGameType}}</p>
+    </div>
+  </div>
+  <div class="col-md-4">
+    <div *ngIf="isChessboardEnabled()">
+      <app-chessboard
+        [gameEngines]="enginesNames"
+        [rule]="displayEloRule"
+        [type]="displayClusterGameType"
+      ></app-chessboard>
+    </div>
+    <span> </span>
+  </div>
+  <div class="col-md-3">
+    <div class="same-height">
+      <app-cluster-play-mode
+        *ngIf="canBeEnabled()"
+        (chosenType)="onClusterPlayType($event)"
+        [enginesNames]='enginesNames'
+        [ruleOfPlay]='displayEloRule'>
+      </app-cluster-play-mode>
+    </div>
+  </div>
+</div>
+

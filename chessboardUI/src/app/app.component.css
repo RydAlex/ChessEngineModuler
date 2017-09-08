@@ -1,0 +1,27 @@
+.content{
+  margin-top: 60px;
+  height: 100%;
+}
+
+.same-height{
+  min-height: 350px;
+}
+
+.no-margin-left{
+  margin-left: 0;
+  padding-left: 0;
+}
+
+.no-margin-right{
+  margin-right: 0;
+  padding-right: 0;
+}
+
+.general-info-styling{
+  min-height: 80px;
+  margin-top: 30px;
+}
+
+.left-side-splitter{
+  border-left: 1px lightblue solid;
+}
