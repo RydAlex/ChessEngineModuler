@@ -34,16 +34,18 @@ public class ClusterBattlePairingService {
     public static HashSet<List<EnginesCluster>> fetchEngineClusters(){
         List<EnginesCluster> clusters = EngineSearcher.createClustersToBattleVersusEnginesInIt();
         HashSet<List<EnginesCluster>> clustersToReturn= new HashSet<>();
-        for(EnginesCluster enginesCluster : clusters){
-            for(EngineEloPair engine : enginesCluster.getEngineList()){
-                if(engine.getEngineName().contains("stockfish")){
-                    List<EnginesCluster> battlesList = new LinkedList<>();
-                    battlesList.add(enginesCluster);
-                    EnginesCluster enginesClusterNew = new EnginesCluster();
-                    enginesClusterNew.addEngineToCluster(engine.getEngineName());
-                    enginesClusterNew.setPlayRule(enginesCluster.getRuleValue());
-                    battlesList.add(enginesClusterNew);
-                    clustersToReturn.add(battlesList);
+        for(int i=0 ; i<1000; i++){
+            for(EnginesCluster enginesCluster : clusters){
+                for(EngineEloPair engine : enginesCluster.getEngineList()){
+                    if(engine.getEngineName().contains("stockfish")){
+                        List<EnginesCluster> battlesList = new LinkedList<>();
+                        battlesList.add(enginesCluster);
+                        EnginesCluster enginesClusterNew = new EnginesCluster();
+                        enginesClusterNew.addEngineToCluster(engine.getEngineName());
+                        enginesClusterNew.setPlayRule(enginesCluster.getRuleValue());
+                        battlesList.add(enginesClusterNew);
+                        clustersToReturn.add(battlesList);
+                    }
                 }
             }
         }
