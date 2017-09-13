@@ -36,13 +36,15 @@ public class ClusterBattlePairingService {
         HashSet<List<EnginesCluster>> clustersToReturn= new HashSet<>();
         for(EnginesCluster enginesCluster : clusters){
             for(EngineEloPair engine : enginesCluster.getEngineList()){
-                List<EnginesCluster> battlesList = new LinkedList<>();
-                battlesList.add(enginesCluster);
-                EnginesCluster enginesClusterNew = new EnginesCluster();
-                enginesClusterNew.addEngineToCluster(engine.getEngineName());
-                enginesClusterNew.setPlayRule(enginesCluster.getRuleValue());
-                battlesList.add(enginesClusterNew);
-                clustersToReturn.add(battlesList);
+                if(engine.getEngineName().contains("stockfish")){
+                    List<EnginesCluster> battlesList = new LinkedList<>();
+                    battlesList.add(enginesCluster);
+                    EnginesCluster enginesClusterNew = new EnginesCluster();
+                    enginesClusterNew.addEngineToCluster(engine.getEngineName());
+                    enginesClusterNew.setPlayRule(enginesCluster.getRuleValue());
+                    battlesList.add(enginesClusterNew);
+                    clustersToReturn.add(battlesList);
+                }
             }
         }
         return clustersToReturn;
