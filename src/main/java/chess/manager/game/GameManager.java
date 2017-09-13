@@ -56,12 +56,12 @@ public class GameManager {
                     processingEngineEloList.addAll(clusterTwo.getEngineList());
 
                     if(clusterOne.getRuleType().equals("timeout")){
-                        gameDefiner.playFullActorTimeoutGameWithDefindedEnginesNamesAndDefinedSize(processingEngineEloList,
-                                clusterOne.getRuleValue(),
-                                TypeOfMessageExtraction.ELO_VOTE_WITH_DISTRIBUTION,
-                                clusterOne.getEngineList().size(),
-                                clusterTwo.getEngineList().size()
-                        );
+//                        gameDefiner.playFullActorTimeoutGameWithDefindedEnginesNamesAndDefinedSize(processingEngineEloList,
+//                                clusterOne.getRuleValue(),
+//                                TypeOfMessageExtraction.ELO_VOTE_WITH_DISTRIBUTION,
+//                                clusterOne.getEngineList().size(),
+//                                clusterTwo.getEngineList().size()
+//                        );
                         gameDefiner.playFullActorTimeoutGameWithDefindedEnginesNamesAndDefinedSize(
                                 processingEngineEloList,
                                 clusterOne.getRuleValue(),
@@ -69,13 +69,13 @@ public class GameManager {
                                 clusterOne.getEngineList().size(),
                                 clusterTwo.getEngineList().size()
                         );
-                        gameDefiner.playFullActorTimeoutGameWithDefindedEnginesNamesAndDefinedSize(
-                                processingEngineEloList,
-                                clusterOne.getRuleValue(),
-                                TypeOfMessageExtraction.RANDOM,
-                                clusterOne.getEngineList().size(),
-                                clusterTwo.getEngineList().size()
-                        );
+//                        gameDefiner.playFullActorTimeoutGameWithDefindedEnginesNamesAndDefinedSize(
+//                                processingEngineEloList,
+//                                clusterOne.getRuleValue(),
+//                                TypeOfMessageExtraction.RANDOM,
+//                                clusterOne.getEngineList().size(),
+//                                clusterTwo.getEngineList().size()
+//                        );
                     }
                 });
     }
