@@ -25,10 +25,7 @@ public class AMQPConsumer {
 
 
     public static void main(String[] argv) throws NoSuchAlgorithmException, KeyManagementException, URISyntaxException {
-<<<<<<< HEAD
-=======
 
->>>>>>> 58d9883bb497f5510970d1529ceec26d968bb863
         Connection connection = null;
         try {
             Config config = new Config()
