@@ -61,16 +61,16 @@ public class AMQPConsumer {
                         String message = new String(body,"UTF-8");
                         ChessJSONObject chessObject = ChessJSONReader.readDataFromJson(message);
                         log.info("I process " + chessObject.getChessGameName() + " with fen " + chessObject.getFen());
-                        if(chessObject.getDepth() != null) {
-                            response = ChessScheduler.startGameWithDepthRule(chessObject);
-                        }
-                        else if(chessObject.getTimeout() != null) {
-                            response = ChessScheduler.startGameWithTimeoutRule(chessObject);
-                        } else {
-                            response = null;
-                        }
-//                        response = chessObject;
-//                        response.setAnswer("1");
+//                        if(chessObject.getDepth() != null) {
+//                            response = ChessScheduler.startGameWithDepthRule(chessObject);
+//                        }
+//                        else if(chessObject.getTimeout() != null) {
+//                            response = ChessScheduler.startGameWithTimeoutRule(chessObject);
+//                        } else {
+//                            response = null;
+//                        }
+                        response = chessObject;
+                        response.setAnswer("1");
 
                         log.info("I have message ready To Parse And Send");
                         answer = ChessJSONCreator.createChessJsonFromObject(response);
