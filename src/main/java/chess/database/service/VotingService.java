@@ -29,8 +29,8 @@ public class VotingService {
 				temp2 = joinNamesIntoClusterName(temp2, name);
 			}
 		}
-		firstClusterName = temp1 + "_vs_" + temp2;
-		secondClusterName = temp2 + "_vs_" + temp1;
+		firstClusterName = temp1 + "1_vs_" + temp2+"2";
+		secondClusterName = temp2 + "2_vs_" + temp1+"1";
 
 		String suffix = extractSufix(answer);
 		firstClusterName += suffix;
