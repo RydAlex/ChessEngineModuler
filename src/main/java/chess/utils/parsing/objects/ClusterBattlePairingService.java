@@ -31,34 +31,44 @@ public class ClusterBattlePairingService {
         return clustersBattles;
     }
 
-    public static LinkedList<List<EnginesCluster>> fetchEngineClusters(){
+    public static LinkedList<List<EnginesCluster>> fetchEngineClusters() {
         // List<EnginesCluster> clusters = EngineSearcher.createClustersToBattleVersusEnginesInIt();
-        List<EnginesCluster> clusters = new LinkedList<>();
         LinkedList<List<EnginesCluster>> clustersToReturn = new LinkedList<>();
+        for(int i=0; i<250 ; i++){
+            createEngineVSEngineGames(clustersToReturn, "komodo");
+            createEngineVSEngineGames(clustersToReturn, "gull");
+            createEngineVSEngineGames(clustersToReturn, "senpai");
+            createEngineVSEngineGames(clustersToReturn, "greko");
+            createEngineVSEngineGames(clustersToReturn, "ruy");
+        }
+        //            for(EnginesCluster enginesCluster : clusters){
+        //                for(EngineEloPair engine : enginesCluster.getEngineList()){
+        //                    if(engine.getEngineName().contains("stockfish")){
+        //                        List<EnginesCluster> battlesList = new LinkedList<>();
+        //                        battlesList.add(enginesCluster);
+        //                        EnginesCluster enginesClusterNew = new EnginesCluster();
+        //                        enginesClusterNew.addEngineToCluster(engine.getEngineName());
+        //                        enginesClusterNew.setPlayRule(enginesCluster.getRuleValue());
+        //                        battlesList.add(enginesClusterNew);
+        //                        clustersToReturn.add(battlesList);
+        //                    }
+        //                }
+        //            }
+        //    }
+        return clustersToReturn;
+    }
+
+    private static void createEngineVSEngineGames(LinkedList<List<EnginesCluster>> clustersToReturn, String name) {
+
+        List<EnginesCluster> clusters = new LinkedList<>();
         EnginesCluster enginesCluster = new EnginesCluster();
         LinkedList<EngineEloPair> list = new LinkedList<>();
-        list.add(new EngineEloPair("stockfish", 0));
+        list.add(new EngineEloPair(name, 0));
         enginesCluster.setEngineList(list);
         enginesCluster.setPlayRule(3000);
         clusters.add(enginesCluster);
         clusters.add(enginesCluster);
-        for(int i=0 ; i<1000; i++){
-            clustersToReturn.add(clusters);
-//            for(EnginesCluster enginesCluster : clusters){
-//                for(EngineEloPair engine : enginesCluster.getEngineList()){
-//                    if(engine.getEngineName().contains("stockfish")){
-//                        List<EnginesCluster> battlesList = new LinkedList<>();
-//                        battlesList.add(enginesCluster);
-//                        EnginesCluster enginesClusterNew = new EnginesCluster();
-//                        enginesClusterNew.addEngineToCluster(engine.getEngineName());
-//                        enginesClusterNew.setPlayRule(enginesCluster.getRuleValue());
-//                        battlesList.add(enginesClusterNew);
-//                        clustersToReturn.add(battlesList);
-//                    }
-//                }
-//            }
-        }
-        return clustersToReturn;
+        clustersToReturn.add(clusters);
     }
 
     private static HashSet<List<EnginesCluster>> createBattlePairForThisLevel(List<EnginesCluster> currentClusters) {
