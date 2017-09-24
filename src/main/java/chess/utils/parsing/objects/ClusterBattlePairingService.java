@@ -32,29 +32,21 @@ public class ClusterBattlePairingService {
     }
 
     public static LinkedList<List<EnginesCluster>> fetchEngineClusters() {
-        // List<EnginesCluster> clusters = EngineSearcher.createClustersToBattleVersusEnginesInIt();
+        List<EnginesCluster> clusters = EngineSearcher.createClustersToBattleVersusEnginesInIt();
         LinkedList<List<EnginesCluster>> clustersToReturn = new LinkedList<>();
-        for(int i=0; i<250 ; i++){
-            createEngineVSEngineGames(clustersToReturn, "komodo");
-            createEngineVSEngineGames(clustersToReturn, "gull");
-            createEngineVSEngineGames(clustersToReturn, "senpai");
-            createEngineVSEngineGames(clustersToReturn, "greko");
-            createEngineVSEngineGames(clustersToReturn, "ruy");
+        for(EnginesCluster enginesCluster : clusters){
+            //for(EngineEloPair engine : enginesCluster.getEngineList()){
+            //if(engine.getEngineName().contains("stockfish")){
+            List<EnginesCluster> battlesList = new LinkedList<>();
+            battlesList.add(enginesCluster);
+            EnginesCluster enginesClusterNew = new EnginesCluster();
+            enginesClusterNew.addEngineToCluster("stockfish");
+            enginesClusterNew.setPlayRule(enginesCluster.getRuleValue());
+            battlesList.add(enginesClusterNew);
+            clustersToReturn.add(battlesList);
+            //}
+            //}
         }
-        //            for(EnginesCluster enginesCluster : clusters){
-        //                for(EngineEloPair engine : enginesCluster.getEngineList()){
-        //                    if(engine.getEngineName().contains("stockfish")){
-        //                        List<EnginesCluster> battlesList = new LinkedList<>();
-        //                        battlesList.add(enginesCluster);
-        //                        EnginesCluster enginesClusterNew = new EnginesCluster();
-        //                        enginesClusterNew.addEngineToCluster(engine.getEngineName());
-        //                        enginesClusterNew.setPlayRule(enginesCluster.getRuleValue());
-        //                        battlesList.add(enginesClusterNew);
-        //                        clustersToReturn.add(battlesList);
-        //                    }
-        //                }
-        //            }
-        //    }
         return clustersToReturn;
     }
 
