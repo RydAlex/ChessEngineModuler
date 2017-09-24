@@ -11,6 +11,7 @@ import lombok.extern.slf4j.Slf4j;
 
 import java.util.ArrayList;
 import java.util.HashSet;
+import java.util.LinkedList;
 import java.util.List;
 import java.util.stream.Stream;
 
@@ -23,18 +24,18 @@ public class GameManager {
     public static void main(String[] argv){
         //Learning manager
         FullInsideGameDefiner gameDefiner = new FullInsideGameDefiner();
-        while(true){
+//        while(true){
             doClusterVsSingleEngineBattles(gameDefiner);
 //            doLearningCallWithEloTypeAndFightOneVsOne(gameDefiner);
 //            doLearningCallForClusters(gameDefiner);
-        }
+//        }
     }
 
 
     private static void doClusterVsSingleEngineBattles(FullInsideGameDefiner gameDefiner) {
 
         //Map - List of chess engines names, play_rule
-        HashSet<List<EnginesCluster>> enginesClusterVsSingleBattles = ClusterBattlePairingService.fetchEngineClusters();
+        LinkedList<List<EnginesCluster>> enginesClusterVsSingleBattles = ClusterBattlePairingService.fetchEngineClusters();
         enginesClusterVsSingleBattles.stream()
                 .parallel()
                 .map(EngineEloPairParser::findElosForEnginesInClusters)

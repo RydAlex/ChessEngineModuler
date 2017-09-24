@@ -70,8 +70,8 @@ public class EloProcessor {
                 pack_two += answer.getChessGameName().get(i);
             }
         }
-        enginesNames.add(pack_one+"_vs_"+pack_two);
-        enginesNames.add(pack_two+"_vs_"+pack_one);
+        enginesNames.add(pack_one+"_vss_"+pack_two);
+        enginesNames.add(pack_two+"_vss_"+pack_one);
         return enginesNames;
     }
 
