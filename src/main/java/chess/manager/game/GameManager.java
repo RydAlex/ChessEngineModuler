@@ -34,7 +34,7 @@ public class GameManager {
             try {
                 Integer messageCounter = RedisManager.getInformationAboutMessageInQueue(Settings.getChessProcessingQueueName());
                 if (messageCounter < 300) {
-                    while(RedisManager.getInformationAboutMessageInQueue(Settings.getChessProcessingQueueName()) > 500){
+                    while(RedisManager.getInformationAboutMessageInQueue(Settings.getChessProcessingQueueName()) < 500){
                         EngineSearcher.createPairsOfGames()
                                 .stream()
                                 .map(GameManager::findEloValueForEngineName)
