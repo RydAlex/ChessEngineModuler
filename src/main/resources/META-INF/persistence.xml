@@ -3,11 +3,9 @@
 
     <persistence-unit name="NewPersistenceUnit" transaction-type="RESOURCE_LOCAL">
         <provider>org.hibernate.jpa.HibernatePersistenceProvider</provider>
-        <class>chess.database.entities.CurrentElo</class>
-        <class>chess.database.entities.EloGamesHistory</class>
+        <class>chess.database.entities.Battle</class>
+        <class>chess.database.entities.EloEnginesHistory</class>
         <class>chess.database.entities.EngineName</class>
-        <class>chess.database.entities.Score</class>
-        <class>chess.database.entities.VotingStats</class>
         <properties>
             <property name="hibernate.dialect" value="org.hibernate.dialect.PostgreSQL94Dialect"/>
             <property name="hibernate.connection.driver_class" value="org.postgresql.Driver"/>

@@ -1,12 +1,9 @@
 package chess.manager.game.definitions;
 
-import chess.amqp.sender.AMQPSender;
-import chess.manager.messages.processors.EloProcessor;
+import chess.amqp.sender.AMQPGameCreatorHelper;
 import chess.amqp.message.TypeOfMessageExtraction;
-import chess.amqp.message.ChessJSONObject;
 import chess.amqp.message.EngineEloPair;
 import chess.engine.processor.core.enginemechanism.FenGenerator;
-import chess.database.service.VotingService;
 
 import java.util.List;
 
@@ -16,68 +13,41 @@ import java.util.List;
 public class FullInsideGameDefiner extends GameDefiner {
 
     public void playFullActorDepthGameWithDefinedEnginesNames(List<EngineEloPair> engineEloPairs,
-                                                        int depth, TypeOfMessageExtraction type, int sizeOne, int sizeTwo){
+                                                        int depth, TypeOfMessageExtraction type, int sizeOne){
         FenGenerator fenGenerator = new FenGenerator(); // GAME NEAR TO END - 2 kings 8/8/5K2/8/8/5k2/8/8 w - -
         String fenStringPositions = fenGenerator.returnFenStringPositions();
 
-        AMQPSender sender = new AMQPSender();
-        ChessJSONObject answer = sender.sendMessageWithDepthRule(
+        AMQPGameCreatorHelper sender = new AMQPGameCreatorHelper();
+        sender.sendMessageWithDepthRule(
                 fenStringPositions,
                 depth,
                 type ,
                 false ,
-                1,
                 getEngineNamesFromEngineEloPair(engineEloPairs),
                 engineEloPairs,
-                sizeOne,
-                sizeTwo
-        ).get(0);
-        System.gc();
-
-        extractAndSaveGameResult(answer);
-        saveEnginesVotesStats(answer);
-
+                sizeOne
+        );
         System.gc();
     }
 
     public void playFullActorTimeoutGameWithDefindedEnginesNamesAndDefinedSize(List<EngineEloPair> engineEloPairs,
-                                            int timeout, TypeOfMessageExtraction type, int sizeOne, int sizeTwo) {
+                                            int timeout, TypeOfMessageExtraction type, int sizeOne) {
 
         FenGenerator fenGenerator = new FenGenerator(); // GAME NEAR TO END - 2 kings 8/8/5K2/8/8/5k2/8/8 w - -
         String fenStringPositions = fenGenerator.returnFenStringPositions();
 
-        AMQPSender sender = new AMQPSender();
-        ChessJSONObject answer = sender.sendMessageWithTimeoutRule(
+        AMQPGameCreatorHelper sender = new AMQPGameCreatorHelper();
+        sender.sendMessageWithTimeoutRule(
                 fenStringPositions,
                 timeout,
                 type,
                 false,
-                1,
                 getEngineNamesFromEngineEloPair(engineEloPairs),
                 engineEloPairs,
-                sizeOne,
-                sizeTwo
-        ).get(0);
-        System.gc();
-
-        extractAndSaveGameResult(answer);
-        saveEnginesVotesStats(answer);
-
+                sizeOne
+        );
         System.gc();
     }
 
-    private void extractAndSaveGameResult(ChessJSONObject answer) {
-        if(answer != null && !answer.getAnswer().equals("-1")){
-            EloProcessor eloProcessor = new EloProcessor();
-            eloProcessor.fetchDataAndUpdateElo(answer);
-        }
-    }
-
-    private void saveEnginesVotesStats(ChessJSONObject answer) {
-        if(answer != null && !answer.getAnswer().equals("-1")) {
-            VotingService votingService = new VotingService();
-            votingService.applyVotesToDatabase(answer);
-        }
-    }
 
 }

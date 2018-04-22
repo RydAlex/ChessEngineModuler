@@ -1,8 +1,5 @@
 package chess.algorithms.elo;
 
-/**
- * Created by aleksanderr on 09/07/17.
- */
 public enum EloGameResultValue {
     WIN(1),
     DRAW(0.5),

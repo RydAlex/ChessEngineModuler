@@ -9,38 +9,41 @@ import javax.transaction.Transactional;
 public class CoreDAO<Type> {
 
     protected EntityManager em;
-    public CoreDAO(){
-        startConnection();
-    }
 
-    private void startConnection(){
+    protected void startConnection(){
         em = EntityManagerSingleton.getInstance().getEntityManager();
     }
 
     @Transactional
     public void save(Type object){
+        startConnection();
         em.getTransaction().begin();
         em.persist(object);
         em.flush();
         em.getTransaction().commit();
+        closeConnection();
     }
 
     @Transactional
     public void edit(Type object){
+        startConnection();
         em.getTransaction().begin();
         em.merge(object);
         em.getTransaction().commit();
+        closeConnection();
     }
 
     @Transactional
     public void remove(Type object){
+        startConnection();
         em.getTransaction().begin();
         em.remove(object);
         em.getTransaction().commit();
+        closeConnection();
     }
 
     @Transactional
-    public void closeConnection(){
+    protected void closeConnection(){
         em.close();
     }
 }

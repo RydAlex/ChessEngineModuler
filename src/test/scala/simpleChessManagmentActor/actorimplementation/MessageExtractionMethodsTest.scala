@@ -7,7 +7,7 @@ import scala.collection.mutable.ListBuffer
 
 class MessageExtractionMethodsTest extends FunSpec with BeforeAndAfter {
 
-  var names = Seq[String]("senpai","stockfish","gull","greko")
+  var names = Seq[String]("senpai","stockfish","gull3","greko")
   var elo: Seq[EngineEloPair] = _
   var answers: ListBuffer[MessageBack] = _
 
@@ -43,7 +43,7 @@ class MessageExtractionMethodsTest extends FunSpec with BeforeAndAfter {
       var answers :ListBuffer[MessageBack] = ListBuffer()
       answers += new MessageBack("senpai","b")      // 1000
       answers += new MessageBack("stockfish", "a")  // 1200
-      answers += new MessageBack("gull","a")        // 1400
+      answers += new MessageBack("gull3","a")        // 1400
       answers += new MessageBack("greko","c")       // 1600
     }
   }

@@ -5,7 +5,7 @@ logLevel := sbt.Level.Info
 
 version := "1.0"
 
-mainClass in (Compile, run) := Some("chess.amqp.receiver.AMQPConsumer")
+mainClass in (Compile, run) := Some("chess.manager.game.GameProcessorStarter")
 
 scalaVersion := "2.12.2"
 
@@ -16,10 +16,10 @@ scalacOptions in Test ++= Seq("-Yrangepos")
 lazy val root = (project in file("chessEngineModuler")).enablePlugins(JavaServerAppPackaging)
 
 libraryDependencies ++= Seq(
-  "com.rabbitmq" % "amqp-client" % "4.1.0",
+  "com.rabbitmq" % "amqp-client" % "5.2.0",
   "net.jodah" % "lyra" % "0.5.4",
-  "org.mockito" % "mockito-core" % "2.7.22" % "test",
-  "org.specs2" %% "specs2-core" % "3.9.1" % "test",
+  "org.mockito" % "mockito-core" % "2.7.22",
+  "org.specs2" %% "specs2-core" % "3.9.1",
   "com.typesafe.akka" %% "akka-actor" % "2.4.17",
   "com.typesafe.akka" %% "akka-agent" % "2.4.17",
   "com.typesafe.akka" %% "akka-camel" % "2.4.17",
@@ -40,6 +40,7 @@ libraryDependencies ++= Seq(
   "com.typesafe.akka" %% "akka-distributed-data-experimental" % "2.4.17",
   "com.typesafe.akka" %% "akka-typed-experimental" % "2.4.17",
   "com.typesafe" % "config" % "1.3.1",
+  "redis.clients" % "jedis" % "2.9.0",
   "org.postgresql" % "postgresql" % "9.4.1212",
   "org.hibernate" % "hibernate-core" % "5.2.9.Final",
   "org.springframework.boot" % "spring-boot-starter-web" % "1.5.3.RELEASE",

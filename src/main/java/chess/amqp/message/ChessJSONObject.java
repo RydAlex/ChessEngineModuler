@@ -1,8 +1,6 @@
 package chess.amqp.message;
 
-/**
- * Created by aleksanderr on 29/05/17.
- */
+import chess.algorithms.elo.EloGameResultValue;
 import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.annotation.JsonPropertyOrder;
@@ -29,14 +27,14 @@ public class ChessJSONObject {
     private List<EngineEloPair> chessGamesEloValue;
     @JsonProperty("engineNamesVotesMap")
     private List<GameVotingStats> engineNamesVotesMap = null;
-    @JsonProperty("singleMoveResults")
-    private List<SingleMoveResult> singleMoveResults = null;
+    @JsonProperty("fenMovesInGame")
+    private String fenMovesInGame;
     @JsonProperty("depth")
     private Integer depth;
     @JsonProperty("isSingleMove")
     private Boolean isSingleMove;
-    @JsonProperty("sizeOfEnginesInFight")
-    private HashMap<String, Integer> sizeOfEnginesInFight;
+    @JsonProperty("sizeOfEnginesInFirstGroup")
+    private Integer sizeOfEnginesInFirstGroup;
     @JsonProperty("timeout")
     private Integer timeout;
     @JsonProperty("fen")
@@ -52,14 +50,6 @@ public class ChessJSONObject {
 
     public void setChessGameName(List<String> chessGameName) {
         this.chessGameName = chessGameName;
-    }
-
-    public List<SingleMoveResult> getSingleMoveResults() {
-        return singleMoveResults;
-    }
-
-    public void setSingleMoveResults(List<SingleMoveResult> singleMoveResults) {
-        this.singleMoveResults = singleMoveResults;
     }
 
     public Integer getDepth() {
@@ -104,8 +94,16 @@ public class ChessJSONObject {
 
     public String getAnswer() { return answer; }
 
+    public Integer takeAnswerAsInteger() { return Integer.parseInt(answer); }
+
     public void setAnswer(String answer) {
         this.answer = answer;
+    }
+
+    public String getFenMovesInGame() { return fenMovesInGame; }
+
+    public void setFenMovesInGame(String fenMovesInGame) {
+        this.fenMovesInGame = fenMovesInGame;
     }
 
     public List<EngineEloPair> getChessGamesEloValue() {
@@ -124,19 +122,11 @@ public class ChessJSONObject {
         this.engineNamesVotesMap = engineNamesVotesMap;
     }
 
-    public HashMap<String, Integer> getSizeOfEnginesInFight() { return sizeOfEnginesInFight; }
+    public Integer getSizeOfEnginesInFirstGroup() { return sizeOfEnginesInFirstGroup; }
 
-    public void addEngineSizeToFirstGrp(Integer size) {
-        if(this.sizeOfEnginesInFight == null){
-            this.sizeOfEnginesInFight = new HashMap<>();
-        }
-        this.sizeOfEnginesInFight.put("GroupOneSize", size);
-    }
+    public Integer takeSizeOfEnginesInSecondGroup() { return chessGameName.size() - sizeOfEnginesInFirstGroup; }
 
-    public void addEngineSizeToSecondGrp(Integer size) {
-        if(this.sizeOfEnginesInFight == null){
-            this.sizeOfEnginesInFight = new HashMap<>();
-        }
-        this.sizeOfEnginesInFight.put("GroupSecSize", size);
+    public void setSizeOfEnginesInFirstGroup(Integer size) {
+        this.sizeOfEnginesInFirstGroup = size;
     }
 }

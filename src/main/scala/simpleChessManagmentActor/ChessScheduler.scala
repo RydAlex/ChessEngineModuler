@@ -21,8 +21,8 @@ object ChessScheduler {
     val isSingleMove : Boolean = chessObject.getIsSingleMove
     val chessEngineList: Seq[String] = JavaConverters.asScalaBuffer(chessObject.getChessGameName)
     val chessEloList: Seq[EngineEloPair] = JavaConverters.asScalaBuffer(chessObject.getChessGamesEloValue)
-    val sizeOfFirstGroup: Int = chessObject.getSizeOfEnginesInFight.get("GroupOneSize")
-    val sizeOfSecondGroup : Int = chessObject.getSizeOfEnginesInFight.get("GroupSecSize")
+    val sizeOfFirstGroup: Int = chessObject.getSizeOfEnginesInFirstGroup
+    val sizeOfSecondGroup : Int = chessObject.takeSizeOfEnginesInSecondGroup
 
 
     val gameShaper = new GameShaper()
@@ -32,9 +32,10 @@ object ChessScheduler {
     gameShaper.startGameWithDepthRule(actor, depth, chessboard) match {
       case gameResult : EndGame  =>  {
           chessObject.setAnswer(gameResult.whoWin.toString)
+          chessObject.setFenMovesInGame(gameResult.fenMovesInGame)
           chessObject.setEngineNamesVotesMap(JavaConverters.bufferAsJavaList(gameResult.decisionMadeInThisGame))
       }
-      case move       : List[SingleMoveResult]  =>    chessObject.setSingleMoveResults(JavaConverters.seqAsJavaList(move))
+      //case move       : List[SingleMoveResult]  =>    chessObject.setSingleMoveResults(JavaConverters.seqAsJavaList(move))
     }
     chessObject
   }
@@ -47,8 +48,8 @@ object ChessScheduler {
     val isSingleMove : Boolean = chessObject.getIsSingleMove
     val chessEngineList: Seq[String] = JavaConverters.asScalaBuffer(chessObject.getChessGameName)
     val chessEloList: Seq[EngineEloPair] = JavaConverters.asScalaBuffer(chessObject.getChessGamesEloValue)
-    val sizeOfFirstGroup: Int = chessObject.getSizeOfEnginesInFight.get("GroupOneSize").intValue()
-    val sizeOfSecondGroup: Int = chessObject.getSizeOfEnginesInFight.get("GroupSecSize").intValue()
+    val sizeOfFirstGroup: Int = chessObject.getSizeOfEnginesInFirstGroup
+    val sizeOfSecondGroup: Int = chessObject.takeSizeOfEnginesInSecondGroup
 
     val gameShaper = new GameShaper()
     val actor: ActorRef = gameShaper.defineNewGameWithThoseEngine(typeOfGame, isSingleMove, chessEngineList, chessEloList,
@@ -57,6 +58,7 @@ object ChessScheduler {
     gameShaper.startGameWithTimeOutRule(actor, timeout, chessboard) match {
       case gameResult : EndGame  =>  {
         chessObject.setAnswer(gameResult.whoWin.toString)
+        chessObject.setFenMovesInGame(gameResult.fenMovesInGame)
         chessObject.setEngineNamesVotesMap(JavaConverters.bufferAsJavaList(gameResult.decisionMadeInThisGame))
       }
       case singleMove : String  =>    chessObject.setAnswer(singleMove)

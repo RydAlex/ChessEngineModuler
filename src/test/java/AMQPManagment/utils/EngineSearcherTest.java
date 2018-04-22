@@ -24,16 +24,4 @@ public class EngineSearcherTest {
         Set<List<EnginesCluster>> enginesClusters = ClusterBattlePairingService.createPairs();
         Assert.assertEquals(3,enginesClusters.size());
     }
-
-    @Test
-    public void rematchEnginesWorksFine(){
-        List<List<String>> pairsOfGames = EngineSearcher.rematchBestEnginesForDepthOrTimeout();
-        Assert.assertEquals(2,pairsOfGames.size());
-
-
-        List<List<String>> gamePair = EngineSearcher.rematchBestEnginesForDepthOrTimeout();
-        Assert.assertEquals(2,gamePair.size());
-
-//        Assert.assertTrue(!pairsOfGames.equals(gamePair));
-    }
 }

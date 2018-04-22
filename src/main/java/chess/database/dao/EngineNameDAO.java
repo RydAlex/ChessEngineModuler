@@ -15,17 +15,32 @@ import java.util.List;
 public class EngineNameDAO extends CoreDAO<EngineName> {
 
 
+    public List<EngineName> findByName(String name) {
+        startConnection();
+        List engineNames = em.createQuery(
+                "FROM EngineName engine WHERE engine.engineName LIKE :name")
+                .setParameter("name", name)
+                .getResultList();
+        closeConnection();
+        return engineNames;
+    }
+
     public List<EngineName> findByNameAndType(String name, String typeOfGame) {
-        List<EngineName> engineNames = em.createQuery(
-                "FROM EngineName engine WHERE engine.engineName LIKE :name AND engine.typeOfGameUsedByThatEngine LIKE :gameType")
+        startConnection();
+        List engineNames = em.createQuery(
+                "FROM EngineName engine WHERE engine.engineName LIKE :name AND engine.typeOfGame LIKE :gameType")
                 .setParameter("name", name)
                 .setParameter("gameType", typeOfGame)
                 .getResultList();
+        closeConnection();
         return engineNames;
     }
 
 
     public List<EngineName> findAll(){
-        return em.createQuery("from EngineName").getResultList();
+        startConnection();
+        List listOfResults = em.createQuery("from EngineName").getResultList();
+        closeConnection();
+        return listOfResults;
     }
 }

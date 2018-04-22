@@ -4,6 +4,7 @@ import chess.engine.processor.core.enginemechanism.CommandQuery;
 import chess.engine.processor.core.enginemechanism.EngineAvailabilityScanner;
 import chess.engine.processor.core.enginemechanism.EngineProcessor;
 import chess.engine.processor.core.utils.enums.GoEnum;
+import lombok.extern.slf4j.Slf4j;
 import org.junit.BeforeClass;
 import org.junit.Test;
 
@@ -17,6 +18,7 @@ import static java.lang.Thread.sleep;
  * Created by aleksanderr on 17/04/16.
  */
 
+@Slf4j
 public class EngineConnectionTest {
 
     private static int unitTestTimeout = 5000;
@@ -34,10 +36,8 @@ public class EngineConnectionTest {
     @Test
     public void canInitialize() throws Exception {
         for(String enginePath : enginesPath){
-
             EngineProcessor er = new EngineProcessor();
-
-
+            log.info("Now i check the: " + enginePath + " engine");
             CommandQuery commandMenu = er.setEngineConnection(enginePath);
             boolean msgFound;
             commandMenu.getChessEngineInformation();
@@ -49,25 +49,16 @@ public class EngineConnectionTest {
         }
     }
 
-//
-//    @Test
-//    public void canSetNewOption() throws Exception {
-//        EngineProcessor er = EngineProcessor.getInstance();
-//        CommandQuery commandMenu = er.setEngineConnection(enginePath);
-//        commandMenu.startNewGame();
-//        Thread.sleep(unitTestTimeout);
-//    }
-//
-
     @Test
     public void canExitAfterThreeSecond() throws Exception {
         for(String enginePath : enginesPath) {
-                EngineProcessor er = new EngineProcessor();
-                CommandQuery commandMenu = er.setEngineConnection(enginePath);
-                commandMenu.exitTheGame();
-                Thread.sleep(1000);
-                assert !er.isEngineStillWork();
-                commandMenu.clearMessagesInLogs();
+            log.info("Now i check the: " + enginePath + " engine");
+            EngineProcessor er = new EngineProcessor();
+            CommandQuery commandMenu = er.setEngineConnection(enginePath);
+            commandMenu.exitTheGame();
+            Thread.sleep(1000);
+            assert !er.isEngineStillWork();
+            commandMenu.clearMessagesInLogs();
         }
     }
 
@@ -76,6 +67,7 @@ public class EngineConnectionTest {
 
         int counter=0;
         for(String enginePath : enginesPath) {
+            log.info("Now i check the: " + enginePath + " engine");
             EngineProcessor er = new EngineProcessor();
             CommandQuery commandMenu = er.setEngineConnection(enginePath);
             commandMenu.showActualLookOfGame();
@@ -92,6 +84,7 @@ public class EngineConnectionTest {
     @Test
     public void playFastTimeGame() throws Exception {
         for(String enginePath : enginesPath) {
+            log.info("Now i check the: " + enginePath + " engine");
             System.out.println(enginePath);
             EngineProcessor er = new EngineProcessor();
             CommandQuery commandMenu = er.setEngineConnection(enginePath);
@@ -109,18 +102,11 @@ public class EngineConnectionTest {
         }
     }
 
-
-
-    //Proper sequence to get answer:
-    // UCI
-    // ucinewgame
-    // position fen r1k4r/p2nb1p1/2b4p/1p1n1p2/2PP4/3Q1NB1/1P3PPP/R5K1 b - c3 0 19
-    // go movetime 5000
-
     @Test
     public void playProperTypeOfGame() throws Exception {
         int timeout = 60000;
         for(String enginePath : enginesPath) {
+            log.info("Now i check the: " + enginePath + " engine");
             EngineProcessor er = new EngineProcessor();
             CommandQuery commandMenu = er.setEngineConnection(enginePath);
             commandMenu
@@ -160,6 +146,7 @@ public class EngineConnectionTest {
 
     public void testGameWithDepth(int depth) throws Exception {
         for(String enginePath : enginesPath) {
+            log.info("Now i check the: " + enginePath + " engine");
             EngineProcessor er = new EngineProcessor();
             CommandQuery commandMenu = er.setEngineConnection(enginePath);
             commandMenu

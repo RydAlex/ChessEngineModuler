@@ -1,14 +1,14 @@
 package chess.database.entities;
 
 import lombok.Data;
+import lombok.Getter;
+import lombok.Setter;
 
 import javax.persistence.*;
 
-/**
- * Created by aleksanderr on 25/06/17.
- */
 @Entity
 @Data
+@Table(name = "enginename", schema = "public", catalog = "d5n5g3s0tqt8q5")
 public class EngineName {
 
     @Id
@@ -18,14 +18,21 @@ public class EngineName {
     @Access(AccessType.PROPERTY)
     private Integer id;
 
-
     @Basic
+    @Getter
+    @Setter
     @Column(name = "engine_name")
     private String engineName;
 
+    @Basic
+    @Getter
+    @Setter
+    @Column(name = "type_of_game")
+    private String typeOfGame;
 
     @Basic
-    @Column(name = "type_of_game_used_by_that_engine")
-    private String typeOfGameUsedByThatEngine;
-
+    @Getter
+    @Setter
+    @Column(name = "current_elo")
+    private Integer currentElo;
 }

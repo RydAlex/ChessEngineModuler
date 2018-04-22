@@ -17,7 +17,6 @@ public class FenGenerator {
     private SortedMap<String, String> chessBoard = new TreeMap<>();
     private boolean isWhiteActive = true;
     private String enPessant = "-";
-    private ArrayList<String> castlingMove = new ArrayList<>(Arrays.asList("K","Q","k","q"));
 
     //White - uppercase
     //Black - lowercase
@@ -38,10 +37,9 @@ public class FenGenerator {
         String[] fenDetails = fen.split(" ");
         String board = fenDetails[0];
         setWhoseTurnIsNow(fenDetails[1].charAt(0));
+        ArrayList<String> castlingMove = new ArrayList<>(Arrays.asList("K", "Q", "k", "q"));
         castlingMove.clear();
-        for(String castlings : fenDetails[2].split("")){
-            castlingMove.add(castlings);
-        }
+        castlingMove.addAll(Arrays.asList(fenDetails[2].split("")));
         enPessant = fenDetails[3];
 
         String[] fenLines = board.split("/");
@@ -162,7 +160,7 @@ public class FenGenerator {
         }
 
         sb.append(" ").append(whoseMoveIsNow())
-                .append(" ").append(returnCastlingAllowance())
+                .append(" ").append("-")
                 .append(" ").append(enPessant);
         return sb.toString();
     }
@@ -206,19 +204,10 @@ public class FenGenerator {
     private char whoseMoveIsNow(){
         return isWhiteActive ? 'w' : 'b';
     }
-
-    private String returnCastlingAllowance(){
-        StringBuilder sb = new StringBuilder();
-        for(String castling : castlingMove){
-            if(castling != null){
-                sb.append(castling);
-            }
-        }
-        String result = sb.toString();
-        return "-"; //result.equals("") ? "-" : result;
+    private void changeSideWhichHaveMove(){
+        isWhiteActive = !isWhiteActive;
     }
 
-    //white 1-2 row -> big letters, black 7-8 row -> small letters
     private void initializeMapWithStartValues(){
         for(Character literalSide = 'a' ; literalSide<='h' ; literalSide++){
             chessBoard.put(literalSide.toString()+"2", ChessEnum.Pawn.getWhiteFigure());
@@ -247,17 +236,12 @@ public class FenGenerator {
         }
     }
 
-
     private void doPromotion(String onWhichField, ChessEnum onWhichFigure) {
         if(whoseMoveIsNow()=='w') {
             chessBoard.put(onWhichField,onWhichFigure.getWhiteFigure());
         } else {
             chessBoard.put(onWhichField, onWhichFigure.getBlackFigure());
         }
-    }
-
-    private void changeSideWhichHaveMove(){
-        isWhiteActive = !isWhiteActive;
     }
 
 

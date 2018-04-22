@@ -1,14 +1,8 @@
 package chess.amqp.message;
 
-import lombok.NoArgsConstructor;
-
-/**
- * Created by aleksanderr on 09/07/17.
- */
-
 public class EngineEloPair {
-    String engineName;
-    Integer eloValue;
+    private String engineName;
+    private Integer eloValue;
 
     public EngineEloPair(){}
 

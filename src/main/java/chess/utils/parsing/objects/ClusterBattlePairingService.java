@@ -11,7 +11,7 @@ import java.util.stream.Collectors;
  */
 public class ClusterBattlePairingService {
     public static HashSet<List<EnginesCluster>> createPairs(){
-        List<EnginesCluster> clusters = EngineSearcher.createPreDefinedClusters();
+        List<EnginesCluster> clusters = EngineSearcher.createClustersFromPredefindedCSV("PreDefinedClusters");
         HashSet<List<EnginesCluster>> clustersBattles = new HashSet<>();
         List<String> existingRules = Arrays.asList("depth_3", "depth_5", "depth_7", "depth_9",
                                                     "timeout_3000", "timeout_6000", "timeout_9000", "timeout_20000");
@@ -32,12 +32,10 @@ public class ClusterBattlePairingService {
     }
 
     public static LinkedList<List<EnginesCluster>> fetchEngineClusters() {
-        List<EnginesCluster> clusters = EngineSearcher.createClustersToBattleVersusEnginesInIt();
+        List<EnginesCluster> clusters = EngineSearcher.createClustersFromPredefindedCSV("ClusterWithInsideBattle");
         LinkedList<List<EnginesCluster>> clustersToReturn = new LinkedList<>();
         for(int i=0 ; i<1000 ; i++){
             for(EnginesCluster enginesCluster : clusters){
-                //for(EngineEloPair engine : enginesCluster.getEngineList()){
-                //if(engine.getEngineName().contains("stockfish")){
                 List<EnginesCluster> battlesList = new LinkedList<>();
                 battlesList.add(enginesCluster);
                 EnginesCluster enginesClusterNew = new EnginesCluster();
@@ -45,8 +43,6 @@ public class ClusterBattlePairingService {
                 enginesClusterNew.setPlayRule(enginesCluster.getRuleValue());
                 battlesList.add(enginesClusterNew);
                 clustersToReturn.add(battlesList);
-                //}
-                //}
             }
         }
         return clustersToReturn;

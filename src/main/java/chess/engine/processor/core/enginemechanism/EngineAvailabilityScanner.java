@@ -11,7 +11,7 @@ import java.util.stream.Stream;
  * Created by aleksanderr on 18/03/17.
  */
 public class EngineAvailabilityScanner {
-    HashMap<String, String> enginePathsMap = new HashMap<>();
+    private HashMap<String, String> enginePathsMap = new HashMap<>();
 
     private static EngineAvailabilityScanner engineAvaliabilityInstance = new EngineAvailabilityScanner();
 
@@ -22,7 +22,7 @@ public class EngineAvailabilityScanner {
     private EngineAvailabilityScanner() {
         try {
             String systemSufix = OsCheck.isMac() ? "mac" : "linux";
-            String path = EngineAvailabilityScanner.class.getClassLoader().getResource("engines/").getPath();//.getLocation().getFile()+ "/engineprocessor/core/engines/";
+            String path = EngineAvailabilityScanner.class.getClassLoader().getResource("engines/").getPath();
             try (Stream<Path> paths = Files.walk(Paths.get(path))) {
                 paths.filter(filePath -> Files.isDirectory(filePath))
                     .filter(filePath -> filePath.toString().contains(systemSufix))
