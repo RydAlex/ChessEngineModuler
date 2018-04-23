@@ -4,8 +4,21 @@ import redis.clients.jedis.Jedis;
 
 public class RedisManager {
 
-    protected static Jedis madeConnection(){
-        return new Jedis(System.getenv("REDIS_URL"));
+    protected static Jedis madeConnection() {
+        Jedis jedis = null;
+        while(jedis == null){
+            try {
+                jedis = new Jedis(System.getenv("REDIS_URL"));
+            } catch(Exception e){
+                System.out.println("i try to connect");
+                try {
+                    Thread.sleep(10000);
+                } catch (InterruptedException e1) {
+                    e1.printStackTrace();
+                }
+            }
+        }
+        return jedis;
     }
 
     public static void increaseInformationAboutMessageInQueue(String queueName){
