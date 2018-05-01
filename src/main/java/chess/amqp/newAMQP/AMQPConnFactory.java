@@ -11,19 +11,21 @@ class AMQPConnFactory {
 
     public static Optional<Channel> createNewConnectionToAMQPQueue(String queueName){
         Optional<Channel> channelOptional = Optional.empty();
-        try {
-            ConnectionFactory factory = new ConnectionFactory();
-            factory.setUri(Settings.getAMQPString());
-            Connection connection = factory.newConnection();
-            Channel channel = connection.createChannel();
-            channel.basicQos(1);
+        while(!channelOptional.isPresent()){
+            try {
+                ConnectionFactory factory = new ConnectionFactory();
+                factory.setUri(Settings.getAMQPString());
+                Connection connection = factory.newConnection();
+                Channel channel = connection.createChannel();
+                channel.basicQos(1);
 
-            channel.queueDeclare(queueName,true,false, false,null);
+                channel.queueDeclare(queueName,true,false, false,null);
 
-            channelOptional = Optional.of(channel);
+                channelOptional = Optional.of(channel);
 
-        } catch (Exception e) {
-            e.printStackTrace();
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
         }
         return channelOptional;
     }
