@@ -9,24 +9,21 @@ import java.util.Optional;
 
 class AMQPConnFactory {
 
-    public static Optional<Channel> createNewConnectionToAMQPQueue(String queueName){
-        Optional<Channel> channelOptional = Optional.empty();
-        while(!channelOptional.isPresent()){
+    public static Channel createNewConnectionToAMQPQueue(String queueName){
+        Channel channel = null;
+        while(channel == null){
             try {
                 ConnectionFactory factory = new ConnectionFactory();
                 factory.setUri(Settings.getAMQPString());
                 Connection connection = factory.newConnection();
-                Channel channel = connection.createChannel();
+                channel = connection.createChannel();
                 channel.basicQos(1);
 
                 channel.queueDeclare(queueName,true,false, false,null);
-
-                channelOptional = Optional.of(channel);
-
             } catch (Exception e) {
                 e.printStackTrace();
             }
         }
-        return channelOptional;
+        return channel;
     }
 }

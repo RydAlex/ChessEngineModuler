@@ -3,7 +3,6 @@ package simpleChessManagmentActor
 import akka.actor.{ActorRef, ActorSystem, Props}
 import akka.pattern.ask
 import akka.util.Timeout
-import chess.amqp.message.{EngineEloPair, TypeOfMessageExtraction}
 import com.typesafe.scalalogging.Logger
 import chess.engine.processor.core.enginemechanism.FenGenerator
 import simpleChessManagmentActor.actorimplementation._
@@ -24,24 +23,10 @@ class GameShaper{
   val system = ActorSystem("System")
   var f : Future[Any]= Future(0)
 
-  def defineNewGameWithThoseEngine(typeOfGame: TypeOfMessageExtraction, isSingleMove: Boolean,
-                                   chessEngineListForGame: Seq[String], chessEloListForGame: Seq[EngineEloPair],
-                                   clusterOneSize: Int, clusterTwoSize: Int): ActorRef = {
-    val actorGame = system.actorOf(Props(new ActorGame(system, chessEngineListForGame, chessEloListForGame, clusterOneSize, clusterTwoSize)))
-    f = actorGame ? InitGame(typeOfGame, isSingleMove)
+  def defineNewGameWithThoseEngine(): ActorRef = {
+    val actorGame = system.actorOf(Props(new ActorGame(system)))
+    f = actorGame ? InitGame()
     actorGame
-  }
-
-  def startGameWithDepthRule(actor: ActorRef, depth: Int , fenChessboard: String = new FenGenerator().returnFenStringPositions()): Any ={
-    Thread.sleep(3000)
-    actor ! StartNewGameWithDepthRule(depth, fenChessboard)
-
-    val enginesAnswer = Await.result(f, Duration.Inf) match {
-      case endGame: EndGame => endGame
-      case singleMove: SingleMoves => singleMove.singleMoveResult
-      case Failure(fail) => logger.info("Failure in Await.result at GameShaper")
-    }
-    enginesAnswer
   }
 
   def startGameWithTimeOutRule(actor: ActorRef, timeout: Int , fenChessboard: String = new FenGenerator().returnFenStringPositions()): Any ={

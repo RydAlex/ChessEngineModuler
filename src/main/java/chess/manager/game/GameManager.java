@@ -1,17 +1,13 @@
 package chess.manager.game;
 
-import chess.amqp.message.EngineEloPair;
-import chess.amqp.message.TypeOfMessageExtraction;
 import chess.amqp.newAMQP.AMQPReceiverImpl;
-import chess.amqp.newAMQP.RedisManager;
-import chess.database.entities.EngineName;
-import chess.database.service.EngineNameService;
+import chess.geneticAlgorithm.*;
 import chess.manager.game.definitions.FullInsideGameDefiner;
+import chess.redis.RedisGeneticAlgorithmManager;
+import chess.utils.ChessCluster;
 import chess.utils.settings.Settings;
-import chess.utils.name.spy.EngineSearcher;
 import lombok.extern.slf4j.Slf4j;
 
-import java.util.LinkedList;
 import java.util.List;
 
 /**
@@ -30,44 +26,24 @@ public class GameManager {
             receiver.recvFromQueue(Settings.getChessSavingQueueName());
         }).start();
 
+        List<ChessCluster> chessEnginesClusters = InitializeMechanism.initializeGeneticGame();
         while(true){
-            try {
-                Integer messageCounter = RedisManager.getInformationAboutMessageInQueue(Settings.getChessProcessingQueueName());
-                if (messageCounter < 300) {
-                    while(RedisManager.getInformationAboutMessageInQueue(Settings.getChessProcessingQueueName()) < 500){
-                        EngineSearcher.createPairsOfGames()
-                                .stream()
-                                .map(GameManager::findEloValueForEngineName)
-                                .forEach(eloPair -> {
-                                    gameDefiner.playFullActorTimeoutGameWithDefindedEnginesNamesAndDefinedSize(
-                                            eloPair, 6000, TypeOfMessageExtraction.ELO_SIMPLE, 1);
-                                });
-                        log.info("I just have " + RedisManager.getInformationAboutMessageInQueue(Settings.getChessProcessingQueueName()) + " games to play in queue");
-                        Thread.sleep(5000);
-                    }
-                } else {
-                    log.info("There is too much messages. I need to wait. Due to Redis info there is a " + messageCounter + " messages.");
-                    Thread.sleep(20000);
-                }
-            } catch(InterruptedException e) {
-                e.printStackTrace();
-            }
+            EvaluationMechanism.evaluate(chessEnginesClusters);
+            chessEnginesClusters = madeNewGeneration(chessEnginesClusters);
         }
     }
 
-    private static List<EngineEloPair> findEloValueForEngineName(List<String> engineNames) {
-        EngineNameService engineNameService = new EngineNameService();
-        List<EngineEloPair> engineEloPairs = new LinkedList<>();
-
-        for(String engineName: engineNames){
-            List<EngineName> engineNamesList = engineNameService.getEngineNameEntity(engineName);
-            if(engineNamesList.isEmpty()){
-                engineEloPairs.add(new EngineEloPair(engineName, 1500));
-            } else {
-                engineEloPairs.add(new EngineEloPair(engineName, engineNamesList.get(0).getCurrentElo()));
-            }
+    private static List<ChessCluster> madeNewGeneration(List<ChessCluster> chessEnginesClusters) {
+        if(RedisGeneticAlgorithmManager.getActualPhase().equals(GeneticAlgorithmPhase.SELECTION_CROSSOVER_MUTATION)) {
+            chessEnginesClusters = SelectionMechanism.madeSelection();
+            chessEnginesClusters = CrossoverMechanism.madeCrossover(chessEnginesClusters);
+            chessEnginesClusters = MutationMechanism.mutate(chessEnginesClusters);
+            SaveNewPopulationMechanism.saveNewPopulation(chessEnginesClusters);
+            RedisGeneticAlgorithmManager.changePhase();
         }
-        return engineEloPairs;
+        return chessEnginesClusters;
     }
+
+
 
 }

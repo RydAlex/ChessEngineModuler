@@ -34,6 +34,16 @@ public class CoreDAO<Type> {
     }
 
     @Transactional
+    public Type refresh(Type object, Integer id){
+        startConnection();
+        em.getTransaction().begin();
+        Object refreshedObject = em.find(object.getClass(), id);
+        em.getTransaction().commit();
+        closeConnection();
+        return (Type) refreshedObject;
+    }
+
+    @Transactional
     public void remove(Type object){
         startConnection();
         em.getTransaction().begin();

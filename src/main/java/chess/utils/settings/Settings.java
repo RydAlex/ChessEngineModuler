@@ -1,6 +1,6 @@
 package chess.utils.settings;
 
-import chess.amqp.newAMQP.RedisManager;
+import chess.redis.RedisManager;
 import redis.clients.jedis.Jedis;
 
 public class Settings extends RedisManager{
@@ -40,5 +40,9 @@ public class Settings extends RedisManager{
         String dbPassword = jedis.get("DATABASE_PASSWORD");
         jedis.close();
         return dbPassword;
+    }
+
+    public static String getRedisURL(){
+        return System.getenv("REDIS_URL");
     }
 }

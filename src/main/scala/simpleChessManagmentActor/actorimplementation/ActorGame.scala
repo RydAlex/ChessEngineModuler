@@ -3,7 +3,6 @@ package simpleChessManagmentActor.actorimplementation
 import akka.actor._
 import akka.event.Logging
 import akka.stream.Supervision
-import chess.amqp.message.{EngineEloPair, SingleMoveResult, TypeOfMessageExtraction, GameVotingStats}
 import chess.engine.processor.core.enginemechanism.FenGenerator
 
 import scala.collection.mutable.ListBuffer
@@ -12,7 +11,7 @@ import scala.collection.mutable.ListBuffer
 /**
   * Created by aleksanderr on 09/04/17.
   */
-class ActorGame(system: ActorSystem, name: Seq[String], elo: Seq[EngineEloPair], clusterOneSize: Int, clusterTwoSize: Int) extends Actor {
+class ActorGame(system: ActorSystem) extends Actor {
 
 
   val log = Logging(context.system, this)
@@ -23,7 +22,6 @@ class ActorGame(system: ActorSystem, name: Seq[String], elo: Seq[EngineEloPair],
   var halfMoveCounter = 0
   var chessboard: String = ""
   var senderRef: ActorRef = _
-  var listLength: Int = 0
   var whoWin : Int = 0
   var activeListOne = true
   var answers :ListBuffer[MessageBack] = ListBuffer()
@@ -31,21 +29,16 @@ class ActorGame(system: ActorSystem, name: Seq[String], elo: Seq[EngineEloPair],
   var enginesTwo :List[ActorRef] = List[ActorRef]()
   var enginesOneName :List[String] = List[String]()
   var enginesTwoName :List[String] = List[String]()
-  var decisionMadeInThisGame :ListBuffer[GameVotingStats] = ListBuffer()
   var movesInGameFenVersion: String =""
-  var typeOfGame: TypeOfMessageExtraction = TypeOfMessageExtraction.RANDOM
-  val oneMoveMessagesParser = new OneMoveMessagesParser()
 
   def receive = {
     case message: MessageBack => receiveMessageAction(message);
     case assumingMsg: AssumingMessage => assumeAllMessages(assumingMsg)
-    case depthMessage: DepthMessage => reactionOnDepthMessage(depthMessage)
     case timeOutMessage: TimeOutMessage => reactOnTimeOutMessage(timeOutMessage)
     case singleMoves: SingleMoves => singleMoveEnding(singleMoves)
     case endGame: EndGame => endGameBehaviour(endGame)
     case initGame: InitGame => initNewGame(initGame)
     case timeoutRule :StartNewGameWithTimeoutRule => startNewGameWithTimeoutRule(timeoutRule)
-    case depthRule :StartNewGameWithDepthRule => startNewGameWithDepthRule(depthRule)
     case newActor: CreateNewActorInFirstGroup => createActorInFirstGroup(newActor)
     case newActor: CreateNewActorInSecondGroup => createActorInSecondGroup(newActor)
   }
@@ -55,23 +48,21 @@ class ActorGame(system: ActorSystem, name: Seq[String], elo: Seq[EngineEloPair],
     chessboard = new FenGenerator(timeoutRule.chessboardFen).returnFenStringPositions()
     timeOutGameOrAnother = true
     valOfGameRule = timeoutRule.timeout
-    log.info(name + " game with timeout rule should be started shortly :" + timeoutRule.id)
-    while (enginesOne.length + enginesTwo.length != listLength) {
-    }
+//    log.info(name + " game with timeout rule should be started shortly :" + timeoutRule.id)
     self ! new TimeOutMessage(chessboard, timeoutRule.timeout)
   }
 
   private def receiveMessageAction(message: MessageBack): Unit = {
-    log.info(name + "msg from engine received from " + message.engineName +  " no :" + message.id + " with answer: " + message.message)
+//    log.info(name + "msg from engine received from " + message.engineName +  " no :" + message.id + " with answer: " + message.message)
     answers += message
     if(activeListOne){
-      if(answers.length == clusterOneSize) {
-        self ! AssumingMessage()
-      }
+//      if(answers.length == clusterOneSize) {
+//        self ! AssumingMessage()
+//      }
     } else {
-      if(answers.length == clusterTwoSize) {
-        self ! AssumingMessage()
-      }
+//      if(answers.length == clusterTwoSize) {
+//        self ! AssumingMessage()
+//      }
     }
   }
 
@@ -82,18 +73,18 @@ class ActorGame(system: ActorSystem, name: Seq[String], elo: Seq[EngineEloPair],
     val isCheckmate = new FenGenerator(chessboard).isMoveACheckmate(answer.message)
     log.info(answer.message + " is checkmate: " + isCheckmate)
     if(isCheckmate) {
-      log.info(name + " - " + answer.engineName + " LOST!")
+//      log.info(name + " - " + answer.engineName + " LOST!")
       if(activeListOne){
-        self ! EndGame(2, decisionMadeInThisGame, movesInGameFenVersion) // Second Players Win Game
+//        self ! EndGame(2, decisionMadeInThisGame, movesInGameFenVersion) // Second Players Win Game
       } else {
-        self ! EndGame(1, decisionMadeInThisGame, movesInGameFenVersion) // First Player Win Game
+//        self ! EndGame(1, decisionMadeInThisGame, movesInGameFenVersion) // First Player Win Game
       }
     }
     else {
       try{
         movesInGameFenVersion += answer.message+" "
         if(UpdateChessboardOrTellIsItDraw(answer)){
-          self ! EndGame(0, decisionMadeInThisGame, movesInGameFenVersion) // Draw was detected
+//          self ! EndGame(0, decisionMadeInThisGame, movesInGameFenVersion) // Draw was detected
         }
         else if(isSingleMove){
           self ! SingleMoves(chessboard) // If single move than just return those moves
@@ -104,32 +95,10 @@ class ActorGame(system: ActorSystem, name: Seq[String], elo: Seq[EngineEloPair],
       } catch{
         case ex: Exception => {
           log.info("Engine takes move which does not exist")
-          self ! EndGame(-1, decisionMadeInThisGame, movesInGameFenVersion)
+//          self ! EndGame(-1, decisionMadeInThisGame, movesInGameFenVersion)
         }
       }
     }
-  }
-
-  private def reactionOnDepthMessage(depthMessage: DepthMessage): Unit = {
-    //log.info(name + " Depth msg received and will be send to engines:" + depthMessage.id)
-    if(activeListOne){
-      for (engine <- enginesOne){
-        engine ! depthMessage
-      }
-    } else {
-      for (engine <- enginesTwo){
-        engine ! depthMessage
-      }
-    }
-  }
-
-  private def startNewGameWithDepthRule(depthRule: StartNewGameWithDepthRule): Unit = {
-    chessboard = new FenGenerator(depthRule.chessboardFen).returnFenStringPositions()
-    timeOutGameOrAnother = false
-    valOfGameRule = depthRule.depth
-    log.info(name + " game with depth rule should be started shortly :" + depthRule.id)
-    while (enginesOne.length + enginesTwo.length != listLength) {}
-    self ! new DepthMessage(chessboard, depthRule.depth)
   }
 
   private def createActorInSecondGroup(newActor: CreateNewActorInSecondGroup): Unit = {
@@ -144,21 +113,16 @@ class ActorGame(system: ActorSystem, name: Seq[String], elo: Seq[EngineEloPair],
 
   private def initNewGame(initGame: InitGame): Unit = {
     //log.info(name + " InitGame Command received :")
-    this.typeOfGame = initGame.typeOfGame
-    this.isSingleMove = initGame.isSingleMove
     this.senderRef = sender
-    listLength = name.length
-    if (this.clusterOneSize == 0 || this.clusterTwoSize == 0) {
-      throw new RuntimeException("game do not have same number of engines on both sides")
-    }
-    for (i <- Range(0, clusterOneSize)) {
-      enginesOneName = name(i).trim :: enginesOneName
-      self ! CreateNewActorInFirstGroup(name(i).trim)
-    }
-    for (i <- Range(clusterOneSize, name.length)) {
-      enginesTwoName = name(i).trim :: enginesTwoName
-      self ! CreateNewActorInSecondGroup(name(i).trim)
-    }
+//    listLength = name.length
+//    for (i <- Range(0, clusterOneSize)) {
+//      enginesOneName = name(i).trim :: enginesOneName
+//      self ! CreateNewActorInFirstGroup(name(i).trim)
+//    }
+//    for (i <- Range(clusterOneSize, name.length)) {
+//      enginesTwoName = name(i).trim :: enginesTwoName
+//      self ! CreateNewActorInSecondGroup(name(i).trim)
+//    }
   }
 
   private def singleMoveEnding(singleMoves: SingleMoves): Unit = {
@@ -205,11 +169,11 @@ class ActorGame(system: ActorSystem, name: Seq[String], elo: Seq[EngineEloPair],
       halfMoveCounter += 1
     }
     if(halfMoveCounter >= 50){
-      log.info(name + " THERE WAS A DRAW!!!!!!") // Example: "7K/7P/5q2/8/4k3/8/8/8 w - -"
+      //log.info(name + " THERE WAS A DRAW!!!!!!") // Example: "7K/7P/5q2/8/4k3/8/8/8 w - -"
       return true
     }
     chessboard = fen.returnFenStringPositions()
-    log.info(s"$name - move: ${answer.message} ,chessboard: $chessboard, halfmove: $halfMoveCounter")
+    //log.info(s"$name - move: ${answer.message} ,chessboard: $chessboard, halfmove: $halfMoveCounter")
     false
   }
 
@@ -253,20 +217,8 @@ class ActorGame(system: ActorSystem, name: Seq[String], elo: Seq[EngineEloPair],
 
     def methodTest: Unit = {
       if (filteredAnswers.nonEmpty) {
-        if (activeListOne) {
-          messageExtractionMethods = new MessageExtractionMethods(filteredAnswers, elo)
-        } else {
-          messageExtractionMethods = new MessageExtractionMethods(filteredAnswers, elo)
-        }
-        if (typeOfGame.equals(TypeOfMessageExtraction.RANDOM)) {
-          answer = messageExtractionMethods.extractMessageInARandomApproach()
-        } else if (typeOfGame.equals(TypeOfMessageExtraction.ELO_SIMPLE)) {
-          answer = messageExtractionMethods.extractMessageInAEloSimpleApproach()
-        } else if (typeOfGame.equals(TypeOfMessageExtraction.ELO_VOTE_WITH_ELO)) {
-          answer = messageExtractionMethods.extractMessageInAEloVotingApproach()
-        } else if (typeOfGame.equals(TypeOfMessageExtraction.ELO_VOTE_WITH_DISTRIBUTION)) {
-          answer = messageExtractionMethods.extractMessageInAEloDistributionApproach()
-        }
+        messageExtractionMethods = new MessageExtractionMethods(filteredAnswers)
+        answer = messageExtractionMethods.extractMessageInARandomApproach()
       }
       if (answer == null) {
         answer = MessageBack(answers.head.engineName, "a1a1") // default move which means lost the game - couldnt be null cause it was broke forward game
@@ -274,25 +226,8 @@ class ActorGame(system: ActorSystem, name: Seq[String], elo: Seq[EngineEloPair],
     }
 
     methodTest
-    markTheDecisionWasMadeBy(answer.engineName)
     answer
   }
-
-  def markTheDecisionWasMadeBy(engineName: String): Unit ={
-    var nameToPut = ""
-    if(activeListOne) nameToPut = engineName + "_1" else nameToPut = engineName + "_2"
-    var isFound :Boolean = false
-    for(engineInDecisionList <- decisionMadeInThisGame){
-      if(nameToPut.equals(engineInDecisionList.getEngineName)){
-        isFound = true
-        engineInDecisionList.setVoteCounter(engineInDecisionList.getVoteCounter +1 )
-      }
-    }
-    if(!isFound){
-      decisionMadeInThisGame += new GameVotingStats(nameToPut, 1)
-    }
-  }
-
 
   def tellForOtherHalfOfEnginesToStartCounting(): Unit = {
     answers.clear()

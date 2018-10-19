@@ -4,14 +4,14 @@
     <persistence-unit name="NewPersistenceUnit" transaction-type="RESOURCE_LOCAL">
         <provider>org.hibernate.jpa.HibernatePersistenceProvider</provider>
         <class>chess.database.entities.Battle</class>
-        <class>chess.database.entities.EloEnginesHistory</class>
-        <class>chess.database.entities.EngineName</class>
+        <class>chess.database.entities.Cluster</class>
+        <class>chess.database.entities.Engine</class>
+        <class>chess.database.entities.EngineClusterList</class>
         <properties>
             <property name="hibernate.dialect" value="org.hibernate.dialect.PostgreSQL94Dialect"/>
             <property name="hibernate.connection.driver_class" value="org.postgresql.Driver"/>
-
             <property name="hibernate.archive.autodetection" value="class"/>
-            <property name="openjpa.Log" value="DefaultLevel=WARN, Runtime=INFO, Tool=INFO, SQL=TRACE"/>
+            <property name="openjpa.Log" value="DefaultLevel=ERROR, Runtime=ERROR, Tool=ERROR, SQL=TRACE"/>
             <property name="hibernate.show_sql" value="false"/>
             <property name="hibernate.format_sql" value="false"/>
             <property name="hbm2ddl.auto" value="validate"/>

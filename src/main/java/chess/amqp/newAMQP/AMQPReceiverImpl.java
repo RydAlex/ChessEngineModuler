@@ -2,29 +2,28 @@ package chess.amqp.newAMQP;
 
 import chess.amqp.actions.Action;
 import chess.amqp.actions.ActionProcessorFactory;
+import chess.redis.RedisAMQPManager;
+import chess.redis.RedisManager;
 import com.rabbitmq.client.*;
 
 import java.io.IOException;
 import java.util.Optional;
+import java.util.concurrent.TimeoutException;
 
 public class AMQPReceiverImpl {
     private String queueName;
 
     public void recvFromQueue(String queueName) {
-        Optional<Channel> opt = AMQPConnFactory.createNewConnectionToAMQPQueue(queueName);
+        Channel channel = AMQPConnFactory.createNewConnectionToAMQPQueue(queueName);
         this.queueName = queueName;
-        if (opt.isPresent()) {
-            System.out.println(" [x] Awaiting RPC requests");
-            try {
-                opt.get().basicConsume(queueName, false, createConsumer(opt.get()));
-                while (true) {
-                    Thread.sleep(1000);
-                }
-            } catch (IOException | InterruptedException e) {
-                e.printStackTrace();
+        System.out.println(" [x] Awaiting RPC requests");
+        try {
+            channel.basicConsume(queueName, false, createConsumer(channel));
+            while (true) {
+                Thread.sleep(1000);
             }
-        } else {
-            System.out.println();
+        } catch (IOException | InterruptedException e) {
+            e.printStackTrace();
         }
     }
 
@@ -42,10 +41,8 @@ public class AMQPReceiverImpl {
                 } catch (RuntimeException e) {
                     System.out.println(" [.] " + e.toString());
                 } finally {
+                    RedisAMQPManager.reduceInformationAboutMessageInQueue(queueName);
                     channel.basicAck(envelope.getDeliveryTag(), false);
-                    int before =  RedisManager.getInformationAboutMessageInQueue(queueName);
-                    RedisManager.reduceInformationAboutMessageInQueue(queueName);
-                    System.out.println("Redis amount for Chess changed: " + before + "-->" + RedisManager.getInformationAboutMessageInQueue(queueName));
                 }
             }
         };

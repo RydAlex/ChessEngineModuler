@@ -1,6 +1,6 @@
 package chess.utils.settings;
 
-import chess.amqp.newAMQP.RedisManager;
+import chess.redis.RedisManager;
 import redis.clients.jedis.Jedis;
 
 public class SettingSetter extends RedisManager {

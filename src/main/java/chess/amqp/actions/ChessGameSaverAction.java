@@ -9,6 +9,7 @@ public class ChessGameSaverAction implements Action<String> {
     public String proceed(String message) {
         ChessJSONObject chessObject = ChessJSONReader.readDataFromJson(message);
         AnswerProcessor.processAnswer(chessObject);
+
         return "";
     }
 }
