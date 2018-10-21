@@ -35,16 +35,19 @@ public class EvaluationMechanism {
         int sendingAmount = 0;
         while(getSendingQueueMessagesAmount() > 0 || getSavingQueueMessagesAmount() > 0) {
             try {
-                if(sendingAmount == getSendingQueueMessagesAmount() && savingAmount == getSavingQueueMessagesAmount()){
-                    counter++;
-                    if(counter>10){
-                        RedisAMQPManager.resetChessQueuesIndicators();
-                        break;
+                if(getSendingQueueMessagesAmount() < 20 || getSavingQueueMessagesAmount() < 20){
+                    if(sendingAmount == getSendingQueueMessagesAmount() && savingAmount == getSavingQueueMessagesAmount()){
+                        counter++;
+                        if(counter>1000){ // not whole 3 hours
+                            RedisAMQPManager.resetChessQueuesIndicators();
+                            log.info("BROKE WAIT");
+                            break;
+                        }
+                    } else {
+                        savingAmount = getSavingQueueMessagesAmount();
+                        sendingAmount = getSendingQueueMessagesAmount();
+                        counter = 0;
                     }
-                } else {
-                    savingAmount = getSavingQueueMessagesAmount();
-                    sendingAmount = getSendingQueueMessagesAmount();
-                    counter = 0;
                 }
                 log.info("I still wait on end!");
                 Thread.sleep(10000);
