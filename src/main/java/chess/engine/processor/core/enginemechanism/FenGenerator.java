@@ -1,15 +1,18 @@
 package chess.engine.processor.core.enginemechanism;
 
 import chess.engine.processor.core.utils.enums.ChessEnum;
+import lombok.extern.java.Log;
 
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.SortedMap;
 import java.util.TreeMap;
+import java.util.logging.Level;
 
 /**
  * Created by aleksanderr on 10/07/16.
  */
+@Log
 public class FenGenerator {
     //"r1k4r/p2nb1p1/2b4p/1p1n1p2/2PP4/3Q1NB1/1P3PPP/R5K1 b - c3 0 19"
     //"rnbqkbnr/pppppppp/8/8/8/8/PPPPPPPP/RNBQKBNR w KQkq - 0 1"        - Initial
@@ -95,14 +98,19 @@ public class FenGenerator {
 
     public boolean isMoveExistForActivePlayer(String move) {
         if(move != null){
-            String figure = chessBoard.get(move.substring(0, 2));
-            if(figure != null){
-                boolean uppercase = Character.isUpperCase(figure.codePointAt(0));
-                if(uppercase && isWhiteActive){
-                    return true;
-                } else if(!uppercase && !isWhiteActive){
-                    return true;
+            try {
+                String figure = chessBoard.get(move.substring(0, 2));
+                if (figure != null) {
+                    boolean uppercase = Character.isUpperCase(figure.codePointAt(0));
+                    if (uppercase && isWhiteActive) {
+                        return true;
+                    } else if (!uppercase && !isWhiteActive) {
+                        return true;
+                    }
                 }
+            } catch (Exception ex) {
+                log.info("ERROR: Move which couldnt be parsed is " + move);
+                log.severe(ex.getMessage());
             }
         }
         return false;
