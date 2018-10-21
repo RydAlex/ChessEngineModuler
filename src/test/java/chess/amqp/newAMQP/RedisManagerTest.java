@@ -1,6 +1,7 @@
 package chess.amqp.newAMQP;
 
 import chess.redis.RedisAMQPManager;
+import chess.redis.RedisManager;
 import chess.utils.settings.Settings;
 import org.junit.Test;
 
@@ -11,5 +12,10 @@ public class RedisManagerTest {
             System.out.println(RedisAMQPManager.getInformationAboutMessageInQueue(Settings.getChessProcessingQueueName()));
             RedisAMQPManager.reduceInformationAboutMessageInQueue(Settings.getChessProcessingQueueName());
         }
+    }
+
+    @Test
+    public void showAllKeysInRedis(){
+        RedisManager.printAllKeys();
     }
 }

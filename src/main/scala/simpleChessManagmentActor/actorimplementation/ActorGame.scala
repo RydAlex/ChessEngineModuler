@@ -16,13 +16,13 @@ class ActorGame(system: ActorSystem) extends Actor {
 
   val log = Logging(context.system, this)
 
-  var timeOutGameOrAnother: Boolean = true
-  var isSingleMove: Boolean = false
   var valOfGameRule: Int = 0
   var halfMoveCounter = 0
+  var roundCounter = 0
   var chessboard: String = ""
   var senderRef: ActorRef = _
   var whoWin : Int = 0
+  var roundsPerEngine = 5
   var activeListOne = true
   var answers :ListBuffer[MessageBack] = ListBuffer()
   var enginesOne :List[ActorRef] = List[ActorRef]()
@@ -35,7 +35,6 @@ class ActorGame(system: ActorSystem) extends Actor {
     case message: MessageBack => receiveMessageAction(message);
     case assumingMsg: AssumingMessage => assumeAllMessages(assumingMsg)
     case timeOutMessage: TimeOutMessage => reactOnTimeOutMessage(timeOutMessage)
-    case singleMoves: SingleMoves => singleMoveEnding(singleMoves)
     case endGame: EndGame => endGameBehaviour(endGame)
     case initGame: InitGame => initNewGame(initGame)
     case timeoutRule :StartNewGameWithTimeoutRule => startNewGameWithTimeoutRule(timeoutRule)
@@ -43,96 +42,89 @@ class ActorGame(system: ActorSystem) extends Actor {
     case newActor: CreateNewActorInSecondGroup => createActorInSecondGroup(newActor)
   }
 
+  private def describeFirstCluster(): Unit = {
+    var summary: String = "First Cluster contain:"
+    for(engineIndex <- enginesOneName.indices){
+      summary += " " + engineIndex + ": " + enginesOneName(engineIndex)
+    }
+    log.info(summary)
+  }
+
+  private def describeSecondCluster(): Unit = {
+    var summary: String = "Second Cluster contain:"
+    for(engineIndex <- enginesTwoName.indices){
+      summary += " " + engineIndex + ": " + enginesTwoName(engineIndex)
+    }
+    log.info(summary)
+  }
+
 
   private def startNewGameWithTimeoutRule(timeoutRule: StartNewGameWithTimeoutRule): Unit = {
     chessboard = new FenGenerator(timeoutRule.chessboardFen).returnFenStringPositions()
-    timeOutGameOrAnother = true
     valOfGameRule = timeoutRule.timeout
-//    log.info(name + " game with timeout rule should be started shortly :" + timeoutRule.id)
-    self ! new TimeOutMessage(chessboard, timeoutRule.timeout)
+    roundCounter = 0
+    self ! TimeOutMessage(chessboard, timeoutRule.timeout)
   }
 
   private def receiveMessageAction(message: MessageBack): Unit = {
-//    log.info(name + "msg from engine received from " + message.engineName +  " no :" + message.id + " with answer: " + message.message)
     answers += message
     if(activeListOne){
-//      if(answers.length == clusterOneSize) {
-//        self ! AssumingMessage()
-//      }
+      self ! AssumingMessage()
     } else {
-//      if(answers.length == clusterTwoSize) {
-//        self ! AssumingMessage()
-//      }
+      roundCounter += 1
+      self ! AssumingMessage()
     }
   }
 
   private def assumeAllMessages(assumingMsg: AssumingMessage): Unit = {
-    logMessageOnEnterance(assumingMsg)
     val answer :MessageBack = extractMoveWhichShouldBeTakenInThisGame()
-    println(answer)
     val isCheckmate = new FenGenerator(chessboard).isMoveACheckmate(answer.message)
     log.info(answer.message + " is checkmate: " + isCheckmate)
     if(isCheckmate) {
-//      log.info(name + " - " + answer.engineName + " LOST!")
+      log.info(answer.engineName + " LOST!")
       if(activeListOne){
-//        self ! EndGame(2, decisionMadeInThisGame, movesInGameFenVersion) // Second Players Win Game
+        self ! EndGame(2, movesInGameFenVersion) // Second Players Win Game
       } else {
-//        self ! EndGame(1, decisionMadeInThisGame, movesInGameFenVersion) // First Player Win Game
+        self ! EndGame(1, movesInGameFenVersion) // First Player Win Game
       }
     }
     else {
       try{
         movesInGameFenVersion += answer.message+" "
         if(UpdateChessboardOrTellIsItDraw(answer)){
-//          self ! EndGame(0, decisionMadeInThisGame, movesInGameFenVersion) // Draw was detected
-        }
-        else if(isSingleMove){
-          self ! SingleMoves(chessboard) // If single move than just return those moves
+          self ! EndGame(0, movesInGameFenVersion) // Draw was detected
         }
         else {
           tellForOtherHalfOfEnginesToStartCounting() // if no condition was detected just start counting at second side
         }
       } catch{
-        case ex: Exception => {
+        case ex: Exception =>
           log.info("Engine takes move which does not exist")
-//          self ! EndGame(-1, decisionMadeInThisGame, movesInGameFenVersion)
-        }
+          self ! EndGame(-1, movesInGameFenVersion)
       }
     }
   }
 
   private def createActorInSecondGroup(newActor: CreateNewActorInSecondGroup): Unit = {
-    //log.info(name + " - " + newActor.engineName + " actor is created in second group - msg no :" + newActor.id)
     enginesTwo = system.actorOf(Props(new EngineActor(newActor.engineName))) :: enginesTwo
   }
 
   private def createActorInFirstGroup(newActor: CreateNewActorInFirstGroup): Unit = {
-    //log.info(name + " - " + newActor.engineName + " actor is created in first group - msg no :" + newActor.id)
     enginesOne = system.actorOf(Props(new EngineActor(newActor.engineName))) :: enginesOne
   }
 
   private def initNewGame(initGame: InitGame): Unit = {
-    //log.info(name + " InitGame Command received :")
+    log.info("InitGame Command received :")
+    this.roundsPerEngine = initGame.roundsPerEngine
     this.senderRef = sender
-//    listLength = name.length
-//    for (i <- Range(0, clusterOneSize)) {
-//      enginesOneName = name(i).trim :: enginesOneName
-//      self ! CreateNewActorInFirstGroup(name(i).trim)
-//    }
-//    for (i <- Range(clusterOneSize, name.length)) {
-//      enginesTwoName = name(i).trim :: enginesTwoName
-//      self ! CreateNewActorInSecondGroup(name(i).trim)
-//    }
-  }
-
-  private def singleMoveEnding(singleMoves: SingleMoves): Unit = {
-    for (engine <- enginesOne) {
-      engine ! PoisonPill
+    for (i <- initGame.chessEngineListOne.indices) {
+      enginesOneName = initGame.chessEngineListOne(i).getEngineName.trim :: enginesOneName
+      self ! CreateNewActorInFirstGroup(initGame.chessEngineListOne(i).getEngineName.trim)
     }
-    for (engine <- enginesTwo) {
-      engine ! PoisonPill
+    for (i <- initGame.chessEngineListTwo.indices) {
+      enginesTwoName = initGame.chessEngineListTwo(i).getEngineName.trim :: enginesTwoName
+      self ! CreateNewActorInSecondGroup(initGame.chessEngineListTwo(i).getEngineName.trim)
     }
-    senderRef ! singleMoves
   }
 
   private def endGameBehaviour(endGame: EndGame): Unit = {
@@ -149,93 +141,59 @@ class ActorGame(system: ActorSystem) extends Actor {
 
   private def reactOnTimeOutMessage(timeOutMessage: TimeOutMessage): Unit = {
     //log.info(name + " Timeout msg received :" + timeOutMessage.id)
+    var whichEngine = Math.floor(roundCounter / roundsPerEngine).toInt
+    if(whichEngine >= enginesOne.length){
+      whichEngine = enginesOne.length - 1
+    }
+    describeFirstCluster()
+    describeSecondCluster()
+    log.info("There is a " + roundCounter + " round. " + whichEngine + " engine will now decide")
     if (activeListOne) {
-      for (engine <- enginesOne) {
-        engine ! TimeOutMessage(timeOutMessage.chessboardFen, timeOutMessage.duration)
-      }
+      val engine = enginesOne(whichEngine)
+      engine ! TimeOutMessage(timeOutMessage.chessboardFen, timeOutMessage.duration)
     } else {
-      for (engine <- enginesTwo) {
-        engine ! TimeOutMessage(timeOutMessage.chessboardFen, timeOutMessage.duration)
-      }
+      val engine = enginesTwo(whichEngine)
+      engine ! TimeOutMessage(timeOutMessage.chessboardFen, timeOutMessage.duration)
     }
   }
 
   def UpdateChessboardOrTellIsItDraw(answer: MessageBack): Boolean= {
     val fen: FenGenerator = new FenGenerator(chessboard)
     val halfMoveShouldBroke = fen.insertMove(answer.message)
+    log.info("halfmove is now " + halfMoveCounter)
     if(halfMoveShouldBroke){
       halfMoveCounter = 0
     } else {
       halfMoveCounter += 1
     }
     if(halfMoveCounter >= 50){
-      //log.info(name + " THERE WAS A DRAW!!!!!!") // Example: "7K/7P/5q2/8/4k3/8/8/8 w - -"
+      log.info(" THERE WAS A DRAW!!!!!!") // Example: "7K/7P/5q2/8/4k3/8/8/8 w - -"
       return true
     }
     chessboard = fen.returnFenStringPositions()
-    //log.info(s"$name - move: ${answer.message} ,chessboard: $chessboard, halfmove: $halfMoveCounter")
+    log.info(s"move: ${answer.message} ,chessboard: $chessboard, halfmove: $halfMoveCounter")
     false
   }
 
-  def logMessageOnEnterance(assumingMsg: AssumingMessage): Unit = {
-    //log.info(name + " Enough message receive - lets assume :" + assumingMsg.id)
-    log.info(s" All answers $answers")
-  }
-
   def extractMoveWhichShouldBeTakenInThisGame(): MessageBack = {
-    var answer :MessageBack = null
-    var messageExtractionMethods: MessageExtractionMethods = null
+    var answerExist :MessageBack = null
     var fenGenerator : FenGenerator = new FenGenerator()
-    var filteredAnswers :ListBuffer[MessageBack] = ListBuffer()
-    var answersInRightOrder :ListBuffer[MessageBack] = ListBuffer()
-    if (activeListOne) {
-      for(engine <- enginesOneName) {
-        for(answer <- answers) {
-          if(engine.equals(answer.engineName)){
-            answersInRightOrder += answer
-          }
-        }
-      }
+    if(new FenGenerator(chessboard).isMoveExistForActivePlayer(answers(0).message)) {
+      answerExist = answers(0)
     } else {
-      for(engine <- enginesTwoName) {
-        for(answer <- answers) {
-          if(engine.equals(answer.engineName)){
-            answersInRightOrder += answer
-          }
-        }
-      }
-    }
-    for(answer <- answersInRightOrder){
-      if(fenGenerator.isMoveACheckmate(answer.message)){
-        log.info(answer + " was removed cause was a checkmate")
-      } else if(new FenGenerator(chessboard).isMoveExistForActivePlayer(answer.message)) {
-        filteredAnswers += answer
-      } else {
-        log.info(answer + " was removed cause was not exist for that player")
-      }
+      log.info(answers(0) + " was removed cause was not exist for that player")
     }
 
-    def methodTest: Unit = {
-      if (filteredAnswers.nonEmpty) {
-        messageExtractionMethods = new MessageExtractionMethods(filteredAnswers)
-        answer = messageExtractionMethods.extractMessageInARandomApproach()
-      }
-      if (answer == null) {
-        answer = MessageBack(answers.head.engineName, "a1a1") // default move which means lost the game - couldnt be null cause it was broke forward game
-      }
+    if (answerExist == null) {
+      answerExist = MessageBack(answers(0).engineName, "a1a1") // default move which means lost the game - couldnt be null cause it was broke forward game
     }
 
-    methodTest
-    answer
+    answerExist
   }
 
   def tellForOtherHalfOfEnginesToStartCounting(): Unit = {
     answers.clear()
     activeListOne = !activeListOne
-    if (timeOutGameOrAnother) {
-      self ! TimeOutMessage(chessboard, valOfGameRule)
-    } else {
-      self ! DepthMessage(chessboard, valOfGameRule)
-    }
+    self ! TimeOutMessage(chessboard, valOfGameRule)
   }
 }

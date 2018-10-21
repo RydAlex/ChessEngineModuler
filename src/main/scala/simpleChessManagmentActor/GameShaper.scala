@@ -3,6 +3,7 @@ package simpleChessManagmentActor
 import akka.actor.{ActorRef, ActorSystem, Props}
 import akka.pattern.ask
 import akka.util.Timeout
+import chess.database.entities.Engine
 import com.typesafe.scalalogging.Logger
 import chess.engine.processor.core.enginemechanism.FenGenerator
 import simpleChessManagmentActor.actorimplementation._
@@ -23,9 +24,9 @@ class GameShaper{
   val system = ActorSystem("System")
   var f : Future[Any]= Future(0)
 
-  def defineNewGameWithThoseEngine(): ActorRef = {
+  def defineNewGameWithThoseEngine(chessEngineListOne: Seq[Engine], chessEngineListTwo: Seq[Engine]): ActorRef = {
     val actorGame = system.actorOf(Props(new ActorGame(system)))
-    f = actorGame ? InitGame()
+    f = actorGame ? InitGame(chessEngineListOne, chessEngineListTwo, 5)
     actorGame
   }
 
@@ -35,7 +36,6 @@ class GameShaper{
 
     val enginesAnswer = Await.result(f, Duration.Inf) match {
       case endGame: EndGame => endGame
-      case singleMove: SingleMoves => singleMove.singleMoveResult
       case Failure(fail) => logger.info("Failure in Await.result at GameShaper")
     }
     enginesAnswer

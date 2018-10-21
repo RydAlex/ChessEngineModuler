@@ -3,6 +3,8 @@ package chess.redis;
 import chess.utils.settings.Settings;
 import redis.clients.jedis.Jedis;
 
+import java.util.Set;
+
 public class RedisManager {
 
     protected static Jedis madeConnection() {
@@ -22,5 +24,13 @@ public class RedisManager {
         return jedis;
     }
 
+
+    public static void printAllKeys() {
+        Jedis redisConn = madeConnection();
+        Set<String> keys = redisConn.keys("*");
+        for(String key: keys){
+            System.out.println(key + " -> " + redisConn.get(key));
+        }
+    }
 
 }

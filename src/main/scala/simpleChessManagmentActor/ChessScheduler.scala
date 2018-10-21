@@ -1,7 +1,8 @@
 package simpleChessManagmentActor
 
 import akka.actor.ActorRef
-import chess.amqp.message.{ChessJSONObject}
+import chess.amqp.message.ChessJSONObject
+import chess.database.entities.Engine
 import simpleChessManagmentActor.actorimplementation.EndGame
 
 import scala.collection.JavaConverters
@@ -11,14 +12,14 @@ import scala.collection.JavaConverters
   */
 object ChessScheduler {
 
-
-  //TIMEOUT GAME
   def startGameWithTimeoutRule(chessObject: ChessJSONObject): ChessJSONObject ={
     val timeout: Int = chessObject.getTimeout
     val chessboard: String = chessObject.getFen
+    val chessEngineListOne: Seq[Engine] = JavaConverters.asScalaBuffer(chessObject.getEnginesForClusterOne)
+    val chessEngineListTwo: Seq[Engine] = JavaConverters.asScalaBuffer(chessObject.getEnginesForClusterTwo)
 
     val gameShaper = new GameShaper()
-    val actor: ActorRef = gameShaper.defineNewGameWithThoseEngine()
+    val actor: ActorRef = gameShaper.defineNewGameWithThoseEngine(chessEngineListOne, chessEngineListTwo)
 
     gameShaper.startGameWithTimeOutRule(actor, timeout, chessboard) match {
       case gameResult : EndGame  =>  {

@@ -15,8 +15,8 @@ import java.util.*;
 public class EngineSearcher {
 
     public static List<List<String>> createClusterOfChessEngines() {
-        int engineClusterSize = 10; //40
-        int amountOfClusters = 2; //20
+        int engineClusterSize = 30;
+        int amountOfClusters = 20;
 
         List<List<String>> listOfEnginesToReturn = new LinkedList<>();
         List<String> engineList = new EngineRunnerImpl().getEngineNames();

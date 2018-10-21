@@ -42,7 +42,12 @@ public class AMQPReceiverImpl {
                     System.out.println(" [.] " + e.toString());
                 } finally {
                     RedisAMQPManager.reduceInformationAboutMessageInQueue(queueName);
-                    channel.basicAck(envelope.getDeliveryTag(), false);
+                    if(channel.isOpen()){
+                        channel.basicAck(envelope.getDeliveryTag(), false);
+                    } else{
+                        Channel channelRetrive = AMQPConnFactory.createNewConnectionToAMQPQueue(queueName);
+                        channelRetrive.basicAck(envelope.getDeliveryTag(), false);
+                    }
                 }
             }
         };
