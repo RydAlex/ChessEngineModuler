@@ -58,12 +58,4 @@ public class ChessJSONObject {
     public void setClusterBattle(ChessClusterBattle clusterBattle) {
         this.clusterBattle = clusterBattle;
     }
-
-    public List<Engine> getEnginesForClusterOne(){
-        return this.clusterBattle.getChessClusterOne().getEngineList();
-    }
-
-    public List<Engine> getEnginesForClusterTwo(){
-        return this.clusterBattle.getChessClusterTwo().getEngineList();
-    }
 }

@@ -9,10 +9,25 @@ import lombok.NoArgsConstructor;
 import java.util.List;
 
 
-@Data
 @NoArgsConstructor
 @AllArgsConstructor
 public class ChessCluster {
     Cluster cluster;
     List<Engine> engineList;
+
+    public Cluster getCluster() {
+        return cluster;
+    }
+
+    public void setCluster(Cluster cluster) {
+        this.cluster = cluster;
+    }
+
+    public List<Engine> getEngineList() {
+        return engineList;
+    }
+
+    public void setEngineList(List<Engine> engineList) {
+        this.engineList = engineList;
+    }
 }

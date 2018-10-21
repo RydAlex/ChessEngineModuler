@@ -15,8 +15,8 @@ object ChessScheduler {
   def startGameWithTimeoutRule(chessObject: ChessJSONObject): ChessJSONObject ={
     val timeout: Int = chessObject.getTimeout
     val chessboard: String = chessObject.getFen
-    val chessEngineListOne: Seq[Engine] = JavaConverters.asScalaBuffer(chessObject.getEnginesForClusterOne)
-    val chessEngineListTwo: Seq[Engine] = JavaConverters.asScalaBuffer(chessObject.getEnginesForClusterTwo)
+    val chessEngineListOne: Seq[Engine] = JavaConverters.asScalaBuffer(chessObject.getClusterBattle.getChessClusterOne.getEngineList)
+    val chessEngineListTwo: Seq[Engine] = JavaConverters.asScalaBuffer(chessObject.getClusterBattle.getChessClusterTwo.getEngineList)
 
     val gameShaper = new GameShaper()
     val actor: ActorRef = gameShaper.defineNewGameWithThoseEngine(chessEngineListOne, chessEngineListTwo)
