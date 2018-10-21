@@ -8,7 +8,6 @@ import javax.persistence.*;
 import java.util.List;
 
 @Entity
-@Data
 @NoArgsConstructor
 @AllArgsConstructor
 @Table(name = "engine", schema = "public", catalog = "d4o36i322pqtbl")
@@ -35,4 +34,20 @@ public class Engine {
     @Basic
     @Column(name = "engine_name", nullable = false, length = 200)
     private String engineName;
+
+    public Integer getId() {
+        return id;
+    }
+
+    public void setId(Integer id) {
+        this.id = id;
+    }
+
+    public String getEngineName() {
+        return engineName;
+    }
+
+    public void setEngineName(String engineName) {
+        this.engineName = engineName;
+    }
 }
