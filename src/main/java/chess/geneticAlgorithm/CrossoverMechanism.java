@@ -4,19 +4,22 @@ import chess.database.entities.Cluster;
 import chess.database.entities.Engine;
 import chess.utils.ChessCluster;
 
+import java.util.ArrayList;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Random;
+import java.util.stream.Collectors;
 
 public class CrossoverMechanism {
 
+    private static final int AMOUNT_OF_CROSSOVER_CLUSTERS = 10;
 
     public static List<ChessCluster> madeCrossover(List<ChessCluster> chessEnginesClusters) {
         LinkedList<ChessCluster> newChessClusters = new LinkedList<>();
-        for(int i = 0; i<10; i++){
+        for(int i = 0; i<AMOUNT_OF_CROSSOVER_CLUSTERS; i++){
             int firstEngineIndex = new Random().nextInt(chessEnginesClusters.size());
             int secondEngineIndex = firstEngineIndex;
-            while(firstEngineIndex == secondEngineIndex){
+            while(Math.abs(firstEngineIndex-secondEngineIndex) < 7){
                 secondEngineIndex = new Random().nextInt(chessEnginesClusters.size());
             }
             ChessCluster chessClusterOne = chessEnginesClusters.get(firstEngineIndex);
@@ -72,9 +75,9 @@ public class CrossoverMechanism {
         List<Engine> newEnginesForCluster3 = engineListOne.subList(secondEngineIndex, engineListOne.size());
 
         List<Engine> newEnginesForCluster = new LinkedList<>();
-        newEnginesForCluster.addAll(newEnginesForCluster1);
-        newEnginesForCluster.addAll(newEnginesForCluster2);
-        newEnginesForCluster.addAll(newEnginesForCluster3);
+        newEnginesForCluster.addAll(new ArrayList<>(newEnginesForCluster1));
+        newEnginesForCluster.addAll(new ArrayList<>(newEnginesForCluster2));
+        newEnginesForCluster.addAll(new ArrayList<>(newEnginesForCluster3));
         chessCluster.setEngineList(newEnginesForCluster);
 
         return chessCluster;
