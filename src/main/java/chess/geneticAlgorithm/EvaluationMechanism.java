@@ -1,6 +1,5 @@
 package chess.geneticAlgorithm;
 
-import chess.amqp.message.ChessJSONObject;
 import chess.manager.game.definitions.FullInsideGameDefiner;
 import chess.redis.RedisAMQPManager;
 import chess.redis.RedisGeneticAlgorithmManager;
@@ -67,8 +66,6 @@ public class EvaluationMechanism {
 
     private static void sendChessEnginesToAMQP(List<ChessCluster> chessEnginesClusters) {
         createChessClusterBattles(chessEnginesClusters)
-                .stream()
-                .parallel()
                 .forEach(clusterBattle -> FullInsideGameDefiner.playGameWithThisCluster(6000, clusterBattle));
     }
 

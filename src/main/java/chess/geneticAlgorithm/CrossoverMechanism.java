@@ -19,7 +19,7 @@ public class CrossoverMechanism {
         for(int i = 0; i<AMOUNT_OF_CROSSOVER_CLUSTERS; i++){
             int firstEngineIndex = new Random().nextInt(chessEnginesClusters.size());
             int secondEngineIndex = firstEngineIndex;
-            while(Math.abs(firstEngineIndex-secondEngineIndex) < 7){
+            while(firstEngineIndex == secondEngineIndex){
                 secondEngineIndex = new Random().nextInt(chessEnginesClusters.size());
             }
             ChessCluster chessClusterOne = chessEnginesClusters.get(firstEngineIndex);
@@ -55,10 +55,8 @@ public class CrossoverMechanism {
 
         int firstEngineIndex = new Random().nextInt(chessClusterTwo.getEngineList().size());
         int secondEngineIndex = firstEngineIndex;
-        while(firstEngineIndex == secondEngineIndex){
-            if(Math.abs(firstEngineIndex-secondEngineIndex) < 2){
-                secondEngineIndex = new Random().nextInt(chessClusterTwo.getEngineList().size());
-            }
+        while(Math.abs(firstEngineIndex-secondEngineIndex) < 7){
+            secondEngineIndex = new Random().nextInt(chessClusterTwo.getEngineList().size());
         }
 
         List<Engine> engineListOne = chessClusterOne.getEngineList();
