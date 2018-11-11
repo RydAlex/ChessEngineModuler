@@ -9,10 +9,14 @@ public class RedisManager {
 
     protected static Jedis madeConnection() {
         Jedis jedis = null;
+        int connectionTry = 0;
         while (jedis == null) {
             try {
+                connectionTry += 1;
                 jedis = new Jedis(Settings.getRedisURL());
             } catch (Exception e) {
+                if(connectionTry >= 300) //5 min problem
+                    throw new RuntimeException("Problem with connection to Redis");
                 System.out.println("i try to connect to Redis");
                 try {
                     Thread.sleep(1000);

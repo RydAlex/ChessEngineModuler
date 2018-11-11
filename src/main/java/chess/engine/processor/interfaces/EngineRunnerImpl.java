@@ -95,28 +95,29 @@ public class EngineRunnerImpl implements EngineRunner {
     }
 
     @Override
-    public String RunEngineWithGoDepthCommand(String engineName, String fenPosition, int depth) {try {
-        String enginePath = EngineAvailabilityScanner.getInstance().returnMapOfEnginePaths().get(engineName);
-        EngineProcessor er = new EngineProcessor();
-        CommandQuery commandQuery = er.setEngineConnection(enginePath);
-        commandQuery
-                .getChessEngineInformation()
-                .startNewGame()
-                .setPosition(fenPosition)
-                .go(GoEnum.searchDepth, depth);
-        while (commandQuery.isListOfCommandHaveElements()) {
-            sleep(100);
+    public String RunEngineWithGoDepthCommand(String engineName, String fenPosition, int depth) {
+        try {
+            String enginePath = EngineAvailabilityScanner.getInstance().returnMapOfEnginePaths().get(engineName);
+            EngineProcessor er = new EngineProcessor();
+            CommandQuery commandQuery = er.setEngineConnection(enginePath);
+            commandQuery
+                    .getChessEngineInformation()
+                    .startNewGame()
+                    .setPosition(fenPosition)
+                    .go(GoEnum.searchDepth, depth);
+            while (commandQuery.isListOfCommandHaveElements()) {
+                sleep(100);
+            }
+            String msgFound = commandQuery.returnMoveWhichEngineFound();
+            commandQuery.exitTheGame();
+            er = null;
+            commandQuery = null;
+            System.gc();
+            //log.info("Garbage collector broke connection with engines");
+            return msgFound;
+        } catch (IOException | InterruptedException e) {
+            e.printStackTrace();
         }
-        String msgFound = commandQuery.returnMoveWhichEngineFound();
-        commandQuery.exitTheGame();
-        er = null;
-        commandQuery = null;
-        System.gc();
-        //log.info("Garbage collector broke connection with engines");
-        return msgFound;
-    } catch (IOException | InterruptedException e) {
-        e.printStackTrace();
-    }
         return "";
     }
 }
