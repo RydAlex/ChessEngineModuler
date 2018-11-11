@@ -5,7 +5,8 @@ pid=$!
 echo $pid
 
 while :
-do   
+do
+   sleep 3
    eval pid_exist=$(ps -o pid= -p $pid)
    echo $pid_exist
    if [ -z $pid_exist ]: 
@@ -18,6 +19,6 @@ do
    else
       date +%D/%T
       echo "Nothing break"
-      sleep 2 
+      sleep 60
    fi
 done
