@@ -7,7 +7,7 @@ echo $pid
 while :
 do
    sleep 3
-   eval pid_exist=$(ps -o pid= -p $pid)
+   pid_exist=$(ps -o pid= -p $pid)
    echo $pid_exist
    if [ -z $pid_exist ]: 
    then
