@@ -15,7 +15,7 @@ do
       ~/sbt/bin/sbt -mem 3000 -Djline.terminal=jline.UnsupportedTerminal run </dev/null >output.txt &
       pid=$!
       echo $pid
-      sleep 1
+      sleep 10
    else
       date +%D/%T
       echo "Nothing break"
