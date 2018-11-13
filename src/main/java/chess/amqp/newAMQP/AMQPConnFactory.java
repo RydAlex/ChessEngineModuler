@@ -29,7 +29,7 @@ class AMQPConnFactory {
                     e1.printStackTrace();
                 }
             }
-            if(connectionTry >= 300){
+            if(connectionTry >= 10){
                 throw new RuntimeException("Cannot connect to AMQP");
             }
         }
