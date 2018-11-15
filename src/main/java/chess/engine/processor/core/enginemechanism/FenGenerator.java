@@ -7,7 +7,6 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.SortedMap;
 import java.util.TreeMap;
-import java.util.logging.Level;
 
 /**
  * Created by aleksanderr on 10/07/16.

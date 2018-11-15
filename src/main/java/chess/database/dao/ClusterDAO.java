@@ -3,13 +3,8 @@ package chess.database.dao;
 import chess.database.dao.core.CoreDAO;
 import chess.database.entities.Cluster;
 import chess.redis.RedisGeneticAlgorithmManager;
-import chess.redis.RedisManager;
 
 import javax.persistence.Query;
-import javax.persistence.TypedQuery;
-import javax.persistence.criteria.CriteriaBuilder;
-import javax.persistence.criteria.CriteriaQuery;
-import javax.persistence.criteria.Root;
 import java.util.List;
 
 public class ClusterDAO extends CoreDAO<Cluster> {

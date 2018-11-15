@@ -4,7 +4,7 @@ import chess.engine.processor.core.utils.EngineResponse;
 import chess.engine.processor.core.utils.enums.GoEnum;
 import lombok.extern.slf4j.Slf4j;
 
-import java.util.*;
+import java.util.ArrayList;
 import java.util.concurrent.BlockingQueue;
 import java.util.concurrent.LinkedBlockingQueue;
 

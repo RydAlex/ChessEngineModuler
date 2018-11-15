@@ -1,13 +1,12 @@
 package chess.amqp.actions;
+
 import chess.amqp.message.ChessJSONObject;
 import chess.amqp.newAMQP.AMQPSenderImpl;
-import chess.utils.settings.Settings;
 import chess.utils.json.object.ChessJSONCreator;
 import chess.utils.json.object.ChessJSONReader;
+import chess.utils.settings.Settings;
 import lombok.extern.slf4j.Slf4j;
 import simpleChessManagmentActor.ChessScheduler;
-
-import java.io.IOException;
 
 @Slf4j
 public class ChessGameProcessingAction implements Action<String>{

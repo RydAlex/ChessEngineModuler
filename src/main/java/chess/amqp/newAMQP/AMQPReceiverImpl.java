@@ -3,12 +3,9 @@ package chess.amqp.newAMQP;
 import chess.amqp.actions.Action;
 import chess.amqp.actions.ActionProcessorFactory;
 import chess.redis.RedisAMQPManager;
-import chess.redis.RedisManager;
 import com.rabbitmq.client.*;
 
 import java.io.IOException;
-import java.util.Optional;
-import java.util.concurrent.TimeoutException;
 
 public class AMQPReceiverImpl {
     private String queueName;

@@ -3,10 +3,11 @@ package chess.amqp.sender;
 /**
  * Created by aleksanderr on 22/05/17.
  */
+
 import chess.amqp.newAMQP.AMQPSenderImpl;
 import chess.utils.ChessClusterBattle;
-import chess.utils.settings.Settings;
 import chess.utils.json.object.ChessJSONCreator;
+import chess.utils.settings.Settings;
 
 public class AMQPGameCreatorHelper {
 

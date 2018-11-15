@@ -3,10 +3,8 @@ package chess.database.dao;
 import chess.database.dao.core.CoreDAO;
 import chess.database.entities.Cluster;
 import chess.database.entities.Engine;
-import chess.redis.RedisGeneticAlgorithmManager;
 
 import javax.persistence.Query;
-import java.util.LinkedList;
 import java.util.List;
 
 public class EngineDAO extends CoreDAO<Engine> {
