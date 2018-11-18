@@ -71,19 +71,17 @@ public class EvaluationMechanism {
 
 
     protected static List<ChessClusterBattle> createChessClusterBattles(List<ChessCluster> chessEnginesClusters) {
-        // Send 76 games by each cluster - 38 created by engine and 38 created by other engines with this one
         List<ChessClusterBattle> battles = new LinkedList<>();
-        for(int firstEngineIndex = 0; firstEngineIndex < chessEnginesClusters.size(); firstEngineIndex++){
-            for(int i=0; i<2; i++){
-                for(int secondEngineIndex = 0; secondEngineIndex < chessEnginesClusters.size(); secondEngineIndex++){
-                    if(secondEngineIndex != firstEngineIndex){
-                        ChessClusterBattle chessClusterBattle = new ChessClusterBattle();
-                        chessClusterBattle.setChessClusterOne(chessEnginesClusters.get(firstEngineIndex));
-                        chessClusterBattle.setChessClusterTwo(chessEnginesClusters.get(secondEngineIndex));
-                        battles.add(chessClusterBattle);
-                    }
-                }
-            }
+        for(int i=0; i<1000; i++){
+            ChessClusterBattle clusterBattle = new ChessClusterBattle();
+            clusterBattle.setChessClusterOne(chessEnginesClusters.get(0));
+            clusterBattle.setChessClusterTwo(chessEnginesClusters.get(1));
+            battles.add(clusterBattle);
+
+            clusterBattle = new ChessClusterBattle();
+            clusterBattle.setChessClusterOne(chessEnginesClusters.get(1));
+            clusterBattle.setChessClusterTwo(chessEnginesClusters.get(0));
+            battles.add(clusterBattle);
         }
         return battles;
     }

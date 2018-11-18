@@ -8,7 +8,8 @@ import javax.persistence.*;
 @Entity
 @NoArgsConstructor
 @AllArgsConstructor
-@Table(name = "engine", schema = "public", catalog = "d4o36i322pqtbl")
+@Table(name = "engine", schema = "public", catalog = "ducepsca8gpf2")
+// @Table(name = "engine", schema = "public", catalog = "d4o36i322pqtbl")
 @NamedNativeQueries({
         @NamedNativeQuery(
                 name = "getEnginesWhichAreUsedInCluster",

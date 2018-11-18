@@ -4,7 +4,9 @@ import chess.algorithms.elo.EloAlgorithm;
 import chess.algorithms.elo.EloGameResultValue;
 import chess.amqp.message.ChessJSONObject;
 import chess.database.dao.ClusterDAO;
+import chess.database.dao.EloHistoryDAO;
 import chess.database.entities.Cluster;
+import chess.database.entities.EloHistory;
 
 public class AnswerProcessor {
 
@@ -22,12 +24,23 @@ public class AnswerProcessor {
             int newEloTwo = EloAlgorithm.calculateRating(clusterTwo.getEloScore(),
                     clusterOne.getEloScore(), isWin(2, chessJSONObject));
 
+            saveClusterOldElo(clusterOne);
+            saveClusterOldElo(clusterTwo);
+
             clusterOne.setEloScore(newEloOne);
             clusterTwo.setEloScore(newEloTwo);
 
             clusterDao.edit(clusterOne);
             clusterDao.edit(clusterTwo);
         }
+    }
+
+    private static void saveClusterOldElo(Cluster cluster) {
+        EloHistory eloHistory = new EloHistory();
+        eloHistory.setClusterId(cluster.getId());
+        eloHistory.setEloValue(cluster.getEloScore());
+        EloHistoryDAO eloHistoryDAO = new EloHistoryDAO();
+        eloHistoryDAO.save(eloHistory);
     }
 
     private static EloGameResultValue isWin(int forWhichGroup, ChessJSONObject chessJSONObject) {

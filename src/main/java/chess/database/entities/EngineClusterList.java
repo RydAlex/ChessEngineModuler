@@ -8,7 +8,8 @@ import javax.persistence.*;
 @Entity
 @Data
 @NoArgsConstructor
-@Table(name = "engineclusterlist", schema = "public", catalog = "d4o36i322pqtbl")
+@Table(name = "engineclusterlist", schema = "public", catalog = "ducepsca8gpf2")
+// @Table(name = "cluster", engineclusterlist = "public", catalog = "d4o36i322pqtbl")
 public class EngineClusterList {
 
     @Id

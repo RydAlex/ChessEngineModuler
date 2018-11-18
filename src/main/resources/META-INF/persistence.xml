@@ -3,7 +3,7 @@
 
     <persistence-unit name="NewPersistenceUnit" transaction-type="RESOURCE_LOCAL">
         <provider>org.hibernate.jpa.HibernatePersistenceProvider</provider>
-        <class>chess.database.entities.Battle</class>
+        <class>chess.database.entities.EloHistory</class>
         <class>chess.database.entities.Cluster</class>
         <class>chess.database.entities.Engine</class>
         <class>chess.database.entities.EngineClusterList</class>
