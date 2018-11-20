@@ -6,6 +6,7 @@ import lombok.NoArgsConstructor;
 
 import javax.persistence.*;
 import java.sql.Timestamp;
+import java.util.Calendar;
 import java.util.Objects;
 
 @Data
@@ -15,6 +16,11 @@ import java.util.Objects;
 @Table(name = "elohistory", schema = "public", catalog = "ducepsca8gpf2")
 // @Table(name = "elohistory", schema = "public", catalog = "d4o36i322pqtbl")
 public class EloHistory {
+
+    @PrePersist
+    public void init(){
+        this.timestamp = new Timestamp(Calendar.getInstance().getTimeInMillis());
+    }
 
     @Id
     @Column(name = "id")

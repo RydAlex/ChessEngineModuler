@@ -37,9 +37,6 @@ public class EngineSearcher {
         listOfEnginesInCluster.set(16,"cheng439");
         listOfEnginesInCluster.set(17,"stockfish8");
         listOfEnginesInCluster.set(18,"andscacs93");
-        listOfEnginesInCluster.set(21,"stockfish8");
-        listOfEnginesInCluster.set(25,"stockfish8");
-        listOfEnginesInCluster.set(29,"komodo7");
         listOfEnginesToReturn.add(listOfEnginesInCluster);
 
         return listOfEnginesToReturn;

@@ -117,11 +117,11 @@ class ActorGame(system: ActorSystem) extends Actor {
     log.info("InitGame Command received :")
     this.roundsPerEngine = initGame.roundsPerEngine
     this.senderRef = sender
-    for (i <- initGame.chessEngineListOne.indices) {
+    for (i <- initGame.chessEngineListOne.indices) { // TODO: ERROR IN
       enginesOneName = initGame.chessEngineListOne(i).getEngineName.trim :: enginesOneName
       self ! CreateNewActorInFirstGroup(initGame.chessEngineListOne(i).getEngineName.trim)
     }
-    for (i <- initGame.chessEngineListTwo.indices) {
+    for (i <- initGame.chessEngineListTwo.indices) { // TODO: ERROR IN
       enginesTwoName = initGame.chessEngineListTwo(i).getEngineName.trim :: enginesTwoName
       self ! CreateNewActorInSecondGroup(initGame.chessEngineListTwo(i).getEngineName.trim)
     }
