@@ -66,7 +66,7 @@ public class EvaluationMechanism {
 
     private static void sendChessEnginesToAMQP(List<ChessCluster> chessEnginesClusters) {
         createChessClusterBattles(chessEnginesClusters)
-                .forEach(clusterBattle -> FullInsideGameDefiner.playGameWithThisCluster(6000, clusterBattle));
+                .forEach(clusterBattle -> FullInsideGameDefiner.playGameWithThisCluster(10000, clusterBattle));
     }
 
 
