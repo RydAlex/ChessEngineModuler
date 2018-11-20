@@ -12,7 +12,8 @@ import java.io.Serializable;
 @NoArgsConstructor
 @AllArgsConstructor
 @Entity
-@Table(name = "cluster", schema = "public", catalog = "ducepsca8gpf2")
+@Table(name = "cluster", schema = "public", catalog = "d6qgde391i0dir")
+// @Table(name = "cluster", schema = "public", catalog = "ducepsca8gpf2") 6 second
 // @Table(name = "cluster", schema = "public", catalog = "d4o36i322pqtbl")
 @NamedNativeQueries({
         @NamedNativeQuery(
