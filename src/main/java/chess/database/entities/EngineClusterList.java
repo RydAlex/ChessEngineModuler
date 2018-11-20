@@ -8,7 +8,7 @@ import javax.persistence.*;
 @Entity
 @Data
 @NoArgsConstructor
-@Table(name = "elohistory", schema = "public", catalog = "d6qgde391i0dir")
+@Table(name = "engineclusterlist", schema = "public", catalog = "d6qgde391i0dir")
 // @Table(name = "engineclusterlist", schema = "public", catalog = "ducepsca8gpf2") 6 second
 // @Table(name = "cluster", schema = "public", catalog = "d4o36i322pqtbl")
 public class EngineClusterList {

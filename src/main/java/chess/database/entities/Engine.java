@@ -8,7 +8,7 @@ import javax.persistence.*;
 @Entity
 @NoArgsConstructor
 @AllArgsConstructor
-@Table(name = "elohistory", schema = "public", catalog = "d6qgde391i0dir")
+@Table(name = "engine", schema = "public", catalog = "d6qgde391i0dir")
 // @Table(name = "engine", schema = "public", catalog = "ducepsca8gpf2") 6 second
 // @Table(name = "engine", schema = "public", catalog = "d4o36i322pqtbl")
 @NamedNativeQueries({
