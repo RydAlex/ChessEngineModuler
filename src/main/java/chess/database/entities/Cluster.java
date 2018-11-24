@@ -40,4 +40,9 @@ public class Cluster implements Serializable {
     @Basic
     @Column(name = "elo_score", nullable = false)
     private Integer eloScore;
+
+    public Cluster(int epochNumber, int eloScore){
+        this.epochNumber = epochNumber;
+        this.eloScore = eloScore;
+    }
 }

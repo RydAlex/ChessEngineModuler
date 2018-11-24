@@ -11,7 +11,7 @@ import java.util.Random;
 
 public class CrossoverMechanism {
 
-    private static final int AMOUNT_OF_CROSSOVER_CLUSTERS = 10;
+    private static final int AMOUNT_OF_CROSSOVER_CLUSTERS = 9;
 
     public static List<ChessCluster> madeCrossover(List<ChessCluster> chessEnginesClusters) {
         LinkedList<ChessCluster> newChessClusters = new LinkedList<>();
