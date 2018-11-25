@@ -1,6 +1,5 @@
 package chess.geneticAlgorithm;
 
-import chess.database.dao.ClusterDAO;
 import chess.database.dao.EngineDAO;
 import chess.database.entities.Cluster;
 import chess.database.entities.Engine;
@@ -19,11 +18,10 @@ public class SelectionMechanism {
 
     private static LinkedList<ChessCluster> addClearBestCluster(LinkedList<ChessCluster> bestClustersFromDatabase) {
         List<Engine> engines = new LinkedList<>();
-        for(int i=0 ; i<engines.size(); i++) {
+        for(int i=0 ; i<30; i++) {
             engines.add(new EngineDAO().getEngineByName("stockfish9"));
         }
         Cluster cluster = new Cluster(bestClustersFromDatabase.get(0).getCluster().getEpochNumber(), 1500);
-        new ClusterDAO().save(cluster);
         bestClustersFromDatabase.add(new ChessCluster(cluster, engines));
         return bestClustersFromDatabase;
     }
