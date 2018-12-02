@@ -36,11 +36,7 @@ public class CrossoverMechanism {
     private static boolean notExistInThisPopulation(List<ChessCluster> chessEnginesClusters,
                                                     LinkedList<ChessCluster> newChessClusters,
                                                     ChessCluster newChessCluster) {
-        if(chessEnginesClusters.contains(newChessCluster)
-            || newChessClusters.contains(newChessCluster)){
-            return true;
-        }
-        return false;
+        return chessEnginesClusters.contains(newChessCluster) || newChessClusters.contains(newChessCluster);
     }
 
     private static ChessCluster crossOverConnection(ChessCluster chessClusterOne, ChessCluster chessClusterTwo) {

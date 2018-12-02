@@ -7,44 +7,44 @@ import org.junit.Assert;
 import org.junit.Test;
 
 import java.util.LinkedList;
-
-import static org.junit.Assert.*;
+import java.util.List;
 
 public class MutationMechanismTest {
 
     @Test
     public void createNewClusterByMutation() {
-        ChessCluster chessCluster = new ChessCluster();
+        for(int k=0 ; k<100000; k++) {
+            LinkedList<ChessCluster> clusters = new LinkedList<>();
 
-        Cluster cluster = new Cluster();
-        cluster.setId(1);
-        cluster.setEloScore(1500);
-        cluster.setEpochNumber(1);
-        chessCluster.setCluster(cluster);
+            clusters.add(createChessCluster("stockfish9"));
+            clusters.add(createChessCluster("komodo8"));
+            clusters.add(createChessCluster("komodo7"));
+            clusters.add(createChessCluster("stockfish8"));
+            clusters.add(createChessCluster("stockfish7"));
+
+            List<ChessCluster> newClusters = MutationMechanism.mutate(clusters);
+            for (int i = 0; i < newClusters.size(); i++) {
+                for (int j = 0; j < newClusters.size(); j++) {
+                    if (i != j) {
+                        if (newClusters.get(i).equals(newClusters.get(j))) {
+                            Assert.fail();
+                        }
+                    }
+                }
+            }
+            System.out.println(k + "is finished");
+        }
+    }
+
+
+    private ChessCluster createChessCluster(String chessEngine) {
+        Cluster cluster = new Cluster(1,1500, 1);
 
         LinkedList<Engine> chessEngines = new LinkedList<>();
-        Engine engine = new Engine();
-        engine.setEngineName("hehe");
-        engine.setId(1);
-        chessEngines.add(engine);
+        for(int i=0; i<30; i++){
+            chessEngines.add(new Engine(1,chessEngine));
+        }
 
-        Engine engine2 = new Engine();
-        engine2.setEngineName("hehe2");
-        engine2.setId(2);
-        chessEngines.add(engine2);
-
-        Engine engine3 = new Engine();
-        engine3.setEngineName("hehe3");
-        engine3.setId(3);
-        chessEngines.add(engine3);
-
-        Engine engine4 = new Engine();
-        engine4.setEngineName("hehe4");
-        engine4.setId(4);
-        chessEngines.add(engine4);
-        chessCluster.setEngineList(chessEngines);
-
-        ChessCluster newCluster = MutationMechanism.createNewClusterByMutation(chessCluster);
-        Assert.assertNotEquals(newCluster, chessCluster);
+        return new ChessCluster(cluster, chessEngines);
     }
 }

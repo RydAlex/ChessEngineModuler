@@ -1,6 +1,7 @@
 package chess.database.entities;
 
 import lombok.AllArgsConstructor;
+import lombok.EqualsAndHashCode;
 import lombok.NoArgsConstructor;
 
 import javax.persistence.*;
@@ -8,6 +9,7 @@ import javax.persistence.*;
 @Entity
 @NoArgsConstructor
 @AllArgsConstructor
+@EqualsAndHashCode(of="engineName")
 @Table(name = "engine", schema = "public", catalog = "d4o36i322pqtbl")
 @NamedNativeQueries({
         @NamedNativeQuery(

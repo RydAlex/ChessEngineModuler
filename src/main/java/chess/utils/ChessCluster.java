@@ -4,12 +4,14 @@ import chess.database.entities.Cluster;
 import chess.database.entities.Engine;
 import lombok.AllArgsConstructor;
 import lombok.Data;
+import lombok.EqualsAndHashCode;
 import lombok.NoArgsConstructor;
 
 import java.util.List;
 
 
 @NoArgsConstructor
+@EqualsAndHashCode(of="engineList")
 @AllArgsConstructor
 public class ChessCluster {
     Cluster cluster;

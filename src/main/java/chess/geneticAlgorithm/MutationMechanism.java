@@ -7,25 +7,30 @@ import chess.utils.ChessCluster;
 import chess.utils.name.spy.EngineSearcher;
 
 import java.util.ArrayList;
+import java.util.LinkedList;
 import java.util.List;
 import java.util.Random;
 
 public class MutationMechanism {
 
     public static List<ChessCluster> mutate(List<ChessCluster> chessEnginesClusters) {
+        LinkedList<ChessCluster> list = new LinkedList<>();
+        for(ChessCluster cluster: chessEnginesClusters) {
+            list.add(new ChessCluster(cluster.getCluster(), cluster.getEngineList()));
+        }
         for(int i=0; i<5; i++){
             int whichClusterShouldBeMutate = new Random().nextInt(chessEnginesClusters.size());
             ChessCluster clusterToMutation = chessEnginesClusters.get(whichClusterShouldBeMutate);
             ChessCluster chessCluster = createNewClusterByMutation(clusterToMutation);
-            if(chessEnginesClusters.contains(chessCluster)){
+            while(list.contains(chessCluster)){
                 chessCluster = createNewClusterByMutation(clusterToMutation);
             }
-            chessEnginesClusters.add(chessCluster);
+            list.add(chessCluster);
         }
-        return chessEnginesClusters;
+        return list;
     }
 
-    public static ChessCluster createNewClusterByMutation(ChessCluster clusterToMutation){
+    private static ChessCluster createNewClusterByMutation(ChessCluster clusterToMutation){
         ChessCluster chessCluster = new ChessCluster();
 
         Cluster cluster = new Cluster();
@@ -37,8 +42,8 @@ public class MutationMechanism {
         int howMuchMutationHere = new Random().nextInt(2)+1;
         for(int i=0; i<howMuchMutationHere ; i++){
             String newEngineName = EngineSearcher.getRandomChessEngineName();
-            //Engine engine = new Engine(1, newEngineName);
-            Engine engine = new EngineService().findByNameOrCreate(newEngineName);
+            Engine engine = new Engine(1, newEngineName);
+            //Engine engine = new EngineService().findByNameOrCreate(newEngineName);
             int whereMutate = new Random().nextInt(toMutationEngineList.size());
             toMutationEngineList.remove(whereMutate);
             toMutationEngineList.add(whereMutate, engine);
