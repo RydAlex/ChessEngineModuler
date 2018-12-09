@@ -36,9 +36,13 @@ public class GameManager {
     private static List<ChessCluster> madeNewGeneration(List<ChessCluster> chessEnginesClusters) {
         if(RedisGeneticAlgorithmManager.getActualPhase().equals(GeneticAlgorithmPhase.SELECTION_CROSSOVER_MUTATION)) {
             chessEnginesClusters = SelectionMechanism.madeSelection();
+            System.out.println("SELECTION MADE");
             chessEnginesClusters = CrossoverMechanism.madeCrossover(chessEnginesClusters);
+            System.out.println("CROSSOVER MADE");
             chessEnginesClusters = MutationMechanism.mutate(chessEnginesClusters);
+            System.out.println("MUATATION MADE");
             SaveNewPopulationMechanism.saveNewPopulation(chessEnginesClusters);
+            System.out.println("SAVE MADE");
             RedisGeneticAlgorithmManager.changePhase();
         }
         return chessEnginesClusters;
