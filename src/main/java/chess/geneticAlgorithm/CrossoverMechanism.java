@@ -11,11 +11,12 @@ import java.util.Random;
 
 public class CrossoverMechanism {
 
-    private static final int AMOUNT_OF_CROSSOVER_CLUSTERS = 9;
+    private static final int AMOUNT_OF_CROSSOVER_CLUSTERS = 15;
 
     public static List<ChessCluster> madeCrossover(List<ChessCluster> chessEnginesClusters) {
         LinkedList<ChessCluster> newChessClusters = new LinkedList<>();
-        for(int i = 0; i<AMOUNT_OF_CROSSOVER_CLUSTERS; i++){
+        newChessClusters.addAll(chessEnginesClusters);
+        while(newChessClusters.size() < AMOUNT_OF_CROSSOVER_CLUSTERS){
             int firstEngineIndex = new Random().nextInt(chessEnginesClusters.size());
             int secondEngineIndex = firstEngineIndex;
             while(firstEngineIndex == secondEngineIndex){
@@ -29,7 +30,6 @@ public class CrossoverMechanism {
             }
             newChessClusters.add(newChessCluster);
         }
-        newChessClusters.addAll(chessEnginesClusters);
         return newChessClusters;
     }
 

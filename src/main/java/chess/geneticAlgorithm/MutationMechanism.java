@@ -42,8 +42,8 @@ public class MutationMechanism {
         int howMuchMutationHere = new Random().nextInt(2)+1;
         for(int i=0; i<howMuchMutationHere ; i++){
             String newEngineName = EngineSearcher.getRandomChessEngineName();
-            Engine engine = new Engine(1, newEngineName);
-            //Engine engine = new EngineService().findByNameOrCreate(newEngineName);
+            //Engine engine = new Engine(1, newEngineName);
+            Engine engine = new EngineService().findByNameOrCreate(newEngineName);
             int whereMutate = new Random().nextInt(toMutationEngineList.size());
             toMutationEngineList.remove(whereMutate);
             toMutationEngineList.add(whereMutate, engine);
