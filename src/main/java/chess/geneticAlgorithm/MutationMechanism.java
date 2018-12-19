@@ -13,12 +13,14 @@ import java.util.Random;
 
 public class MutationMechanism {
 
+    private static final int MAX_POPULATION_SIZE = 20;
+
     public static List<ChessCluster> mutate(List<ChessCluster> chessEnginesClusters) {
         LinkedList<ChessCluster> list = new LinkedList<>();
         for(ChessCluster cluster: chessEnginesClusters) {
             list.add(new ChessCluster(cluster.getCluster(), cluster.getEngineList()));
         }
-        for(int i=0; i<5; i++){
+        for(int i = list.size(); i<MAX_POPULATION_SIZE; i++){
             int whichClusterShouldBeMutate = new Random().nextInt(chessEnginesClusters.size());
             ChessCluster clusterToMutation = chessEnginesClusters.get(whichClusterShouldBeMutate);
             ChessCluster chessCluster = createNewClusterByMutation(clusterToMutation);

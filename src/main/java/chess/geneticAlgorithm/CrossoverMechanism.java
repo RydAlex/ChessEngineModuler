@@ -2,8 +2,11 @@ package chess.geneticAlgorithm;
 
 import chess.database.entities.Cluster;
 import chess.database.entities.Engine;
+import chess.database.service.EngineService;
 import chess.utils.ChessCluster;
+import chess.utils.name.spy.EngineSearcher;
 import lombok.extern.java.Log;
+import org.junit.Assert;
 
 import java.util.ArrayList;
 import java.util.LinkedList;
@@ -13,29 +16,70 @@ import java.util.Random;
 @Log
 public class CrossoverMechanism {
 
-    private static final int AMOUNT_OF_CROSSOVER_CLUSTERS = 15;
 
     public static List<ChessCluster> madeCrossover(List<ChessCluster> chessEnginesClusters) {
         LinkedList<ChessCluster> newChessClusters = new LinkedList<>();
         newChessClusters.addAll(chessEnginesClusters);
-        while(newChessClusters.size() < AMOUNT_OF_CROSSOVER_CLUSTERS){
+        createEnginesByRegularCrossover(chessEnginesClusters, newChessClusters);
+        createEnginesBySpecialCrossover(chessEnginesClusters, newChessClusters);
+        return newChessClusters;
+    }
+
+    private static void createEnginesBySpecialCrossover(List<ChessCluster> chessEnginesClusters, LinkedList<ChessCluster> newChessClusters) {
+        final int AMOUNT_OF_SPECIALS_CROSSOVER_CLUSTERS = 5;
+        ChessCluster newChessCluster;
+        ChessCluster chessClusterOne = generateRandomChessEngine(chessEnginesClusters.get(0).getCluster().getEpochNumber());
+        LinkedList<ChessCluster> specialCrossoveredClusters = new LinkedList<>();
+        while(specialCrossoveredClusters.size() < AMOUNT_OF_SPECIALS_CROSSOVER_CLUSTERS){
+            do {
+                int secondEngineIndex = getSecondEngineIndex(chessEnginesClusters, -1);
+                ChessCluster chessClusterTwo = chessEnginesClusters.get(secondEngineIndex);
+                newChessCluster = crossOverConnection(chessClusterOne, chessClusterTwo);
+            } while(notExistInThisPopulation(newChessClusters, specialCrossoveredClusters, newChessCluster));
+            specialCrossoveredClusters.add(newChessCluster);
+        }
+        newChessClusters.addAll(specialCrossoveredClusters);
+    }
+
+    private static ChessCluster generateRandomChessEngine(int epoch) {
+        LinkedList<Engine> engineList = new LinkedList<>();
+        for(int i=0; i<30; i++) {
+            String newEngineName = EngineSearcher.getRandomChessEngineName();
+            engineList.add(new EngineService().findByNameOrCreate(newEngineName));
+        }
+        Cluster cluster = new Cluster(epoch,1500);
+        return new ChessCluster(cluster, engineList);
+    }
+
+    private static void createEnginesByRegularCrossover(List<ChessCluster> chessEnginesClusters, LinkedList<ChessCluster> newChessClusters) {
+        int counter = 0, counterLimit=10000;
+        final int AMOUNT_OF_CROSSOVER_CLUSTERS = 5;
+        ChessCluster newChessCluster;
+        LinkedList<ChessCluster> crossoverClusters = new LinkedList<>();
+        while(counter<counterLimit && crossoverClusters.size() < AMOUNT_OF_CROSSOVER_CLUSTERS){
             log.info("i enter into crossover generation");
             int firstEngineIndex = new Random().nextInt(chessEnginesClusters.size());
-            int secondEngineIndex = firstEngineIndex;
-            while(firstEngineIndex == secondEngineIndex){
-                secondEngineIndex = new Random().nextInt(chessEnginesClusters.size());
-                log.info("i hit same index");
-            }
             ChessCluster chessClusterOne = chessEnginesClusters.get(firstEngineIndex);
-            ChessCluster chessClusterTwo = chessEnginesClusters.get(secondEngineIndex);
-            ChessCluster newChessCluster = crossOverConnection(chessClusterOne, chessClusterTwo);
-            while(notExistInThisPopulation(chessEnginesClusters, newChessClusters, newChessCluster)){
+            do {
+                int secondEngineIndex = getSecondEngineIndex(chessEnginesClusters, firstEngineIndex);
+                ChessCluster chessClusterTwo = chessEnginesClusters.get(secondEngineIndex);
                 newChessCluster = crossOverConnection(chessClusterOne, chessClusterTwo);
                 log.info("new cluster couldnt be found");
-            }
-            newChessClusters.add(newChessCluster);
+                counter++;
+                if(counter>=counterLimit) return;
+            } while(notExistInThisPopulation(chessEnginesClusters, crossoverClusters, newChessCluster));
+            crossoverClusters.add(newChessCluster);
         }
-        return newChessClusters;
+        newChessClusters.addAll(crossoverClusters);
+    }
+
+    private static int getSecondEngineIndex(List<ChessCluster> chessEnginesClusters, int firstEngineIndex) {
+        int secondEngineIndex;
+        do{
+            secondEngineIndex = new Random().nextInt(chessEnginesClusters.size());
+            log.info("I choose " + secondEngineIndex + " when first engine index is " + firstEngineIndex);
+        } while(firstEngineIndex == secondEngineIndex);
+        return secondEngineIndex;
     }
 
     private static boolean notExistInThisPopulation(List<ChessCluster> chessEnginesClusters,
