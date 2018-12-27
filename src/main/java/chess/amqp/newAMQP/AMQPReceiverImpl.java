@@ -38,13 +38,7 @@ public class AMQPReceiverImpl {
                 } catch (RuntimeException e) {
                     System.out.println(" [.] " + e.toString());
                 } finally {
-                    RedisAMQPManager.reduceInformationAboutMessageInQueue(queueName);
-                    if(channel.isOpen()){
-                        channel.basicAck(envelope.getDeliveryTag(), false);
-                    } else{
-                        Channel channelRetrive = AMQPConnFactory.createNewConnectionToAMQPQueue(queueName);
-                        channelRetrive.basicAck(envelope.getDeliveryTag(), false);
-                    }
+                    RedisAMQPManager.reduceInformationAboutMessageInQueue(queueName, channel, envelope);
                 }
             }
         };

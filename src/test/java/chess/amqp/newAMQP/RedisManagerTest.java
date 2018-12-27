@@ -10,7 +10,7 @@ public class RedisManagerTest {
     public void resetRedisResult(){
         while(RedisAMQPManager.getInformationAboutMessageInQueue(Settings.getChessProcessingQueueName()) >= 0 ){
             System.out.println(RedisAMQPManager.getInformationAboutMessageInQueue(Settings.getChessProcessingQueueName()));
-            RedisAMQPManager.reduceInformationAboutMessageInQueue(Settings.getChessProcessingQueueName());
+            //RedisAMQPManager.reduceInformationAboutMessageInQueue(Settings.getChessProcessingQueueName());
         }
     }
 
