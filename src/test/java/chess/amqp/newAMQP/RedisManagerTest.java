@@ -18,4 +18,9 @@ public class RedisManagerTest {
     public void showAllKeysInRedis(){
         RedisManager.printAllKeys();
     }
+
+    @Test
+    public void setProperValues(){
+        RedisManager.setProperValues(29, false);
+    }
 }

@@ -6,9 +6,9 @@ import redis.clients.jedis.Jedis;
 
 public class RedisGeneticAlgorithmManager extends RedisManager {
 
-    public static String GENETIC_ALGORITHM_ACTUAL_PHASE_VARIABLE = "GeneticPhase";
-    public static String GENETIC_ALGORITHM_EPOCH_COUNTER = "GeneticEpochCounter";
-    public static String JUMP_GUARD = "JumpGuard";
+    static String GENETIC_ALGORITHM_ACTUAL_PHASE_VARIABLE = "GeneticPhase";
+    static String GENETIC_ALGORITHM_EPOCH_COUNTER = "GeneticEpochCounter";
+    static String JUMP_GUARD = "JumpGuard";
 
     public static GeneticAlgorithmPhase getActualPhase(){
         Jedis redisConn = madeConnection();

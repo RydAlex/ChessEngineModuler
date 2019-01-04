@@ -27,7 +27,7 @@ public class AMQPReceiverImpl {
     private Consumer createConsumer(Channel channel) {
         return new DefaultConsumer(channel) {
             @Override
-            public void handleDelivery(String consumerTag, Envelope envelope, AMQP.BasicProperties properties, byte[] body) throws IOException {
+            public void handleDelivery(String consumerTag, Envelope envelope, AMQP.BasicProperties properties, byte[] body) {
                 try {
                     String message = new String(body, "UTF-8");
                     System.out.println("Message is: " + message);
@@ -35,10 +35,15 @@ public class AMQPReceiverImpl {
                     if(action != null){
                         action.proceed(message);
                     }
-                } catch (RuntimeException e) {
+                } catch (Exception e) {
                     System.out.println(" [.] " + e.toString());
+                    throw new RuntimeException();
                 } finally {
-                    RedisAMQPManager.reduceInformationAboutMessageInQueue(queueName, channel, envelope);
+                    try {
+                        RedisAMQPManager.reduceInformationAboutMessageInQueue(queueName, channel, envelope);
+                    } catch (IOException e) {
+                        throw new RuntimeException(e);
+                    }
                 }
             }
         };

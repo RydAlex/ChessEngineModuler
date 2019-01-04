@@ -37,4 +37,17 @@ public class RedisManager {
         }
     }
 
+    public static void setProperValues(int epochCounter, boolean setJumpGuard) {
+        Jedis redisConn = madeConnection();
+        redisConn.set("GeneticEpochCounter", String.valueOf(epochCounter));
+        redisConn.set("ChessGameProcessingQueue", "0");
+        redisConn.set("SaveChessGameQueue", "0");
+        if(setJumpGuard){
+            redisConn.set("JumpGuard", "True");
+        } else {
+            redisConn.del("JumpGuard");
+        }
+    }
+
+
 }

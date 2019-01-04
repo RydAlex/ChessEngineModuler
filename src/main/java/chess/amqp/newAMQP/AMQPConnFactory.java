@@ -5,6 +5,9 @@ import com.rabbitmq.client.Channel;
 import com.rabbitmq.client.Connection;
 import com.rabbitmq.client.ConnectionFactory;
 
+import java.io.IOException;
+import java.util.concurrent.TimeoutException;
+
 class AMQPConnFactory {
 
     public static Channel createNewConnectionToAMQPQueue(String queueName){
@@ -28,6 +31,13 @@ class AMQPConnFactory {
                 }
             }
             if(connectionTry >= 10){
+                try {
+                    if(channel != null && channel.isOpen()) {
+                        channel.close();
+                    }
+                } catch (IOException | TimeoutException e) {
+                    e.printStackTrace();
+                }
                 throw new RuntimeException("Cannot connect to AMQP");
             }
         }
