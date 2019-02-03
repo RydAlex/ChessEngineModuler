@@ -18,6 +18,8 @@ class AMQPConnFactory {
             try {
                 ConnectionFactory factory = new ConnectionFactory();
                 factory.setUri(Settings.getAMQPString());
+                factory.setConnectionTimeout(0);
+                factory.setHandshakeTimeout(10000);
                 Connection connection = factory.newConnection();
                 channel = connection.createChannel();
                 channel.basicQos(1);

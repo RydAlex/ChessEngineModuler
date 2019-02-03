@@ -21,7 +21,7 @@ public class SelectionMechanism {
         for(int i=0 ; i<30; i++) {
             engines.add(new EngineDAO().getEngineByName("stockfish9"));
         }
-        Cluster tempClusterDefinition = new Cluster(bestClustersFromDatabase.get(0).getCluster().getEpochNumber(), 1500);
+        Cluster tempClusterDefinition = new Cluster(bestClustersFromDatabase.get(0).getCluster().getEpochNumber(), 1500, 0 , 0);
         ChessCluster stockfishCluster = new ChessCluster(tempClusterDefinition, engines);
         boolean isExisting = false;
         for(ChessCluster cluster: bestClustersFromDatabase) {
@@ -41,6 +41,8 @@ public class SelectionMechanism {
             ChessCluster newChessCluster = new ChessCluster();
             Cluster cluster = new Cluster();
             cluster.setEloScore(1500);
+            cluster.setBlackGames(0);
+            cluster.setWhiteGames(0);
             cluster.setEpochNumber(chessCluster.getCluster().getEpochNumber() + 1);
             newChessCluster.setCluster(cluster);
             newChessCluster.setEngineList(chessCluster.getEngineList());

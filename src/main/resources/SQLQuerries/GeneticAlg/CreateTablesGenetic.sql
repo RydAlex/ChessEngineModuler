@@ -1,6 +1,8 @@
 CREATE TABLE Cluster(
   ID                    SERIAL            PRIMARY KEY         NOT NULL,
   epoch_number          INTEGER                               NOT NULL,
+  white_games           INTEGER                               NOT NULL,
+  black_games           INTEGER                               NOT NULL,
   elo_score             INTEGER                               NOT NULL
 );
 

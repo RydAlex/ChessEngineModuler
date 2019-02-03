@@ -25,6 +25,7 @@ public class CrossoverMechanism {
         return newChessClusters;
     }
 
+    /*Special crossover means crossover with original engines from game start*/
     private static void createEnginesBySpecialCrossover(List<ChessCluster> chessEnginesClusters, LinkedList<ChessCluster> newChessClusters) {
         final int AMOUNT_OF_SPECIALS_CROSSOVER_CLUSTERS = 5;
         ChessCluster newChessCluster;
@@ -38,22 +39,29 @@ public class CrossoverMechanism {
             } while(notExistInThisPopulation(newChessClusters, specialCrossoveredClusters, newChessCluster));
             specialCrossoveredClusters.add(newChessCluster);
         }
-        newChessClusters.addAll(specialCrossoveredClusters);
+        for(ChessCluster cluster: specialCrossoveredClusters){
+            while(newChessClusters.size() < 15){
+                newChessClusters.add(cluster);
+            }
+        }
     }
 
     private static ChessCluster generateRandomChessEngine(int epoch) {
         LinkedList<Engine> engineList = new LinkedList<>();
+        String newEngineName = EngineSearcher.getRandomChessEngineName();
+        Engine engine = new EngineService().findByNameOrCreate(newEngineName);
         for(int i=0; i<30; i++) {
-            String newEngineName = EngineSearcher.getRandomChessEngineName();
-            engineList.add(new EngineService().findByNameOrCreate(newEngineName));
+            engineList.add(engine);
         }
-        Cluster cluster = new Cluster(epoch,1500);
+        Cluster cluster = new Cluster(epoch,1500, 0, 0);
         return new ChessCluster(cluster, engineList);
     }
 
+
+    /*Regular crossover means crossover with clusters from last round*/
     private static void createEnginesByRegularCrossover(List<ChessCluster> chessEnginesClusters, LinkedList<ChessCluster> newChessClusters) {
-        int counter = 0, counterLimit=10000;
-        final int AMOUNT_OF_CROSSOVER_CLUSTERS = 5;
+        int counter = 0, counterLimit=100000;
+        final int AMOUNT_OF_CROSSOVER_CLUSTERS = 10;
         ChessCluster newChessCluster;
         LinkedList<ChessCluster> crossoverClusters = new LinkedList<>();
         while(counter<counterLimit && crossoverClusters.size() < AMOUNT_OF_CROSSOVER_CLUSTERS){
@@ -66,7 +74,8 @@ public class CrossoverMechanism {
                 newChessCluster = crossOverConnection(chessClusterOne, chessClusterTwo);
                 log.info("new cluster couldnt be found");
                 counter++;
-                if(counter>=counterLimit) return;
+                if(counter>=counterLimit)
+                    return;
             } while(notExistInThisPopulation(chessEnginesClusters, crossoverClusters, newChessCluster));
             crossoverClusters.add(newChessCluster);
         }
@@ -99,7 +108,7 @@ public class CrossoverMechanism {
 
         int firstEngineIndex = new Random().nextInt(chessClusterTwo.getEngineList().size());
         int secondEngineIndex = firstEngineIndex;
-        while(Math.abs(firstEngineIndex-secondEngineIndex) < 7){
+        while(Math.abs(firstEngineIndex-secondEngineIndex) < 4){
             secondEngineIndex = new Random().nextInt(chessClusterTwo.getEngineList().size());
         }
 

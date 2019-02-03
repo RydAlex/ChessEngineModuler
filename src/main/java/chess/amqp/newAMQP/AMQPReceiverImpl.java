@@ -35,15 +35,10 @@ public class AMQPReceiverImpl {
                     if(action != null){
                         action.proceed(message);
                     }
+                    RedisAMQPManager.reduceInformationAboutMessageInQueue(queueName, channel, envelope);
                 } catch (Exception e) {
                     System.out.println(" [.] " + e.toString());
                     throw new RuntimeException();
-                } finally {
-                    try {
-                        RedisAMQPManager.reduceInformationAboutMessageInQueue(queueName, channel, envelope);
-                    } catch (IOException e) {
-                        throw new RuntimeException(e);
-                    }
                 }
             }
         };

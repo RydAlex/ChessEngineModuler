@@ -1,11 +1,8 @@
 package chess.utils.name.spy;
 
-import chess.engine.processor.core.enginemechanism.OsCheck;
 import chess.engine.processor.interfaces.EngineRunnerImpl;
 import lombok.extern.slf4j.Slf4j;
 
-import java.io.BufferedReader;
-import java.io.FileReader;
 import java.util.*;
 
 /**
@@ -21,19 +18,21 @@ public class EngineSearcher {
         List<List<String>> listOfEnginesToReturn = new LinkedList<>();
         List<String> engineList = new EngineRunnerImpl().getEngineNames();
 
-
-        List<String> listOfEnginesInCluster = new LinkedList<>();
-        for(int j=0; j<engineClusterSize; j++){
-            listOfEnginesInCluster.add("stockfish9");
-        }
-        listOfEnginesToReturn.add(listOfEnginesInCluster);
-        for(int i=listOfEnginesToReturn.size() ; listOfEnginesToReturn.size() < amountOfClusters; i++){
+        List<String> listOfEnginesInCluster;
+        for (String engineName : engineList) {
             listOfEnginesInCluster = new LinkedList<>();
             for(int j=0; j<engineClusterSize; j++){
-                listOfEnginesInCluster.add(engineList.get(new Random().nextInt(engineList.size())));
+                listOfEnginesInCluster.add(engineName);
             }
             listOfEnginesToReturn.add(listOfEnginesInCluster);
         }
+//        for(int i=listOfEnginesToReturn.size() ; listOfEnginesToReturn.size() < amountOfClusters; i++){
+//            listOfEnginesInCluster = new LinkedList<>();
+//            for(int j=0; j<engineClusterSize; j++){
+//                listOfEnginesInCluster.add(engineList.get(new Random().nextInt(engineList.size())));
+//            }
+//            listOfEnginesToReturn.add(listOfEnginesInCluster);
+//        }
         return listOfEnginesToReturn;
     }
 

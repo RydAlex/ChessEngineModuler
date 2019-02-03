@@ -66,15 +66,15 @@ public class EvaluationMechanism {
 
     private static void sendChessEnginesToAMQP(List<ChessCluster> chessEnginesClusters) {
         createChessClusterBattles(chessEnginesClusters)
-                .forEach(clusterBattle -> FullInsideGameDefiner.playGameWithThisCluster(6000, clusterBattle));
+                .forEach(clusterBattle -> FullInsideGameDefiner.playGameWithThisCluster(10000, clusterBattle));
     }
 
 
     protected static List<ChessClusterBattle> createChessClusterBattles(List<ChessCluster> chessEnginesClusters) {
-        // Send 114 games by each cluster - 57 created by engine and 57 created by other engines with this one
+        // Send 152 games by each cluster - 76 created by engine and 76 created by other engines with this one
         List<ChessClusterBattle> battles = new LinkedList<>();
         for(int firstEngineIndex = 0; firstEngineIndex < chessEnginesClusters.size(); firstEngineIndex++){
-            for(int i=0; i<2; i++){
+            for(int i=0; i<4; i++){
                 for(int secondEngineIndex = 0; secondEngineIndex < chessEnginesClusters.size(); secondEngineIndex++){
                     if(secondEngineIndex != firstEngineIndex){
                         ChessClusterBattle chessClusterBattle = new ChessClusterBattle();

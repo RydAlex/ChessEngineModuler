@@ -53,6 +53,6 @@ public class CrossoverMechanismTest {
                 engines.add(new Engine(j,"komodo8"));
             }
         }
-        return new ChessCluster(new Cluster(i, 1, 1500), engines);
+        return new ChessCluster(new Cluster(i, 1, 4, 5, 1500), engines);
     }
 }

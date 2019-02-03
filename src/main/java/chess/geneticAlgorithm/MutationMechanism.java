@@ -37,6 +37,8 @@ public class MutationMechanism {
 
         Cluster cluster = new Cluster();
         cluster.setEloScore(1500);
+        cluster.setWhiteGames(0);
+        cluster.setBlackGames(0);
         cluster.setEpochNumber(clusterToMutation.getCluster().getEpochNumber());
         chessCluster.setCluster(cluster);
 

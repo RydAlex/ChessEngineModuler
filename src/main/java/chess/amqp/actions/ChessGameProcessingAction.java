@@ -16,7 +16,7 @@ public class ChessGameProcessingAction implements Action<String>{
         String answer;
         ChessJSONObject chessObject = ChessJSONReader.readDataFromJson(message);
         if (chessObject.getTimeout() != null) {
-            //chessObject.setAnswer("1");
+//            chessObject.setAnswer("1");
             chessObject = ChessScheduler.startGameWithTimeoutRule(chessObject);
         } else {
             chessObject = null;

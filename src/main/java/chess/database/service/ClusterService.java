@@ -38,6 +38,8 @@ public class ClusterService {
         Cluster cluster = new Cluster();
         cluster.setEloScore(1500);
         cluster.setEpochNumber(1);
+        cluster.setWhiteGames(0);
+        cluster.setBlackGames(0);
         clusterDAO.save(cluster);
         return cluster;
     }

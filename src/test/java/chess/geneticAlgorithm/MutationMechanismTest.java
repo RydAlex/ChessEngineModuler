@@ -38,7 +38,7 @@ public class MutationMechanismTest {
 
 
     private ChessCluster createChessCluster(String chessEngine) {
-        Cluster cluster = new Cluster(1,1500, 1);
+        Cluster cluster = new Cluster(1,1500, 4,5, 1);
 
         LinkedList<Engine> chessEngines = new LinkedList<>();
         for(int i=0; i<30; i++){

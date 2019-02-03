@@ -10,7 +10,7 @@ import javax.persistence.*;
 @NoArgsConstructor
 @AllArgsConstructor
 @EqualsAndHashCode(of="engineName")
-@Table(name = "engine", schema = "public", catalog = "d4o36i322pqtbl")
+@Table(name = "engine", schema = "public", catalog = "dbdbt2hu9ketmn")
 @NamedNativeQueries({
         @NamedNativeQuery(
                 name = "getEnginesWhichAreUsedInCluster",

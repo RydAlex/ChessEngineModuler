@@ -12,7 +12,7 @@ import java.io.Serializable;
 @NoArgsConstructor
 @AllArgsConstructor
 @Entity
-@Table(name = "cluster", schema = "public", catalog = "d4o36i322pqtbl")
+@Table(name = "cluster", schema = "public", catalog = "dbdbt2hu9ketmn")
 @NamedNativeQueries({
         @NamedNativeQuery(
                 name = "getTopClusters",
@@ -38,11 +38,26 @@ public class Cluster implements Serializable {
     private Integer epochNumber;
 
     @Basic
+    @Column(name="white_games", nullable = false)
+    private Integer whiteGames;
+
+    @Basic
+    @Column(name="black_games", nullable = false)
+    private Integer blackGames;
+
+    @Basic
     @Column(name = "elo_score", nullable = false)
     private Integer eloScore;
 
     public Cluster(int epochNumber, int eloScore){
         this.epochNumber = epochNumber;
         this.eloScore = eloScore;
+    }
+
+    public Cluster(int epochNumber, int eloScore, int whiteGames, int blackGames){
+        this.epochNumber = epochNumber;
+        this.eloScore = eloScore;
+        this.whiteGames = whiteGames;
+        this.blackGames = blackGames;
     }
 }
