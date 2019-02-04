@@ -102,6 +102,8 @@ public class CrossoverMechanism {
 
         Cluster cluster = new Cluster();
         cluster.setEloScore(1500);
+        cluster.setWhiteGames(0);
+        cluster.setBlackGames(0);
         cluster.setEpochNumber(chessClusterOne.getCluster().getEpochNumber());
 
         chessCluster.setCluster(cluster);

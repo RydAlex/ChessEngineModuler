@@ -14,6 +14,8 @@ public class EngineDAOTest {
         EngineDAO engineDAO = new EngineDAO();
         Cluster cluster = new Cluster();
         cluster.setId(1);
+        cluster.setWhiteGames(0);
+        cluster.setBlackGames(0);
         cluster.setEloScore(1000);
         cluster.setEpochNumber(1);
         List engines = engineDAO.findListOfEnginesForGivenCluster(cluster);
