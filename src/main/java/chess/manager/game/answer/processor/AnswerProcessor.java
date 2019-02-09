@@ -17,7 +17,7 @@ public class AnswerProcessor {
             clusterOne = clusterDao.refresh(clusterOne, clusterOne.getId());
             clusterTwo = clusterDao.refresh(clusterTwo, clusterTwo.getId());
 
-            if(clusterOne.getWhiteGames() < 50 && clusterTwo.getBlackGames() < 50){
+            if(clusterOne.getWhiteGames() < 50){
                 int newEloOne = EloAlgorithm.calculateRating(clusterOne.getEloScore(),
                         clusterTwo.getEloScore(), isWin(1, chessJSONObject));
                 int newEloTwo = EloAlgorithm.calculateRating(clusterTwo.getEloScore(),
