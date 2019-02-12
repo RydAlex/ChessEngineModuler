@@ -74,7 +74,7 @@ public class EvaluationMechanism {
         // Send 152 games by each cluster - 76 created by engine and 76 created by other engines with this one
         List<ChessClusterBattle> battles = new LinkedList<>();
         for(int firstEngineIndex = 0; firstEngineIndex < chessEnginesClusters.size(); firstEngineIndex++){
-            for(int i=0; i<4; i++){
+            for(int i=0; i<3; i++){
                 for(int secondEngineIndex = 0; secondEngineIndex < chessEnginesClusters.size(); secondEngineIndex++){
                     if(secondEngineIndex != firstEngineIndex){
                         ChessClusterBattle chessClusterBattle = new ChessClusterBattle();

@@ -17,21 +17,19 @@ public class AnswerProcessor {
             clusterOne = clusterDao.refresh(clusterOne, clusterOne.getId());
             clusterTwo = clusterDao.refresh(clusterTwo, clusterTwo.getId());
 
-            if(clusterOne.getWhiteGames() < 50){
-                int newEloOne = EloAlgorithm.calculateRating(clusterOne.getEloScore(),
-                        clusterTwo.getEloScore(), isWin(1, chessJSONObject));
-                int newEloTwo = EloAlgorithm.calculateRating(clusterTwo.getEloScore(),
-                        clusterOne.getEloScore(), isWin(2, chessJSONObject));
+            int newEloOne = EloAlgorithm.calculateRating(clusterOne.getEloScore(),
+                    clusterTwo.getEloScore(), isWin(1, chessJSONObject));
+            int newEloTwo = EloAlgorithm.calculateRating(clusterTwo.getEloScore(),
+                    clusterOne.getEloScore(), isWin(2, chessJSONObject));
 
-                clusterOne.setWhiteGames(clusterOne.getWhiteGames() + 1);
-                clusterTwo.setBlackGames(clusterTwo.getBlackGames() + 1);
+            clusterOne.setWhiteGames(clusterOne.getWhiteGames() + 1);
+            clusterTwo.setBlackGames(clusterTwo.getBlackGames() + 1);
 
-                clusterOne.setEloScore(newEloOne);
-                clusterTwo.setEloScore(newEloTwo);
+            clusterOne.setEloScore(newEloOne);
+            clusterTwo.setEloScore(newEloTwo);
 
-                clusterDao.edit(clusterOne);
-                clusterDao.edit(clusterTwo);
-            }
+            clusterDao.edit(clusterOne);
+            clusterDao.edit(clusterTwo);
         }
     }
 
