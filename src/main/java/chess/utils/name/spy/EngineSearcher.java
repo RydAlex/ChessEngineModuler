@@ -30,13 +30,9 @@ public class EngineSearcher {
         for(int j=0; j<engineClusterSize; j++){
             listOfEnginesInCluster.add("stockfish9");
         }
-        listOfEnginesInCluster.set(10,"cheng439");
-        listOfEnginesInCluster.set(11,"stockfish7");
-        listOfEnginesInCluster.set(12,"komodo9");
-        listOfEnginesInCluster.set(15,"komodo8");
-        listOfEnginesInCluster.set(16,"cheng439");
-        listOfEnginesInCluster.set(17,"stockfish8");
-        listOfEnginesInCluster.set(18,"andscacs93");
+        listOfEnginesInCluster.set(9,"stockfish7");
+        listOfEnginesInCluster.set(10,"stockfish7");
+        listOfEnginesInCluster.set(26,"critter16");
         listOfEnginesToReturn.add(listOfEnginesInCluster);
 
         return listOfEnginesToReturn;
