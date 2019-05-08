@@ -39,6 +39,10 @@ public class EloHistory {
     private Timestamp timestamp;
 
     @Basic
+    @Column(name = "games_moves", nullable = false)
+    private String gamesMoves;
+
+    @Basic
     @Column(name = "cluster_id", nullable = false)
     private Integer clusterId;
 }

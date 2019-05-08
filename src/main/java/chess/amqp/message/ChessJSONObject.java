@@ -20,6 +20,8 @@ public class ChessJSONObject {
     private Integer timeout;
     @JsonProperty("fen")
     private String fen;
+    @JsonProperty("game_moves")
+    private String gameMoves;
     @JsonProperty("answer")
     private String answer;
 
@@ -54,5 +56,13 @@ public class ChessJSONObject {
 
     public void setClusterBattle(ChessClusterBattle clusterBattle) {
         this.clusterBattle = clusterBattle;
+    }
+
+    public String getGameMoves() {
+        return gameMoves;
+    }
+
+    public void setGameMoves(String gameMoves) {
+        this.gameMoves = gameMoves;
     }
 }

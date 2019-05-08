@@ -85,9 +85,8 @@ public class RedisGeneticAlgorithmManager extends RedisManager {
         Jedis redisConn = madeConnection();
         redisConn.del(Settings.getChessProcessingQueueName());
         redisConn.del(Settings.getChessSavingQueueName());
-//        redisConn.del(GENETIC_ALGORITHM_EPOCH_COUNTER);
-//        redisConn.del(GENETIC_ALGORITHM_ACTUAL_PHASE_VARIABLE);
-//        redisConn.del(JUMP_GUARD);
-        redisConn.close();
+        redisConn.del(GENETIC_ALGORITHM_EPOCH_COUNTER);
+        redisConn.del(GENETIC_ALGORITHM_ACTUAL_PHASE_VARIABLE);
+        redisConn.del(JUMP_GUARD);
     }
 }

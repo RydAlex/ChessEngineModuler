@@ -24,6 +24,7 @@ object ChessScheduler {
     gameShaper.startGameWithTimeOutRule(actor, timeout, chessboard) match {
       case gameResult : EndGame  =>  {
         chessObject.setAnswer(gameResult.whoWin.toString)
+        chessObject.setGameMoves(gameResult.fenMovesInGame)
       }
     }
     chessObject

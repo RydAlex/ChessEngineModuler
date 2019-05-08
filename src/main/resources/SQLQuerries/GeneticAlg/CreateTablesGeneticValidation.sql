@@ -19,6 +19,7 @@ CREATE TABLE EngineClusterList (
 CREATE TABLE EloHistory (
   ID                    SERIAL            PRIMARY KEY         NOT NULL,
   elo_value             INTEGER                               NOT NULL,
-  timestamp             TIMESTAMP                             NOT NULL          DEFAULT CURRENT_TIMESTAMP,
+  games_moves           TEXT                                  NOT NULL,
+  timestamp             TIMESTAMP                             NOT NULL,        DEFAULT CURRENT_TIMESTAMP,
   cluster_id            INTEGER           REFERENCES                            Cluster (ID)
 )

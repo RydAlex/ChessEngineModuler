@@ -1,5 +1,6 @@
 package chess.geneticAlgorithm;
 
+import chess.database.entities.Engine;
 import chess.manager.game.definitions.FullInsideGameDefiner;
 import chess.redis.RedisAMQPManager;
 import chess.redis.RedisGeneticAlgorithmManager;
@@ -72,13 +73,14 @@ public class EvaluationMechanism {
 
     protected static List<ChessClusterBattle> createChessClusterBattles(List<ChessCluster> chessEnginesClusters) {
         List<ChessClusterBattle> battles = new LinkedList<>();
-        for(int i=0; i<1000; i++){
+        for(int i=0; i<300; i++){
             ChessClusterBattle clusterBattle = new ChessClusterBattle();
             clusterBattle.setChessClusterOne(chessEnginesClusters.get(0));
             clusterBattle.setChessClusterTwo(chessEnginesClusters.get(1));
             battles.add(clusterBattle);
-
-            clusterBattle = new ChessClusterBattle();
+        }
+        for(int i=0; i<300; i++){
+            ChessClusterBattle clusterBattle = new ChessClusterBattle();
             clusterBattle.setChessClusterOne(chessEnginesClusters.get(1));
             clusterBattle.setChessClusterTwo(chessEnginesClusters.get(0));
             battles.add(clusterBattle);

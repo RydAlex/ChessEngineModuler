@@ -24,8 +24,8 @@ public class AnswerProcessor {
             int newEloTwo = EloAlgorithm.calculateRating(clusterTwo.getEloScore(),
                     clusterOne.getEloScore(), isWin(2, chessJSONObject));
 
-            saveClusterOldElo(clusterOne);
-            saveClusterOldElo(clusterTwo);
+            saveClusterOldElo(clusterOne, chessJSONObject.getGameMoves());
+            saveClusterOldElo(clusterTwo, chessJSONObject.getGameMoves());
 
             clusterOne.setEloScore(newEloOne);
             clusterTwo.setEloScore(newEloTwo);
@@ -35,10 +35,11 @@ public class AnswerProcessor {
         }
     }
 
-    private static void saveClusterOldElo(Cluster cluster) {
+    private static void saveClusterOldElo(Cluster cluster, String gameMoves) {
         EloHistory eloHistory = new EloHistory();
         eloHistory.setClusterId(cluster.getId());
         eloHistory.setEloValue(cluster.getEloScore());
+        eloHistory.setGamesMoves(gameMoves);
         EloHistoryDAO eloHistoryDAO = new EloHistoryDAO();
         eloHistoryDAO.save(eloHistory);
     }

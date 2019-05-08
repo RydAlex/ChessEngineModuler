@@ -27,10 +27,10 @@ public class GameManager {
         }).start();
 
         List<ChessCluster> chessEnginesClusters = InitializeMechanism.initializeGeneticGame();
-        while(true){
-            EvaluationMechanism.evaluate(chessEnginesClusters);
-            chessEnginesClusters = madeNewGeneration(chessEnginesClusters);
-        }
+//        while(true){
+        EvaluationMechanism.evaluate(chessEnginesClusters);
+//            chessEnginesClusters = madeNewGeneration(chessEnginesClusters);
+//        }
     }
 
     private static List<ChessCluster> madeNewGeneration(List<ChessCluster> chessEnginesClusters) {
